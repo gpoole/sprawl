@@ -8,6 +8,8 @@ public class CarController : MonoBehaviour
     public float maxMotorTorque; // maximum torque the motor can apply to wheel
     public float maxSteeringAngle; // maximum steer angle the wheel can have
 
+    public float maxBrakeForce; // pump the brakes
+
     protected Vector3 startPosition;
 
     void Start() {
@@ -37,7 +39,10 @@ public class CarController : MonoBehaviour
     {
         // float motor = maxMotorTorque * Input.GetAxis("Vertical");
         float steering = maxSteeringAngle * Input.GetAxis("Horizontal");
-        float motor = maxMotorTorque * ((Input.GetAxis("Vertical") + 1) / 2);
+        float motor = maxMotorTorque * ((Input.GetAxis("Accelleration") + 1) / 2);
+        float brake = maxBrakeForce * ((Input.GetAxis("Brakes") + 1) / 2);
+        Debug.LogFormat("Accelleration: {0}", Input.GetAxis("Accelleration"));
+        Debug.LogFormat("Brakes: {0}", Input.GetAxis("Brakes"));
 
         foreach (AxleInfo axleInfo in axleInfos)
         {
@@ -51,6 +56,8 @@ public class CarController : MonoBehaviour
                 axleInfo.leftWheel.motorTorque = motor;
                 axleInfo.rightWheel.motorTorque = motor;
             }
+            axleInfo.leftWheel.brakeTorque = brake;
+            axleInfo.rightWheel.brakeTorque = brake;
             ApplyLocalPositionToVisuals(axleInfo.leftWheel);
             ApplyLocalPositionToVisuals(axleInfo.rightWheel);
         }
