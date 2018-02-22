@@ -147,8 +147,4 @@ public class WheelDrive : MonoBehaviour
 			}
 		}
 	}
-
-	public void Reset() {
-		GetComponent<Rigidbody>().velocity = Vector3.zero;
-	}
 }

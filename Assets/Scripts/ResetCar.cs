@@ -20,8 +20,8 @@ public class ResetCar : MonoBehaviour {
 			var transform = GetComponent<Transform>();
 			transform.position = startPosition;
 			transform.rotation = startRotation;
-			var wheelDrive = GetComponent<WheelDrive>();
-			wheelDrive.Reset();
+			GetComponent<Rigidbody>().velocity = Vector3.zero;
+			GetComponent<Rigidbody>().inertiaTensor = Vector3.zero;
 		}
 	}
 }
