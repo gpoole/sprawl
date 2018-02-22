@@ -30,25 +30,34 @@ public class WheelDrive : MonoBehaviour
 	[Tooltip("The vehicle's drive type: rear-wheels drive, front-wheels drive or all-wheels drive.")]
 	public DriveType driveType;
 	
+	[Range(0f, 10f)]
 	public float sidewaysExtremumSlip = 1;
 
+	[Range(0f, 10f)]
 	public float sidewaysAsymptoteSlip = 2;
 	
-	public float sidewaysAsymptoteValue = 10000;
+	[Range(0f, 10f)]
+	public float sidewaysAsymptoteValue = 1;
 	
-	public float sidewaysExtremumValue = 20000;
+	[Range(0f, 10f)]
+	public float sidewaysExtremumValue = 2;
 
+	[Range(0f, 10f)]
 	public float sidewaysStiffness = 1;
 
+	[Range(0f, 10f)]
 	public float forwardAsymptoteSlip = 2;
 	
-	public float forwardAsymptoteValue = 10000;
+	[Range(0f, 10f)]
+	public float forwardAsymptoteValue = 1;
 
-
+	[Range(0f, 10f)]
 	public float forwardExtremumSlip = 1;
 	
-	public float forwardExtremumValue = 20000;
+	[Range(0f, 10f)]
+	public float forwardExtremumValue = 2;
 
+	[Range(0f, 10f)]
 	public float forwardStiffness = 1;
 
     private WheelCollider[] m_Wheels;
