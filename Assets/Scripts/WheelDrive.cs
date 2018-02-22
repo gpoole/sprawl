@@ -46,14 +46,14 @@ public class WheelDrive : MonoBehaviour
 	public float sidewaysStiffness = 1;
 
 	[Range(0f, 10f)]
+	public float forwardExtremumSlip = 1;
+	
+	[Range(0f, 10f)]
 	public float forwardAsymptoteSlip = 2;
 	
 	[Range(0f, 10f)]
 	public float forwardAsymptoteValue = 1;
 
-	[Range(0f, 10f)]
-	public float forwardExtremumSlip = 1;
-	
 	[Range(0f, 10f)]
 	public float forwardExtremumValue = 2;
 
@@ -94,6 +94,10 @@ public class WheelDrive : MonoBehaviour
 				ws.transform.parent = wheel.transform;
 			}
 		}
+	}
+
+	public float GetSpeed() {
+		return GetComponent<Rigidbody>().velocity.magnitude;
 	}
 
 	// This is a really simple approach to updating wheels.
