@@ -1119,7 +1119,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh11706
+  m_Name: pb_Mesh11852
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
@@ -4032,7 +4032,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 2
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -5295,9 +5295,9 @@ MonoBehaviour:
     rightWheel: {fileID: 230167634}
     motor: 1
     steering: 0
-  maxMotorTorque: 3000
+  maxMotorTorque: 5000
   maxSteeringAngle: 60
-  maxBrakeForce: 5000
+  maxBrakeForce: 10000
 --- !u!54 &1442347878
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5333,7 +5333,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh-154198
+  m_Name: pb_Mesh11696
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
@@ -5638,7 +5638,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh11820
+  m_Name: pb_Mesh11822
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
@@ -6345,7 +6345,7 @@ GameObject:
   - component: {fileID: 1949970938}
   - component: {fileID: 1949970937}
   m_Layer: 0
-  m_Name: Cone
+  m_Name: Concrete pyramid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6357,7 +6357,7 @@ MeshCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1949970936}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 8b2443140ed5245be8b72100f727b5e5, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -8568,7 +8568,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 2
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89

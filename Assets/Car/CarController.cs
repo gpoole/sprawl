@@ -56,8 +56,8 @@ public class CarController : MonoBehaviour
                 axleInfo.leftWheel.motorTorque = motor;
                 axleInfo.rightWheel.motorTorque = motor;
             }
-            axleInfo.leftWheel.brakeTorque = brake;
-            axleInfo.rightWheel.brakeTorque = brake;
+            // axleInfo.leftWheel.brakeTorque = brake;
+            // axleInfo.rightWheel.brakeTorque = brake;
             ApplyLocalPositionToVisuals(axleInfo.leftWheel);
             ApplyLocalPositionToVisuals(axleInfo.rightWheel);
         }
