@@ -155,26 +155,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 8053376}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cc9ccd2c75644b398d188844bc9ef2a, type: 3}
+  m_Script: {fileID: 11500000, guid: b8afaff0154db482ca0c50ec8bc0ddd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxAngle: 40
-  maxTorque: 3200
+  maxAngle: 4000
+  maxTorque: 300
   brakeTorque: 30000
   wheelShape: {fileID: 1807639738020574, guid: e7cf263575f2644fc91ce609cc3c0315, type: 2}
   criticalSpeed: 5
   stepsBelow: 5
   stepsAbove: 1
   driveType: 0
-  sidewaysExtremumSlip: 0.34
-  sidewaysAsymptoteSlip: 3.43
-  sidewaysAsymptoteValue: 2.88
-  sidewaysExtremumValue: 1.06
+  sidewaysExtremumSlip: 1
+  sidewaysAsymptoteSlip: 2
+  sidewaysAsymptoteValue: 1
+  sidewaysExtremumValue: 2
   sidewaysStiffness: 1
-  forwardExtremumSlip: 0
-  forwardAsymptoteSlip: 3.49
-  forwardAsymptoteValue: 1.17
-  forwardExtremumValue: 1.23
+  forwardExtremumSlip: 0.45
+  forwardAsymptoteSlip: 2.55
+  forwardAsymptoteValue: 2.27
+  forwardExtremumValue: 2.71
   forwardStiffness: 1
 --- !u!114 &8053379
 MonoBehaviour:

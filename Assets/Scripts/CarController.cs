@@ -9,7 +9,7 @@ public enum DriveType
 	AllWheelDrive
 }
 
-public class WheelDrive : MonoBehaviour
+public class CarController : MonoBehaviour
 {
     [Tooltip("Maximum steering angle of the wheels")]
 	public float maxAngle = 30f;

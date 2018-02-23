@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Speedo : MonoBehaviour {
 
-	public WheelDrive car;
+	public CarController car;
 
 	// Use this for initialization
 	void Start () {
