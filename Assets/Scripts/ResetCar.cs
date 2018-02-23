@@ -21,7 +21,7 @@ public class ResetCar : MonoBehaviour {
 			transform.position = startPosition;
 			transform.rotation = startRotation;
 			GetComponent<Rigidbody>().velocity = Vector3.zero;
-			GetComponent<Rigidbody>().inertiaTensor = Vector3.zero;
+			GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 		}
 	}
 }
