@@ -22,6 +22,10 @@ public class ResetCar : MonoBehaviour {
 			transform.rotation = startRotation;
 			GetComponent<Rigidbody>().velocity = Vector3.zero;
 			GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+			var wheels = GetComponentsInChildren<WheelCollider>();
+			foreach (WheelCollider wheel in wheels) {
+				wheel.brakeTorque = Mathf.Infinity;
+			}
 		}
 	}
 }
