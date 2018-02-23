@@ -85,6 +85,7 @@ public class CarController : MonoBehaviour
 			var wheel = m_Wheels [i];
 			wheel.sidewaysFriction = sidewaysCurve;
 			wheel.forwardFriction = forwardCurve;
+			wheel.mass = 80;
 
 			// Create wheel shapes only when needed.
 			if (wheelShape != null)
@@ -141,7 +142,9 @@ public class CarController : MonoBehaviour
 				wheel.brakeTorque = 0;
 			}
 
-			wheel.motorTorque = torque;
+			if (!isFrontWheel)  {
+				wheel.motorTorque = torque;
+			}
 
 			// Update visual wheels if any.
 			if (wheelShape) 
