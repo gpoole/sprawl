@@ -165,7 +165,6 @@ MonoBehaviour:
   criticalSpeed: 50
   stepsBelow: 10
   stepsAbove: 5
-  driveType: 2
   sidewaysExtremumSlip: 1
   sidewaysAsymptoteSlip: 1.94
   sidewaysAsymptoteValue: 0.95
@@ -173,11 +172,11 @@ MonoBehaviour:
   sidewaysStiffness: 1.78
   forwardExtremumSlip: 0.4
   forwardAsymptoteSlip: 7.08
-  forwardAsymptoteValue: 1
-  forwardExtremumValue: 1.45
+  forwardAsymptoteValue: 1.89
+  forwardExtremumValue: 2.38
   forwardStiffness: 1.11
   centreOfMass: {fileID: 1189072700}
-  brakingMass: 18000
+  brakingMass: 36000
 --- !u!114 &8053379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -972,7 +971,7 @@ Transform:
   m_GameObject: {fileID: 1938546193}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.11, z: 0}
-  m_LocalScale: {x: 1.816698, y: 1.7680457, z: 2.1595428}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8053381}
   m_RootOrder: 0

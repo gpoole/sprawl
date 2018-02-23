@@ -123,6 +123,10 @@ public class CarController : MonoBehaviour
 			rigidBody.mass = initialMass;
 		}
 
+		if (Input.GetKey(KeyCode.LeftShift)) {
+			rigidBody.AddForceAtPosition(transform.forward.normalized * 50, transform.position, ForceMode.Acceleration);
+		}
+
 		foreach (WheelCollider wheel in m_Wheels)
 		{
 			var isFrontWheel = wheel.transform.localPosition.z > 0;
