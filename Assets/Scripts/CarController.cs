@@ -60,7 +60,13 @@ public class CarController : MonoBehaviour
 	[Range(0f, 10f)]
 	public float forwardStiffness = 1;
 
+	public Transform centreOfMass;
+
     private WheelCollider[] m_Wheels;
+
+	public float brakingMass;
+	
+	private float initialMass;
 
     // Find all the WheelColliders down in the hierarchy.
 	void Start()
@@ -80,6 +86,8 @@ public class CarController : MonoBehaviour
 		forwardCurve.stiffness = forwardStiffness;
 
 		m_Wheels = GetComponentsInChildren<WheelCollider>();
+
+		initialMass = GetComponent<Rigidbody>().mass;
 
 		for (int i = 0; i < m_Wheels.Length; ++i) 
 		{
@@ -109,26 +117,42 @@ public class CarController : MonoBehaviour
 
 		float angle = maxAngle * Input.GetAxis("Horizontal");
 		float torque = maxTorque * Input.GetAxis("Vertical");
+		bool useHandBrake = Input.GetKey(KeyCode.Space);
 
-		float handBrake = Input.GetKey(KeyCode.Space) ? brakeTorque : 0;
+		var rigidBody = GetComponent<Rigidbody>();
+		var transform = GetComponent<Transform>();
+		if (useHandBrake) {
+			rigidBody.centerOfMass = centreOfMass.localPosition;
+			// rigidBody.centerOfMass = Vector3.Lerp(rigidBody.centerOfMass, centreOfMass.localPosition, Time.deltaTime);
+			// rigidBody.mass = Mathf.Lerp(rigidBody.mass, 6000, Time.deltaTime);
+			rigidBody.mass = brakingMass;
+		} else {
+			// rigidBody.centerOfMass = Vector3.Lerp(rigidBody.centerOfMass, Vector3.zero, Time.deltaTime);
+			rigidBody.centerOfMass = Vector3.zero;
+			rigidBody.mass = initialMass;
+			// rigidBody.mass = Mathf.Lerp(rigidBody.mass, 2000, Time.deltaTime);
+		}
 
 		foreach (WheelCollider wheel in m_Wheels)
 		{
-			// A simple car where front wheels steer while rear ones drive.
-			if (wheel.transform.localPosition.z > 0)
-				wheel.steerAngle = angle;
+			var isFrontWheel = wheel.transform.localPosition.z > 0;
 
-			if (wheel.transform.localPosition.z < 0)
-			{
-				wheel.brakeTorque = handBrake;
+			// A simple car where front wheels steer while rear ones drive.
+			if (isFrontWheel)
+				wheel.steerAngle = angle;
+			
+			if (useHandBrake) {
+				wheel.brakeTorque = brakeTorque;
+			} else {
+				wheel.brakeTorque = 0;
 			}
 
-			if (wheel.transform.localPosition.z < 0 && driveType != DriveType.FrontWheelDrive)
+			if (!isFrontWheel && driveType != DriveType.FrontWheelDrive)
 			{
 				wheel.motorTorque = torque;
 			}
 
-			if (wheel.transform.localPosition.z >= 0 && driveType != DriveType.RearWheelDrive)
+			if (isFrontWheel && driveType != DriveType.RearWheelDrive)
 			{
 				wheel.motorTorque = torque;
 			}
