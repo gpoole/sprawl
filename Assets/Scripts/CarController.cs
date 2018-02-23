@@ -135,7 +135,7 @@ public class CarController : MonoBehaviour
 			if (isFrontWheel)
 				wheel.steerAngle = steerAngle;
 			
-			if (useHandBrake) {
+			if (useHandBrake && !isFrontWheel) {
 				wheel.brakeTorque = brakeTorque;
 			} else {
 				wheel.brakeTorque = 0;
