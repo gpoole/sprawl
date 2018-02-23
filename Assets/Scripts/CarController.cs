@@ -1,14 +1,6 @@
 ﻿using UnityEngine;
 using System;
 
-[Serializable]
-public enum DriveType
-{
-	RearWheelDrive,
-	FrontWheelDrive,
-	AllWheelDrive
-}
-
 public class CarController : MonoBehaviour
 {
     [Tooltip("Maximum steering angle of the wheels")]
@@ -27,9 +19,6 @@ public class CarController : MonoBehaviour
 	[Tooltip("Simulation sub-steps when the speed is below critical.")]
 	public int stepsAbove = 1;
 
-	[Tooltip("The vehicle's drive type: rear-wheels drive, front-wheels drive or all-wheels drive.")]
-	public DriveType driveType;
-	
 	[Range(0f, 10f)]
 	public float sidewaysExtremumSlip = 1;
 
@@ -67,6 +56,8 @@ public class CarController : MonoBehaviour
 	public float brakingMass;
 	
 	private float initialMass;
+
+	private float steerAngle;
 
     // Find all the WheelColliders down in the hierarchy.
 	void Start()
@@ -115,7 +106,10 @@ public class CarController : MonoBehaviour
 	{
 		m_Wheels[0].ConfigureVehicleSubsteps(criticalSpeed, stepsBelow, stepsAbove);
 
-		float angle = maxAngle * Input.GetAxis("Horizontal");
+		float wantedAngle = Input.GetAxis("Horizontal") * maxAngle;
+		steerAngle = Mathf.Lerp(steerAngle, wantedAngle, Time.deltaTime * 6f);
+		Debug.Log(wantedAngle + "," + steerAngle);
+
 		float torque = maxTorque * Input.GetAxis("Vertical");
 		bool useHandBrake = Input.GetKey(KeyCode.Space);
 
@@ -123,14 +117,10 @@ public class CarController : MonoBehaviour
 		var transform = GetComponent<Transform>();
 		if (useHandBrake) {
 			rigidBody.centerOfMass = centreOfMass.localPosition;
-			// rigidBody.centerOfMass = Vector3.Lerp(rigidBody.centerOfMass, centreOfMass.localPosition, Time.deltaTime);
-			// rigidBody.mass = Mathf.Lerp(rigidBody.mass, 6000, Time.deltaTime);
 			rigidBody.mass = brakingMass;
 		} else {
-			// rigidBody.centerOfMass = Vector3.Lerp(rigidBody.centerOfMass, Vector3.zero, Time.deltaTime);
 			rigidBody.centerOfMass = Vector3.zero;
 			rigidBody.mass = initialMass;
-			// rigidBody.mass = Mathf.Lerp(rigidBody.mass, 2000, Time.deltaTime);
 		}
 
 		foreach (WheelCollider wheel in m_Wheels)
@@ -139,7 +129,7 @@ public class CarController : MonoBehaviour
 
 			// A simple car where front wheels steer while rear ones drive.
 			if (isFrontWheel)
-				wheel.steerAngle = angle;
+				wheel.steerAngle = steerAngle;
 			
 			if (useHandBrake) {
 				wheel.brakeTorque = brakeTorque;
@@ -147,15 +137,7 @@ public class CarController : MonoBehaviour
 				wheel.brakeTorque = 0;
 			}
 
-			if (!isFrontWheel && driveType != DriveType.FrontWheelDrive)
-			{
-				wheel.motorTorque = torque;
-			}
-
-			if (isFrontWheel && driveType != DriveType.RearWheelDrive)
-			{
-				wheel.motorTorque = torque;
-			}
+			wheel.motorTorque = torque;
 
 			// Update visual wheels if any.
 			if (wheelShape) 
