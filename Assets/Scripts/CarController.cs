@@ -54,6 +54,10 @@ public class CarController : MonoBehaviour
     private WheelCollider[] m_Wheels;
 
 	public float brakingMass;
+
+	public Material wheelTouchMaterial;
+
+	public Material wheelMaterial;
 	
 	private float initialMass;
 
@@ -79,6 +83,7 @@ public class CarController : MonoBehaviour
 		m_Wheels = GetComponentsInChildren<WheelCollider>();
 
 		initialMass = GetComponent<Rigidbody>().mass;
+		GetComponent<Rigidbody>().centerOfMass = centreOfMass.localPosition;
 
 		for (int i = 0; i < m_Wheels.Length; ++i) 
 		{
@@ -116,13 +121,13 @@ public class CarController : MonoBehaviour
 
 		var rigidBody = GetComponent<Rigidbody>();
 		var transform = GetComponent<Transform>();
-		if (useHandBrake) {
-			rigidBody.centerOfMass = centreOfMass.localPosition;
-			rigidBody.mass = brakingMass;
-		} else {
-			rigidBody.centerOfMass = Vector3.zero;
-			rigidBody.mass = initialMass;
-		}
+		// if (useHandBrake) {
+		// 	rigidBody.centerOfMass = centreOfMass.localPosition;
+		// 	rigidBody.mass = brakingMass;
+		// } else {
+		// 	rigidBody.centerOfMass = Vector3.zero;
+		// 	rigidBody.mass = initialMass;
+		// }
 
 		if (Input.GetKey(KeyCode.LeftShift)) {
 			rigidBody.AddForceAtPosition(transform.forward.normalized * 50, transform.position, ForceMode.Acceleration);
@@ -136,7 +141,7 @@ public class CarController : MonoBehaviour
 			if (isFrontWheel)
 				wheel.steerAngle = steerAngle;
 			
-			if (useHandBrake && !isFrontWheel) {
+			if (useHandBrake) {
 				wheel.brakeTorque = brakeTorque;
 			} else {
 				wheel.brakeTorque = 0;
@@ -157,6 +162,14 @@ public class CarController : MonoBehaviour
 				Transform shapeTransform = wheel.transform.GetChild (0);
 				shapeTransform.position = p;
 				shapeTransform.rotation = q;
+
+				GameObject wheelObject = shapeTransform.gameObject;
+
+				if (wheel.isGrounded) {
+					wheelObject.GetComponentInChildren<Renderer>().material = wheelTouchMaterial;
+				} else {
+					wheelObject.GetComponentInChildren<Renderer>().material = wheelMaterial;
+				}
 			}
 		}
 	}
