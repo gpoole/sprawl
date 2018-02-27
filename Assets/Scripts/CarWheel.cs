@@ -24,10 +24,10 @@ public class CarWheel : MonoBehaviour {
             var springForce = compressionRatio * springFactor;
             var dampingForce = (prevCompression - compressionRatio) * dampingFactor;
             var totalForce = springForce - dampingForce;
-            Debug.Log("compressionRatio=" + compressionRatio);
-            Debug.Log("springForce=" + springForce);
-            Debug.Log("dampingForce=" + dampingForce);
-            Debug.Log("totalForce=" + totalForce);
+            // Debug.Log("compressionRatio=" + compressionRatio);
+            // Debug.Log("springForce=" + springForce);
+            // Debug.Log("dampingForce=" + dampingForce);
+            // Debug.Log("totalForce=" + totalForce);
             prevCompression = compressionRatio;
             rb.AddForceAtPosition((transform.TransformDirection(Vector3.up) * totalForce) / Time.deltaTime, transform.position, ForceMode.Impulse);
         }
