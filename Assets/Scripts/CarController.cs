@@ -9,8 +9,14 @@ public class CarController : MonoBehaviour {
     [Range(0f, 50f)]
     public float accelerationFactor = 10f;
 
-    [Range(0f, 50f)]
-    public float frictionFactor = 5f;
+    [Range(0f, 5f)]
+    public float frictionFactor = 2f;
+
+    public float suspensionSpringLength = 0.7f;
+
+    public float suspensionBounce = 20f;
+
+    private float wheelOrientation = 0f;
 
     void Start() { }
 
@@ -21,20 +27,22 @@ public class CarController : MonoBehaviour {
     void FixedUpdate() {
         var transform = GetComponent<Transform>();
         var colliderRb = GetComponent<Rigidbody>();
-        var acceleration = Input.GetAxis("Vertical");
+
         var turning = Input.GetAxis("Horizontal");
-        colliderRb.AddRelativeTorque(Vector3.up * turning * colliderRb.velocity.normalized.magnitude * turningFactor);
-        if (acceleration > 0) {
-            colliderRb.AddForce(transform.forward.normalized * acceleration * accelerationFactor);
-        }
+        wheelOrientation = Mathf.Lerp(wheelOrientation, 30f * turning, Time.deltaTime * 10f);
+
+        var wheelRotation = Quaternion.AngleAxis(wheelOrientation, Vector3.up);
+        var wheelForwardDirection = wheelRotation * transform.forward.normalized;
+
+        var acceleration = Input.GetAxis("Vertical");
+        colliderRb.AddForce(wheelForwardDirection * acceleration * accelerationFactor);
+
+        colliderRb.AddRelativeTorque(Vector3.up * wheelOrientation * turningFactor);
 
         var velocityDirection = colliderRb.velocity.normalized;
         var orientation = new Vector3(transform.right.x, 0, transform.right.z);
         var frictionVector = new Vector3(-velocityDirection.x, 0, -velocityDirection.z);
         var sidewaysness = Mathf.Abs(Vector3.Dot(velocityDirection, orientation));
-        Debug.Log(sidewaysness);
-        Debug.Log("orientation=" + orientation);
-        Debug.Log("velocity=" + velocityDirection);
         colliderRb.AddForce(frictionVector * colliderRb.velocity.magnitude * sidewaysness * frictionFactor);
     }
 }
