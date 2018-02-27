@@ -3,22 +3,27 @@ using System;
 
 public class CarController : MonoBehaviour {
 
-    [Range(0f, 50f)]
     public float turningFactor = 10f;
 
-    [Range(0f, 50f)]
     public float accelerationFactor = 10f;
 
-    [Range(0f, 5f)]
     public float frictionFactor = 2f;
 
     public float suspensionSpringLength = 0.7f;
 
-    public float suspensionBounce = 20f;
+    public float suspensionDamping = 0f;
+
+    public float suspensionSpring = 0f;
 
     private float wheelOrientation = 0f;
 
-    void Start() { }
+    void Update() {
+        foreach (var wheel in GetComponentsInChildren<CarWheel>()) {
+            wheel.springFactor = suspensionSpring;
+            wheel.dampingFactor = suspensionDamping;
+            wheel.targetLength = suspensionSpringLength;
+        }
+    }
 
     public float GetSpeed() {
         return GetComponent<Rigidbody>().velocity.magnitude;
