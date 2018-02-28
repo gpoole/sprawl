@@ -12,6 +12,8 @@ public class CarController : MonoBehaviour {
 
     public float accelerationFactor = 10f;
 
+    public float reverseAcceleration = 3f;
+
     public float enginePower = 10f;
 
     public float brakingFactor = 10f;
@@ -19,6 +21,8 @@ public class CarController : MonoBehaviour {
     public float frictionFactor = 2f;
 
     public float driftFactor = 1f;
+
+    public float handbrakeDrift = 1f;
 
     public float suspensionSpringLength = 0.7f;
 
@@ -86,30 +90,43 @@ public class CarController : MonoBehaviour {
         var wheelForwardDirection = wheelRotation * new Vector3(transform.forward.normalized.x, 0, transform.forward.normalized.z);
 
         // Turn the car in the direction we're turning
-        colliderRb.AddRelativeTorque(Vector3.up * turning * relativeMovementDirection.z * turningFactor);
+        var reverseMultiplier = (isReversing) ? -1 : 1;
+        colliderRb.AddRelativeTorque(Vector3.up * turning * relativeMovementDirection.z * turningFactor * reverseMultiplier);
 
         var accelerator = GetAccelerator();
         engineSpeed = Mathf.Lerp(engineSpeed, 0, Time.deltaTime);
-        engineSpeed += accelerator * accelerationFactor * Time.deltaTime;
+        if (accelerator > 0) {
+            engineSpeed += accelerator * accelerationFactor * Time.deltaTime;
+        } else {
+            engineSpeed += accelerator * reverseAcceleration * Time.deltaTime;
+        }
         colliderRb.AddForce(wheelForwardDirection * engineSpeed * enginePower);
 
         // Assist steering by pushing the car sideways depending on how fast we're going
-        if (turning != 0) {
+        if (turning != 0 && !isReversing) {
             colliderRb.AddRelativeForce(turning * relativeMovementDirection.z * driftFactor, 0, 0);
         }
 
         // Rotate the car towards the direction of travel
         // FIXME: align to road I guess
-        if (travellingDirection.magnitude != 0 && !IsHandbraking()) {
-            var forwardDirection = new Vector3(transform.forward.normalized.x, 0, transform.forward.normalized.z);
-            float steeringDifference;
-            // forward
+        var forwardDirection = new Vector3(transform.forward.normalized.x, 0, transform.forward.normalized.z);
+        float steeringDifference;
+        // forward
+        if (!isReversing) {
+            steeringDifference = -Vector3.SignedAngle(travellingDirection, forwardDirection, Vector3.up);
+        } else {
+            steeringDifference = -Vector3.SignedAngle(travellingDirection, -forwardDirection, Vector3.up);
+        }
+
+        if (IsHandbraking()) {
             if (!isReversing) {
-                steeringDifference = -Vector3.SignedAngle(travellingDirection, forwardDirection, Vector3.up);
-            } else {
-                steeringDifference = -Vector3.SignedAngle(travellingDirection, -forwardDirection, Vector3.up);
+                colliderRb.AddForce(wheelForwardDirection * travellingDirection.magnitude * handbrakeDrift);
+                colliderRb.AddForce(-travellingDirection / 3f);
             }
-            colliderRb.AddRelativeTorque(Vector3.up * steeringDifference * travellingDirection.magnitude * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
+        } else {
+            if (travellingDirection.magnitude != 0) {
+                colliderRb.AddRelativeTorque(Vector3.up * steeringDifference * travellingDirection.magnitude * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
+            }
         }
 
         var velocityDirection = colliderRb.velocity.normalized;
