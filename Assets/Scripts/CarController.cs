@@ -12,6 +12,8 @@ public class CarController : MonoBehaviour {
 
     public float accelerationFactor = 10f;
 
+    public float enginePower = 10f;
+
     public float brakingFactor = 10f;
 
     public float frictionFactor = 2f;
@@ -29,6 +31,8 @@ public class CarController : MonoBehaviour {
     private float wheelOrientation = 0f;
 
     private bool isReversing = false;
+
+    private float engineSpeed = 0f;
 
     void Update() {
         foreach (var wheel in GetWheels()) {
@@ -85,8 +89,9 @@ public class CarController : MonoBehaviour {
         colliderRb.AddRelativeTorque(Vector3.up * turning * relativeMovementDirection.z * turningFactor);
 
         var accelerator = GetAccelerator();
-        // FIXME: this doesn't make the car go forward unless you're holding the accelerator
-        colliderRb.AddForce(wheelForwardDirection * accelerator * accelerationFactor);
+        engineSpeed = Mathf.Lerp(engineSpeed, 0, Time.deltaTime);
+        engineSpeed += accelerator * accelerationFactor * Time.deltaTime;
+        colliderRb.AddForce(wheelForwardDirection * engineSpeed * enginePower);
 
         // Assist steering by pushing the car sideways depending on how fast we're going
         if (turning != 0) {
