@@ -55,6 +55,10 @@ public class CarController : MonoBehaviour {
         return brakingAmount;
     }
 
+    private bool IsHandbraking() {
+        return Input.GetButton("P" + playerNumber + " Handbrake");
+    }
+
     private CarWheel[] GetWheels() {
         return GetComponentsInChildren<CarWheel>();
     }
@@ -81,6 +85,7 @@ public class CarController : MonoBehaviour {
         colliderRb.AddRelativeTorque(Vector3.up * turning * relativeMovementDirection.z * turningFactor);
 
         var accelerator = GetAccelerator();
+        // FIXME: this doesn't make the car go forward unless you're holding the accelerator
         colliderRb.AddForce(wheelForwardDirection * accelerator * accelerationFactor);
 
         // Assist steering by pushing the car sideways depending on how fast we're going
@@ -90,7 +95,7 @@ public class CarController : MonoBehaviour {
 
         // Rotate the car towards the direction of travel
         // FIXME: align to road I guess
-        if (travellingDirection.magnitude != 0) {
+        if (travellingDirection.magnitude != 0 && !IsHandbraking()) {
             var forwardDirection = new Vector3(transform.forward.normalized.x, 0, transform.forward.normalized.z);
             float steeringDifference;
             // forward
@@ -99,7 +104,7 @@ public class CarController : MonoBehaviour {
             } else {
                 steeringDifference = -Vector3.SignedAngle(travellingDirection, -forwardDirection, Vector3.up);
             }
-            colliderRb.AddRelativeTorque(Vector3.up * steeringDifference * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
+            colliderRb.AddRelativeTorque(Vector3.up * steeringDifference * travellingDirection.magnitude * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
         }
 
         var velocityDirection = colliderRb.velocity.normalized;
