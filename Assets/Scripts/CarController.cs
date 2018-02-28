@@ -11,6 +11,8 @@ public class CarController : MonoBehaviour {
 
     public float frictionFactor = 2f;
 
+    public float driftFactor = 1f;
+
     public float suspensionSpringLength = 0.7f;
 
     public float suspensionDamping = 0f;
@@ -52,7 +54,7 @@ public class CarController : MonoBehaviour {
 
         // Assist steering by pushing the car sideways depending on how fast we're going
         if (turning != 0) {
-            colliderRb.AddRelativeForce(turning * relativeMovementDirection.z, 0, 0);
+            colliderRb.AddRelativeForce(turning * relativeMovementDirection.z * driftFactor, 0, 0);
         }
 
         // colliderRb.AddRelativeTorque(Vector3.up * wheelOrientation * turningFactor);
