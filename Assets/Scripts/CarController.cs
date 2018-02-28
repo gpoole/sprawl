@@ -107,25 +107,26 @@ public class CarController : MonoBehaviour {
             colliderRb.AddRelativeForce(turning * relativeMovementDirection.z * driftFactor, 0, 0);
         }
 
-        // Rotate the car towards the direction of travel
         // FIXME: align to road I guess
         var forwardDirection = new Vector3(transform.forward.normalized.x, 0, transform.forward.normalized.z);
-        float steeringDifference;
-        // forward
+        // Calculate the difference between the direction of travel and the direction we're pointing in
+        float alignmentDifference;
         if (!isReversing) {
-            steeringDifference = -Vector3.SignedAngle(travellingDirection, forwardDirection, Vector3.up);
+            alignmentDifference = -Vector3.SignedAngle(travellingDirection, forwardDirection, Vector3.up);
         } else {
-            steeringDifference = -Vector3.SignedAngle(travellingDirection, -forwardDirection, Vector3.up);
+            alignmentDifference = -Vector3.SignedAngle(travellingDirection, -forwardDirection, Vector3.up);
         }
 
         if (IsHandbraking()) {
             if (!isReversing) {
+                // Veer in the direction the wheels are pointing in and decelerate in the direction we're travelling
                 colliderRb.AddForce(wheelForwardDirection * travellingDirection.magnitude * handbrakeDrift);
                 colliderRb.AddForce(-travellingDirection / 3f);
             }
         } else {
+            // Rotate the car towards the direction of travel
             if (travellingDirection.magnitude != 0) {
-                colliderRb.AddRelativeTorque(Vector3.up * steeringDifference * travellingDirection.magnitude * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
+                colliderRb.AddRelativeTorque(Vector3.up * alignmentDifference * travellingDirection.magnitude * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
             }
         }
 
