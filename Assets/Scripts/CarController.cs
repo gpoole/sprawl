@@ -19,6 +19,8 @@ public class CarController : MonoBehaviour {
 
     public float suspensionSpring = 0f;
 
+    public int playerNumber = 1;
+
     private float wheelOrientation = 0f;
 
     void Update() {
@@ -29,15 +31,19 @@ public class CarController : MonoBehaviour {
         }
     }
 
-    public float GetSpeed() {
-        return GetComponent<Rigidbody>().velocity.magnitude;
+    private float GetTurning() {
+        return Input.GetAxis("P" + playerNumber + " Steering");
+    }
+
+    private float GetAccelerator() {
+        return Input.GetAxis("P" + playerNumber + " Accelerator");
     }
 
     void FixedUpdate() {
         var transform = GetComponent<Transform>();
         var colliderRb = GetComponent<Rigidbody>();
 
-        var turning = Input.GetAxis("Horizontal");
+        var turning = GetTurning();
         wheelOrientation = Mathf.Lerp(wheelOrientation, maxTurningAngle * turning, Time.deltaTime * 50f);
 
         var travellingDirection = new Vector3(colliderRb.velocity.x, 0, colliderRb.velocity.z);
@@ -49,15 +55,13 @@ public class CarController : MonoBehaviour {
         var wheelForwardDirection = wheelRotation * new Vector3(transform.forward.normalized.x, 0, transform.forward.normalized.z);
         // Debug.Log(wheelForwardDirection);
 
-        var acceleration = Input.GetAxis("Vertical");
-        colliderRb.AddForce(wheelForwardDirection * acceleration * accelerationFactor);
+        var accelerator = GetAccelerator();
+        colliderRb.AddForce(wheelForwardDirection * accelerator * accelerationFactor);
 
         // Assist steering by pushing the car sideways depending on how fast we're going
         if (turning != 0) {
             colliderRb.AddRelativeForce(turning * relativeMovementDirection.z * driftFactor, 0, 0);
         }
-
-        // colliderRb.AddRelativeTorque(Vector3.up * wheelOrientation * turningFactor);
 
         // Rotate the car towards the direction of travel
         // FIXME: align to road I guess

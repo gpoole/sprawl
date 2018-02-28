@@ -176,9 +176,10 @@ MonoBehaviour:
   maxTurningAngle: 30
   accelerationFactor: 30
   frictionFactor: 0.5
+  driftFactor: 1
   suspensionSpringLength: 0.5
-  suspensionDamping: 0.06
-  suspensionSpring: 0.01
+  suspensionDamping: 0.03
+  suspensionSpring: 0.02
 --- !u!1 &284945997
 GameObject:
   m_ObjectHideFlags: 0
