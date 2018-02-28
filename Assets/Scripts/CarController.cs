@@ -6,9 +6,13 @@ public class CarController : MonoBehaviour {
 
     public float turningFactor = 10f;
 
+    public float orientationCorrectionRate = 0.006f;
+
     public float maxTurningAngle = 30f;
 
     public float accelerationFactor = 10f;
+
+    public float brakingFactor = 10f;
 
     public float frictionFactor = 2f;
 
@@ -23,6 +27,8 @@ public class CarController : MonoBehaviour {
     public int playerNumber = 1;
 
     private float wheelOrientation = 0f;
+
+    private bool isReversing = false;
 
     void Update() {
         foreach (var wheel in GetWheels()) {
@@ -40,6 +46,15 @@ public class CarController : MonoBehaviour {
         return Input.GetAxis("P" + playerNumber + " Accelerator");
     }
 
+    private float GetBraking() {
+        var brakingAmount = Input.GetAxis("P" + playerNumber + " Braking");
+        var accelerator = GetAccelerator();
+        if (accelerator < 0 && !isReversing) {
+            brakingAmount = Math.Abs(accelerator);
+        }
+        return brakingAmount;
+    }
+
     private CarWheel[] GetWheels() {
         return GetComponentsInChildren<CarWheel>();
     }
@@ -54,13 +69,16 @@ public class CarController : MonoBehaviour {
 
         var travellingDirection = new Vector3(colliderRb.velocity.x, 0, colliderRb.velocity.z);
         var relativeMovementDirection = transform.InverseTransformDirection(travellingDirection);
-        var isReversing = relativeMovementDirection.z < 0;
+        isReversing = relativeMovementDirection.z < 0;
 
         var turning = GetTurning();
         wheelOrientation = Mathf.Lerp(wheelOrientation, maxTurningAngle * turning, Time.deltaTime * 50f);
         var wheelRotation = Quaternion.AngleAxis(wheelOrientation, Vector3.up);
         // FIXME: needs to be relative to the road surface
         var wheelForwardDirection = wheelRotation * new Vector3(transform.forward.normalized.x, 0, transform.forward.normalized.z);
+
+        // Turn the car in the direction we're turning
+        colliderRb.AddRelativeTorque(Vector3.up * turning * relativeMovementDirection.z * turningFactor);
 
         var accelerator = GetAccelerator();
         colliderRb.AddForce(wheelForwardDirection * accelerator * accelerationFactor);
@@ -81,7 +99,7 @@ public class CarController : MonoBehaviour {
             } else {
                 steeringDifference = -Vector3.SignedAngle(travellingDirection, -forwardDirection, Vector3.up);
             }
-            colliderRb.AddRelativeTorque(Vector3.up * steeringDifference * turningFactor * Time.deltaTime, ForceMode.Impulse);
+            colliderRb.AddRelativeTorque(Vector3.up * steeringDifference * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
         }
 
         var velocityDirection = colliderRb.velocity.normalized;
@@ -89,6 +107,11 @@ public class CarController : MonoBehaviour {
         var frictionVector = new Vector3(-velocityDirection.x, 0, -velocityDirection.z);
         var sidewaysness = Mathf.Abs(Vector3.Dot(velocityDirection, orientation));
         colliderRb.AddForce(frictionVector * colliderRb.velocity.magnitude * sidewaysness * frictionFactor);
+
+        var brakingAmount = GetBraking();
+        if (brakingAmount > 0) {
+            colliderRb.AddForce(-travellingDirection.normalized * brakingAmount * brakingFactor);
+        }
     }
 
     void FixedUpdate() {

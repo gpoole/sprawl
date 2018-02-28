@@ -172,7 +172,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8afaff0154db482ca0c50ec8bc0ddd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turningFactor: 3
+  turningFactor: 0.25
+  orientationCorrectionRate: 0.2
   maxTurningAngle: 30
   accelerationFactor: 30
   frictionFactor: 0.5
@@ -180,6 +181,7 @@ MonoBehaviour:
   suspensionSpringLength: 0.5
   suspensionDamping: 0.03
   suspensionSpring: 0.02
+  playerNumber: 1
 --- !u!1 &284945997
 GameObject:
   m_ObjectHideFlags: 0
@@ -611,11 +613,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400020, guid: 3e8586cca86394fada6d9fdce40fa897, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.7071068
+      value: -0.44938245
       objectReference: {fileID: 0}
     - target: {fileID: 400020, guid: 3e8586cca86394fada6d9fdce40fa897, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 400020, guid: 3e8586cca86394fada6d9fdce40fa897, type: 3}
       propertyPath: m_LocalRotation.z
@@ -623,11 +625,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400020, guid: 3e8586cca86394fada6d9fdce40fa897, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 0.89333946
       objectReference: {fileID: 0}
     - target: {fileID: 400020, guid: 3e8586cca86394fada6d9fdce40fa897, type: 3}
       propertyPath: m_RootOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 3e8586cca86394fada6d9fdce40fa897, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: 3e8586cca86394fada6d9fdce40fa897, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -53.408
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3e8586cca86394fada6d9fdce40fa897, type: 3}
