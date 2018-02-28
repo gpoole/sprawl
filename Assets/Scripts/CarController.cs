@@ -16,6 +16,8 @@ public class CarController : MonoBehaviour {
 
     public float enginePower = 10f;
 
+    public float maxEngineSpeed = 3f;
+
     public float brakingFactor = 10f;
 
     public float frictionFactor = 2f;
@@ -23,6 +25,8 @@ public class CarController : MonoBehaviour {
     public float driftFactor = 1f;
 
     public float handbrakeDrift = 1f;
+
+    public float handbrakeBrakePower = 1f;
 
     public float suspensionSpringLength = 0.7f;
 
@@ -90,8 +94,7 @@ public class CarController : MonoBehaviour {
         var wheelForwardDirection = wheelRotation * new Vector3(transform.forward.normalized.x, 0, transform.forward.normalized.z);
 
         // Turn the car in the direction we're turning
-        var reverseMultiplier = (isReversing) ? -1 : 1;
-        colliderRb.AddRelativeTorque(Vector3.up * turning * relativeMovementDirection.z * turningFactor * reverseMultiplier);
+        colliderRb.AddRelativeTorque(Vector3.up * turning * relativeMovementDirection.z * turningFactor);
 
         var accelerator = GetAccelerator();
         engineSpeed = Mathf.Lerp(engineSpeed, 0, Time.deltaTime);
@@ -100,6 +103,7 @@ public class CarController : MonoBehaviour {
         } else {
             engineSpeed += accelerator * reverseAcceleration * Time.deltaTime;
         }
+        engineSpeed = Mathf.Min(engineSpeed, maxEngineSpeed);
         colliderRb.AddForce(wheelForwardDirection * engineSpeed * enginePower);
 
         // Assist steering by pushing the car sideways depending on how fast we're going
@@ -121,7 +125,7 @@ public class CarController : MonoBehaviour {
             if (!isReversing) {
                 // Veer in the direction the wheels are pointing in and decelerate in the direction we're travelling
                 colliderRb.AddForce(wheelForwardDirection * travellingDirection.magnitude * handbrakeDrift);
-                colliderRb.AddForce(-travellingDirection / 3f);
+                colliderRb.AddForce(-travellingDirection * handbrakeBrakePower);
             }
         } else {
             // Rotate the car towards the direction of travel
