@@ -12,6 +12,11 @@ public class CarWheel : MonoBehaviour {
 
     private float prevCompression = 0f;
 
+    public bool grounded {
+        get;
+        private set;
+    }
+
     // Update is called once per frame
     void FixedUpdate() {
         var transform = GetComponent<Transform>();
@@ -30,6 +35,9 @@ public class CarWheel : MonoBehaviour {
             // Debug.Log("totalForce=" + totalForce);
             prevCompression = compressionRatio;
             rb.AddForceAtPosition((transform.TransformDirection(Vector3.up) * totalForce) / Time.deltaTime, transform.position, ForceMode.Impulse);
+            grounded = true;
+        } else {
+            grounded = false;
         }
     }
 }

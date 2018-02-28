@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Linq;
 
 public class CarController : MonoBehaviour {
 
@@ -24,7 +25,7 @@ public class CarController : MonoBehaviour {
     private float wheelOrientation = 0f;
 
     void Update() {
-        foreach (var wheel in GetComponentsInChildren<CarWheel>()) {
+        foreach (var wheel in GetWheels()) {
             wheel.springFactor = suspensionSpring;
             wheel.dampingFactor = suspensionDamping;
             wheel.targetLength = suspensionSpringLength;
@@ -39,21 +40,27 @@ public class CarController : MonoBehaviour {
         return Input.GetAxis("P" + playerNumber + " Accelerator");
     }
 
-    void FixedUpdate() {
+    private CarWheel[] GetWheels() {
+        return GetComponentsInChildren<CarWheel>();
+    }
+
+    private bool IsGrounded() {
+        return GetWheels().Any(wheel => wheel.grounded);
+    }
+
+    private void ApplyDrivingForces() {
         var transform = GetComponent<Transform>();
         var colliderRb = GetComponent<Rigidbody>();
-
-        var turning = GetTurning();
-        wheelOrientation = Mathf.Lerp(wheelOrientation, maxTurningAngle * turning, Time.deltaTime * 50f);
 
         var travellingDirection = new Vector3(colliderRb.velocity.x, 0, colliderRb.velocity.z);
         var relativeMovementDirection = transform.InverseTransformDirection(travellingDirection);
         var isReversing = relativeMovementDirection.z < 0;
 
+        var turning = GetTurning();
+        wheelOrientation = Mathf.Lerp(wheelOrientation, maxTurningAngle * turning, Time.deltaTime * 50f);
         var wheelRotation = Quaternion.AngleAxis(wheelOrientation, Vector3.up);
         // FIXME: needs to be relative to the road surface
         var wheelForwardDirection = wheelRotation * new Vector3(transform.forward.normalized.x, 0, transform.forward.normalized.z);
-        // Debug.Log(wheelForwardDirection);
 
         var accelerator = GetAccelerator();
         colliderRb.AddForce(wheelForwardDirection * accelerator * accelerationFactor);
@@ -82,5 +89,11 @@ public class CarController : MonoBehaviour {
         var frictionVector = new Vector3(-velocityDirection.x, 0, -velocityDirection.z);
         var sidewaysness = Mathf.Abs(Vector3.Dot(velocityDirection, orientation));
         colliderRb.AddForce(frictionVector * colliderRb.velocity.magnitude * sidewaysness * frictionFactor);
+    }
+
+    void FixedUpdate() {
+        if (IsGrounded()) {
+            ApplyDrivingForces();
+        }
     }
 }
