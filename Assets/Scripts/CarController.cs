@@ -36,7 +36,11 @@ public class CarController : MonoBehaviour {
         var colliderRb = GetComponent<Rigidbody>();
 
         var turning = Input.GetAxis("Horizontal");
-        wheelOrientation = Mathf.Lerp(wheelOrientation, maxTurningAngle * turning, Time.deltaTime * 10f);
+        wheelOrientation = Mathf.Lerp(wheelOrientation, maxTurningAngle * turning, Time.deltaTime * 50f);
+
+        var travellingDirection = new Vector3(colliderRb.velocity.x, 0, colliderRb.velocity.z);
+        var relativeMovementDirection = transform.InverseTransformDirection(travellingDirection);
+        var isReversing = relativeMovementDirection.z < 0;
 
         var wheelRotation = Quaternion.AngleAxis(wheelOrientation, Vector3.up);
         // FIXME: needs to be relative to the road surface
@@ -46,14 +50,22 @@ public class CarController : MonoBehaviour {
         var acceleration = Input.GetAxis("Vertical");
         colliderRb.AddForce(wheelForwardDirection * acceleration * accelerationFactor);
 
+        // Assist steering by pushing the car sideways depending on how fast we're going
+        if (turning != 0) {
+            colliderRb.AddRelativeForce(turning * relativeMovementDirection.z, 0, 0);
+        }
+
+        // colliderRb.AddRelativeTorque(Vector3.up * wheelOrientation * turningFactor);
+
         // Rotate the car towards the direction of travel
         // FIXME: align to road I guess
-        var travellingDirection = new Vector3(colliderRb.velocity.x, 0, colliderRb.velocity.z);
-        if (travellingDirection.magnitude > 0) {
+        if (travellingDirection.magnitude != 0) {
             var forwardDirection = new Vector3(transform.forward.normalized.x, 0, transform.forward.normalized.z);
-            var steeringDifference = -Vector3.SignedAngle(travellingDirection, forwardDirection, Vector3.up);
-            // We're reversing
-            if (Math.Abs(steeringDifference) > 90) {
+            float steeringDifference;
+            // forward
+            if (!isReversing) {
+                steeringDifference = -Vector3.SignedAngle(travellingDirection, forwardDirection, Vector3.up);
+            } else {
                 steeringDifference = -Vector3.SignedAngle(travellingDirection, -forwardDirection, Vector3.up);
             }
             colliderRb.AddRelativeTorque(Vector3.up * steeringDifference * turningFactor * Time.deltaTime, ForceMode.Impulse);
