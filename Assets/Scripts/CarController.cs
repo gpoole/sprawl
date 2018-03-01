@@ -46,8 +46,6 @@ public class CarController : MonoBehaviour {
         private set;
     }
 
-    private Vector3 wheelRight;
-
     private float[] joystickRange = { 0f, 1f };
 
     void Start() {
@@ -110,7 +108,7 @@ public class CarController : MonoBehaviour {
         var wheelRotation = Quaternion.AngleAxis(wheelOrientation, Vector3.up);
         var wheelSidewaysRotation = Quaternion.AngleAxis(90, Vector3.up);
         var wheelForwardDirection = transform.TransformDirection(wheelRotation * Vector3.forward);
-        wheelRight = transform.TransformDirection(wheelRotation * wheelSidewaysRotation * Vector3.forward);
+        var wheelRight = transform.TransformDirection(wheelRotation * wheelSidewaysRotation * Vector3.forward);
 
         // Drive the car forward in the direction of the wheels
         var forwardDrivingForce = wheelForwardDirection * engineSpeed * enginePower;
@@ -162,6 +160,8 @@ public class CarController : MonoBehaviour {
     void FixedUpdate() {
         if (IsGrounded()) {
             ApplyDrivingForces();
+        } else {
+            speed = 0;
         }
     }
 }

@@ -24,7 +24,7 @@ public class CarDebugger : MonoBehaviour {
 
         if (Input.GetKeyUp(KeyCode.B)) {
             var mesh = GetComponent<BoxCollider>();
-            rb.AddExplosionForce(750f, t.TransformPoint(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)) + (Vector3.down * 2f), 50f);
+            rb.AddExplosionForce(750f * rb.mass, t.TransformPoint(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)) + (Vector3.down * 2f), 50f);
         }
 
         if (Input.GetKeyUp(KeyCode.R)) {
