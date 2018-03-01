@@ -123,6 +123,7 @@ GameObject:
   - component: {fileID: 270800851}
   - component: {fileID: 270800850}
   - component: {fileID: 270800852}
+  - component: {fileID: 270800853}
   m_Layer: 2
   m_Name: Car
   m_TagString: Untagged
@@ -138,7 +139,7 @@ Rigidbody:
   m_GameObject: {fileID: 270800849}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 0.3
+  m_Drag: 0.1
   m_AngularDrag: 6
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -159,7 +160,7 @@ Transform:
   - {fileID: 1102557874}
   - {fileID: 1175116632}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &270800852
 MonoBehaviour:
@@ -173,15 +174,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turningFactor: 0.25
-  orientationCorrectionRate: 0.2
+  orientationCorrectionRate: 0.025
   maxTurningAngle: 30
-  accelerationFactor: 30
+  accelerationFactor: 5
+  reverseAcceleration: 1
+  enginePower: 8
+  maxEngineSpeed: 2
+  brakingFactor: 50
   frictionFactor: 0.5
-  driftFactor: 1
+  driftFactor: 0.5
+  handbrakeDrift: 0.3
+  handbrakeBrakePower: 0.5
   suspensionSpringLength: 0.5
   suspensionDamping: 0.03
   suspensionSpring: 0.02
   playerNumber: 1
+--- !u!114 &270800853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 270800849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 901c15f93b9f84fc583aa1fa589f33d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  warpPoints:
+  - {fileID: 367256479}
 --- !u!1 &284945997
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,13 +277,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 284945997}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 24.74, y: 20.24, z: -46.6}
+  m_LocalRotation: {x: -0, y: -0.9991485, z: -0, w: 0.041259877}
+  m_LocalPosition: {x: 24.02, y: 20.24, z: 16.42}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: -175.27101, z: 0}
 --- !u!114 &284946002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,6 +304,34 @@ MonoBehaviour:
     updateCameraInFixedUpdate: 1
     updateCameraInLateUpdate: 0
     switchViewKey: 0
+--- !u!1 &367256478
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 367256479}
+  m_Layer: 0
+  m_Name: Warp1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &367256479
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 367256478}
+  m_LocalRotation: {x: -0, y: -0.7967052, z: -0, w: 0.6043682}
+  m_LocalPosition: {x: 173.9, y: 113.8, z: -126.93}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: -105.633, z: 0}
 --- !u!1 &444479786 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 100000, guid: 3e8586cca86394fada6d9fdce40fa897, type: 3}
@@ -629,7 +677,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400020, guid: 3e8586cca86394fada6d9fdce40fa897, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 3e8586cca86394fada6d9fdce40fa897, type: 3}
       propertyPath: m_LocalRotation.w
@@ -705,7 +753,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &1653565436
 GameObject:
@@ -816,7 +864,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1670197538}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.379, z: -2.126}
+  m_LocalPosition: {x: 0, y: 1.379, z: -2.26}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 270800851}
@@ -1081,7 +1129,7 @@ RectTransform:
   m_Children:
   - {fileID: 1653565437}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

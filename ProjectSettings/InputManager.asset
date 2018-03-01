@@ -7,7 +7,7 @@ InputManager:
   m_Axes:
   - serializedVersion: 3
     m_Name: P1 Steering
-    descriptiveName: 
+    descriptiveName: P1 Steering (Keyboard)
     descriptiveNegativeName: 
     negativeButton: left
     positiveButton: right
@@ -58,7 +58,7 @@ InputManager:
     descriptiveName: P1 Accelerator (Controller)
     descriptiveNegativeName: 
     negativeButton: 
-    positiveButton: joystick button 0
+    positiveButton: 
     altNegativeButton: 
     altPositiveButton: 
     gravity: 1000
@@ -67,14 +67,14 @@ InputManager:
     snap: 0
     invert: 0
     type: 0
-    axis: 0
+    axis: 5
     joyNum: 1
   - serializedVersion: 3
-    m_Name: P1 Accelerator
-    descriptiveName: P1 Accelerator (Controller)
+    m_Name: P1 Braking
+    descriptiveName: P1 Braking (Controller)
     descriptiveNegativeName: 
     negativeButton: 
-    positiveButton: joystick button 0
+    positiveButton: 
     altNegativeButton: 
     altPositiveButton: 
     gravity: 1000
@@ -83,5 +83,21 @@ InputManager:
     snap: 0
     invert: 0
     type: 0
-    axis: 0
+    axis: 4
     joyNum: 1
+  - serializedVersion: 3
+    m_Name: P1 Handbrake
+    descriptiveName: P1 Handbrake (Keyboard)
+    descriptiveNegativeName: 
+    negativeButton: 
+    positiveButton: space
+    altNegativeButton: 
+    altPositiveButton: 
+    gravity: 3
+    dead: 0.001
+    sensitivity: 3
+    snap: 0
+    invert: 0
+    type: 0
+    axis: 0
+    joyNum: 0
