@@ -301,6 +301,11 @@ Prefab:
       propertyPath: warpPoints.Array.data[3]
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 114945856155524928, guid: fcedf4ceef9074252b67199506281029,
+        type: 2}
+      propertyPath: turningRate
+      value: 0.01
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: fcedf4ceef9074252b67199506281029, type: 2}
   m_IsPrefabParent: 0

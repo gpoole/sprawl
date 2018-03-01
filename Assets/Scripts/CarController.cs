@@ -4,7 +4,7 @@ using System.Linq;
 
 public class CarController : MonoBehaviour {
 
-    public float turningFactor = 10f;
+    public float turningRate = 10f;
 
     public float orientationCorrectionRate = 0.006f;
 
@@ -44,6 +44,8 @@ public class CarController : MonoBehaviour {
 
     private float engineSpeed = 0f;
 
+    private Vector3 wheelRight;
+
     private float[] joystickRange = { 0f, 1f };
 
     void Start() {
@@ -52,14 +54,6 @@ public class CarController : MonoBehaviour {
         var joysticks = Input.GetJoystickNames();
         if (joysticks.Length >= playerNumber && joysticks[playerNumber - 1].Contains("Xbox 360 Wired Controller")) {
             joystickRange = new[] { -1f, 1f };
-        }
-    }
-
-    void Update() {
-        foreach (var wheel in GetWheels()) {
-            wheel.springFactor = suspensionSpring;
-            wheel.dampingFactor = suspensionDamping;
-            wheel.targetLength = suspensionSpringLength;
         }
     }
 
@@ -76,7 +70,6 @@ public class CarController : MonoBehaviour {
         var acceleratorAmount = GetRangedInput("P" + playerNumber + " Accelerator");
         var braking = GetRangedInput("P" + playerNumber + " Braking");
         if (braking > 0 && (isReversing || isStopped)) {
-            Debug.Log("reversing");
             acceleratorAmount -= braking;
         }
         return acceleratorAmount;
@@ -105,19 +98,50 @@ public class CarController : MonoBehaviour {
         var transform = GetComponent<Transform>();
         var colliderRb = GetComponent<Rigidbody>();
 
-        var travellingDirection = new Vector3(colliderRb.velocity.x, 0, colliderRb.velocity.z);
-        var relativeMovementDirection = transform.InverseTransformDirection(travellingDirection);
-        isReversing = relativeMovementDirection.z < 0;
-        isStopped = relativeMovementDirection.z == 0;
+        // var travellingDirection = transform.InverseTransformDirection(new Vector3(colliderRb.velocity.normalized.x, 0, colliderRb.velocity.normalized.z));
+        var forwardSpeed = Vector3.Project(colliderRb.velocity, transform.forward).magnitude;
+        // Debug.Log("forwardSpeed=" + forwardSpeed);
+        isReversing = forwardSpeed < 0;
+        isStopped = forwardSpeed == 0;
 
-        var turning = GetTurning();
-        wheelOrientation = Mathf.Lerp(wheelOrientation, maxTurningAngle * turning, Time.deltaTime * 50f);
         var wheelRotation = Quaternion.AngleAxis(wheelOrientation, Vector3.up);
-        // FIXME: needs to be relative to the road surface
-        var wheelForwardDirection = wheelRotation * new Vector3(transform.forward.normalized.x, 0, transform.forward.normalized.z);
+        var wheelSidewaysRotation = Quaternion.AngleAxis(90, Vector3.up);
+        var wheelForwardDirection = transform.TransformDirection(wheelRotation * Vector3.forward);
+        wheelRight = transform.TransformDirection(wheelRotation * wheelSidewaysRotation * Vector3.forward);
 
-        // Turn the car in the direction we're turning
-        colliderRb.AddRelativeTorque(Vector3.up * turning * relativeMovementDirection.z * turningFactor);
+        // Drive the car forward in the direction of the wheels
+        var forwardDrivingForce = wheelForwardDirection * engineSpeed * enginePower;
+        colliderRb.AddForce(forwardDrivingForce * Time.deltaTime, ForceMode.Impulse);
+
+        // Turn the car to match the orientation of the wheels depending on forward travel speed
+        // var forwardTravelSpeed = travellingDirection;
+        // FIXME: transform.up instead of Vector3.up?
+        var bodyWheelAlignmentDifference = -Vector3.SignedAngle(wheelForwardDirection, transform.forward, Vector3.up);
+        var alignToWheelsForce = Vector3.up * turningRate * bodyWheelAlignmentDifference * forwardSpeed;
+        colliderRb.AddRelativeTorque(alignToWheelsForce * Time.deltaTime, ForceMode.Impulse);
+
+        // Turn the car to match the direction of movement, unless we're overriding it
+        var motionWheelAlignmentDifference = Vector3.SignedAngle(wheelForwardDirection, colliderRb.velocity, Vector3.up);
+        if (wheelOrientation == 0) {
+            colliderRb.AddRelativeTorque(Vector3.up * motionWheelAlignmentDifference * forwardSpeed * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
+        }
+
+        // Add resistance to travelling perpendicular to the wheels
+        var sidewaysSpeed = Vector3.Project(colliderRb.velocity, wheelRight);
+        colliderRb.AddForce(-sidewaysSpeed * frictionFactor * Time.deltaTime, ForceMode.Impulse);
+
+        var brakingAmount = GetBraking();
+        if (brakingAmount > 0 && colliderRb.velocity.magnitude > 0) {
+            colliderRb.AddForce(-colliderRb.velocity * brakingAmount * brakingFactor * Time.deltaTime, ForceMode.Impulse);
+        }
+    }
+
+    void Update() {
+        foreach (var wheel in GetWheels()) {
+            wheel.springFactor = suspensionSpring;
+            wheel.dampingFactor = suspensionDamping;
+            wheel.targetLength = suspensionSpringLength;
+        }
 
         var accelerator = GetAccelerator();
         engineSpeed = Mathf.Lerp(engineSpeed, 0, Time.deltaTime);
@@ -127,51 +151,25 @@ public class CarController : MonoBehaviour {
             engineSpeed += accelerator * reverseAcceleration * Time.deltaTime;
         }
         engineSpeed = Mathf.Min(engineSpeed, maxEngineSpeed);
-        colliderRb.AddForce(wheelForwardDirection * engineSpeed * enginePower);
 
-        // Assist steering by pushing the car sideways depending on how fast we're going
-        if (turning != 0) {
-            colliderRb.AddRelativeForce(turning * relativeMovementDirection.z * driftFactor, 0, 0);
-        }
 
-        // FIXME: align to road I guess
-        var forwardDirection = new Vector3(transform.forward.normalized.x, 0, transform.forward.normalized.z);
-        // Calculate the difference between the direction of travel and the direction we're pointing in
-        float alignmentDifference;
-        if (!isReversing) {
-            alignmentDifference = -Vector3.SignedAngle(travellingDirection, forwardDirection, Vector3.up);
-        } else {
-            alignmentDifference = -Vector3.SignedAngle(travellingDirection, -forwardDirection, Vector3.up);
-        }
-
-        if (IsHandbraking()) {
-            if (!isReversing) {
-                // Veer in the direction the wheels are pointing in and decelerate in the direction we're travelling
-                colliderRb.AddForce(wheelForwardDirection * travellingDirection.magnitude * handbrakeDrift);
-                colliderRb.AddForce(-travellingDirection * handbrakeBrakePower);
-            }
-        } else {
-            // Rotate the car towards the direction of travel
-            if (travellingDirection.magnitude != 0) {
-                colliderRb.AddRelativeTorque(Vector3.up * alignmentDifference * travellingDirection.magnitude * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
-            }
-        }
-
-        var velocityDirection = colliderRb.velocity.normalized;
-        var orientation = new Vector3(transform.right.x, 0, transform.right.z);
-        var frictionVector = new Vector3(-velocityDirection.x, 0, -velocityDirection.z);
-        var sidewaysness = Mathf.Abs(Vector3.Dot(velocityDirection, orientation));
-        colliderRb.AddForce(frictionVector * colliderRb.velocity.magnitude * sidewaysness * frictionFactor);
-
-        var brakingAmount = GetBraking();
-        if (brakingAmount > 0) {
-            colliderRb.AddForce(-travellingDirection.normalized * brakingAmount * brakingFactor);
-        }
+        var turning = GetTurning();
+        // wheelOrientation = Mathf.Lerp(wheelOrientation, maxTurningAngle * turning, Time.deltaTime * 50f);
+        wheelOrientation = maxTurningAngle * turning;
     }
+
 
     void FixedUpdate() {
         if (IsGrounded()) {
             ApplyDrivingForces();
         }
+    }
+
+    void OnDrawGizmos() {
+        var wheelRotation = Quaternion.AngleAxis(wheelOrientation, Vector3.up);
+        var wheelForwardDirection = transform.TransformDirection(wheelRotation * Vector3.forward);
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, wheelForwardDirection * 20f);
+        Gizmos.DrawRay(transform.position, wheelRight * 20f);
     }
 }
