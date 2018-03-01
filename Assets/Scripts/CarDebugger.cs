@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CarDebugger : MonoBehaviour {
 
@@ -9,6 +10,8 @@ public class CarDebugger : MonoBehaviour {
     Quaternion initialRotation;
 
     public Transform[] warpPoints;
+
+    public Text carStatus;
 
     void Start() {
         initialPosition = GetComponent<Transform>().position;
@@ -33,6 +36,10 @@ public class CarDebugger : MonoBehaviour {
                 WarpTo(warpPoints[i].position, warpPoints[i].rotation);
             }
         }
+
+        var car = GetComponent<CarController>();
+        carStatus.text = "Engine speed: " + car.engineSpeed.ToString() + "\n";
+        carStatus.text += "Speed: " + car.speed;
     }
 
     void WarpTo(Vector3 position, Quaternion rotation) {

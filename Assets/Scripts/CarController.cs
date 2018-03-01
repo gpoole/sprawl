@@ -22,12 +22,6 @@ public class CarController : MonoBehaviour {
 
     public float frictionFactor = 2f;
 
-    public float driftFactor = 1f;
-
-    public float handbrakeDrift = 1f;
-
-    public float handbrakeBrakePower = 1f;
-
     public float suspensionSpringLength = 0.7f;
 
     public float suspensionDamping = 0f;
@@ -42,13 +36,24 @@ public class CarController : MonoBehaviour {
 
     private bool isStopped = true;
 
-    private float engineSpeed = 0f;
+    public float engineSpeed {
+        get;
+        private set;
+    }
+
+    public float speed {
+        get;
+        private set;
+    }
 
     private Vector3 wheelRight;
 
     private float[] joystickRange = { 0f, 1f };
 
     void Start() {
+        engineSpeed = 0;
+        speed = 0;
+
         // FIXME: compensate for the XBox's triggers ranging from -1 to 1 instead of 0 to 1,
         // need to move this to somewhere better and make it more generic
         var joysticks = Input.GetJoystickNames();
@@ -98,11 +103,9 @@ public class CarController : MonoBehaviour {
         var transform = GetComponent<Transform>();
         var colliderRb = GetComponent<Rigidbody>();
 
-        // var travellingDirection = transform.InverseTransformDirection(new Vector3(colliderRb.velocity.normalized.x, 0, colliderRb.velocity.normalized.z));
-        var forwardSpeed = Vector3.Project(colliderRb.velocity, transform.forward).magnitude;
-        // Debug.Log("forwardSpeed=" + forwardSpeed);
-        isReversing = forwardSpeed < 0;
-        isStopped = forwardSpeed == 0;
+        speed = Vector3.Project(colliderRb.velocity, transform.forward).magnitude;
+        isReversing = speed < 0;
+        isStopped = speed == 0;
 
         var wheelRotation = Quaternion.AngleAxis(wheelOrientation, Vector3.up);
         var wheelSidewaysRotation = Quaternion.AngleAxis(90, Vector3.up);
@@ -117,12 +120,12 @@ public class CarController : MonoBehaviour {
         // var forwardTravelSpeed = travellingDirection;
         // FIXME: transform.up instead of Vector3.up?
         var bodyWheelAlignmentDifference = -Vector3.SignedAngle(wheelForwardDirection, transform.forward, Vector3.up);
-        var alignToWheelsForce = Vector3.up * turningRate * bodyWheelAlignmentDifference * forwardSpeed;
+        var alignToWheelsForce = Vector3.up * turningRate * bodyWheelAlignmentDifference * speed;
         colliderRb.AddRelativeTorque(alignToWheelsForce * Time.deltaTime, ForceMode.Impulse);
 
-        // Turn the car to match the direction of movement, unless we're overriding it
+        // Turn the car to match the direction of movement
         var motionWheelAlignmentDifference = Vector3.SignedAngle(wheelForwardDirection, colliderRb.velocity, Vector3.up);
-        colliderRb.AddRelativeTorque(Vector3.up * motionWheelAlignmentDifference * forwardSpeed * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
+        colliderRb.AddRelativeTorque(Vector3.up * motionWheelAlignmentDifference * speed * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
 
         // Add resistance to travelling perpendicular to the wheels
         var sidewaysSpeed = Vector3.Project(colliderRb.velocity, wheelRight);
@@ -153,7 +156,6 @@ public class CarController : MonoBehaviour {
 
         var turning = GetTurning();
         wheelOrientation = Mathf.Lerp(wheelOrientation, maxTurningAngle * turning, Time.deltaTime * 50f);
-        // wheelOrientation = maxTurningAngle * turning;
     }
 
 
@@ -161,13 +163,5 @@ public class CarController : MonoBehaviour {
         if (IsGrounded()) {
             ApplyDrivingForces();
         }
-    }
-
-    void OnDrawGizmos() {
-        var wheelRotation = Quaternion.AngleAxis(wheelOrientation, Vector3.up);
-        var wheelForwardDirection = transform.TransformDirection(wheelRotation * Vector3.forward);
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, wheelForwardDirection * 20f);
-        Gizmos.DrawRay(transform.position, wheelRight * 20f);
     }
 }
