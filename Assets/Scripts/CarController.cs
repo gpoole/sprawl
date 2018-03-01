@@ -40,7 +40,20 @@ public class CarController : MonoBehaviour {
 
     private bool isReversing = false;
 
+    private bool isStopped = true;
+
     private float engineSpeed = 0f;
+
+    private float[] joystickRange = { 0f, 1f };
+
+    void Start() {
+        // FIXME: compensate for the XBox's triggers ranging from -1 to 1 instead of 0 to 1,
+        // need to move this to somewhere better and make it more generic
+        var joysticks = Input.GetJoystickNames();
+        if (joysticks.Length >= playerNumber && joysticks[playerNumber - 1].Contains("Xbox 360 Wired Controller")) {
+            joystickRange = new[] { -1f, 1f };
+        }
+    }
 
     void Update() {
         foreach (var wheel in GetWheels()) {
@@ -54,17 +67,26 @@ public class CarController : MonoBehaviour {
         return Input.GetAxis("P" + playerNumber + " Steering");
     }
 
+    private float GetRangedInput(String name) {
+        var range = joystickRange[1] - joystickRange[0];
+        return (Input.GetAxis(name) - joystickRange[0]) / range;
+    }
+
     private float GetAccelerator() {
-        return Input.GetAxis("P" + playerNumber + " Accelerator");
+        var acceleratorAmount = GetRangedInput("P" + playerNumber + " Accelerator");
+        var braking = GetRangedInput("P" + playerNumber + " Braking");
+        if (braking > 0 && (isReversing || isStopped)) {
+            Debug.Log("reversing");
+            acceleratorAmount -= braking;
+        }
+        return acceleratorAmount;
     }
 
     private float GetBraking() {
-        var brakingAmount = Input.GetAxis("P" + playerNumber + " Braking");
-        var accelerator = GetAccelerator();
-        if (accelerator < 0 && !isReversing) {
-            brakingAmount = Math.Abs(accelerator);
+        if (isReversing) {
+            return 0;
         }
-        return brakingAmount;
+        return GetRangedInput("P" + playerNumber + " Braking");
     }
 
     private bool IsHandbraking() {
@@ -86,6 +108,7 @@ public class CarController : MonoBehaviour {
         var travellingDirection = new Vector3(colliderRb.velocity.x, 0, colliderRb.velocity.z);
         var relativeMovementDirection = transform.InverseTransformDirection(travellingDirection);
         isReversing = relativeMovementDirection.z < 0;
+        isStopped = relativeMovementDirection.z == 0;
 
         var turning = GetTurning();
         wheelOrientation = Mathf.Lerp(wheelOrientation, maxTurningAngle * turning, Time.deltaTime * 50f);
@@ -107,7 +130,7 @@ public class CarController : MonoBehaviour {
         colliderRb.AddForce(wheelForwardDirection * engineSpeed * enginePower);
 
         // Assist steering by pushing the car sideways depending on how fast we're going
-        if (turning != 0 && !isReversing) {
+        if (turning != 0) {
             colliderRb.AddRelativeForce(turning * relativeMovementDirection.z * driftFactor, 0, 0);
         }
 
