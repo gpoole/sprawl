@@ -4,9 +4,15 @@ using System.Linq;
 
 public class CarController : MonoBehaviour {
 
-    public float turningRate = 10f;
+    public float minTurningRate = 1f;
 
-    public float orientationCorrectionRate = 0.006f;
+    public float maxTurningRate = 2f;
+
+    public float maxSpeed = 60f;
+
+    public float minOrientationCorrectionRate = 0.1f;
+
+    public float maxOrientationCorrectionRate = 0.2f;
 
     public float maxTurningAngle = 30f;
 
@@ -18,7 +24,7 @@ public class CarController : MonoBehaviour {
 
     public float maxEngineSpeed = 3f;
 
-    public float brakingFactor = 10f;
+    public float brakingPower = 10f;
 
     public float frictionFactor = 2f;
 
@@ -45,6 +51,8 @@ public class CarController : MonoBehaviour {
         get;
         private set;
     }
+
+    private Vector3 wheelForwardDirection;
 
     private float[] joystickRange = { 0f, 1f };
 
@@ -107,7 +115,7 @@ public class CarController : MonoBehaviour {
 
         var wheelRotation = Quaternion.AngleAxis(wheelOrientation, Vector3.up);
         var wheelSidewaysRotation = Quaternion.AngleAxis(90, Vector3.up);
-        var wheelForwardDirection = transform.TransformDirection(wheelRotation * Vector3.forward);
+        wheelForwardDirection = transform.TransformDirection(wheelRotation * Vector3.forward);
         var wheelRight = transform.TransformDirection(wheelRotation * wheelSidewaysRotation * Vector3.forward);
 
         // Drive the car forward in the direction of the wheels
@@ -115,15 +123,18 @@ public class CarController : MonoBehaviour {
         colliderRb.AddForce(forwardDrivingForce * Time.deltaTime, ForceMode.Impulse);
 
         // Turn the car to match the orientation of the wheels depending on forward travel speed
-        // var forwardTravelSpeed = travellingDirection;
         // FIXME: transform.up instead of Vector3.up?
         var bodyWheelAlignmentDifference = -Vector3.SignedAngle(wheelForwardDirection, transform.forward, Vector3.up);
-        var alignToWheelsForce = Vector3.up * turningRate * bodyWheelAlignmentDifference * speed;
+        var turnMultiplier = Mathf.Lerp(maxTurningRate, minTurningRate, speed / maxSpeed);
+        var alignToWheelsForce = Vector3.up * bodyWheelAlignmentDifference * turnMultiplier;
         colliderRb.AddRelativeTorque(alignToWheelsForce * Time.deltaTime, ForceMode.Impulse);
 
         // Turn the car to match the direction of movement
         var motionWheelAlignmentDifference = Vector3.SignedAngle(wheelForwardDirection, colliderRb.velocity, Vector3.up);
-        colliderRb.AddRelativeTorque(Vector3.up * motionWheelAlignmentDifference * speed * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
+        var orientationCorrectionRate = Mathf.Lerp(maxOrientationCorrectionRate, minOrientationCorrectionRate, speed / maxSpeed);
+        if (Math.Abs(motionWheelAlignmentDifference) < 45) {
+            colliderRb.AddRelativeTorque(Vector3.up * motionWheelAlignmentDifference * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
+        }
 
         // Add resistance to travelling perpendicular to the wheels
         var sidewaysSpeed = Vector3.Project(colliderRb.velocity, wheelRight);
@@ -131,7 +142,7 @@ public class CarController : MonoBehaviour {
 
         var brakingAmount = GetBraking();
         if (brakingAmount > 0 && colliderRb.velocity.magnitude > 0) {
-            colliderRb.AddForce(-colliderRb.velocity * brakingAmount * brakingFactor * Time.deltaTime, ForceMode.Impulse);
+            colliderRb.AddForce(-colliderRb.velocity * brakingAmount * brakingPower * Time.deltaTime, ForceMode.Impulse);
         }
     }
 
@@ -163,5 +174,12 @@ public class CarController : MonoBehaviour {
         } else {
             speed = 0;
         }
+    }
+
+    void OnDrawGizmos() {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(GetComponent<Transform>().position, GetComponent<Rigidbody>().velocity);
+        Gizmos.color = Color.green;
+        Gizmos.DrawRay(GetComponent<Transform>().position, wheelForwardDirection * 5f);
     }
 }
