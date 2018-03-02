@@ -12,11 +12,15 @@ public class CarWheel : MonoBehaviour {
 
     public float visualTurnMultiplier = 1.5f;
 
+    public float visualRotationSpeed = 1f;
+
     private float prevCompression = 0f;
 
     private bool isFrontWheel;
 
     private GameObject car;
+
+    private Transform visualWheel;
 
     public bool grounded {
         get;
@@ -25,14 +29,21 @@ public class CarWheel : MonoBehaviour {
 
     void Start() {
         var transform = GetComponent<Transform>();
+        visualWheel = transform.GetChild(0);
         car = transform.parent.parent.gameObject;
         isFrontWheel = transform.localPosition.z > 0;
     }
 
     void Update() {
+        var carController = car.GetComponent<CarController>();
         if (isFrontWheel) {
-            var carController = car.GetComponent<CarController>();
             transform.localRotation = Quaternion.AngleAxis(carController.wheelOrientation * visualTurnMultiplier, Vector3.up);
+        }
+
+        if (grounded) {
+            visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.speed / carController.maxSpeed) * Time.deltaTime);
+        } else {
+            visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.engineSpeed / carController.maxEngineSpeed) * Time.deltaTime);
         }
     }
 
