@@ -558,8 +558,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8afaff0154db482ca0c50ec8bc0ddd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turningRate: 2
-  orientationCorrectionRate: 0.2
+  minTurningRate: 1
+  maxTurningRate: 2
+  maxSpeed: 60
+  minOrientationCorrectionRate: 0.2
+  maxOrientationCorrectionRate: 0.5
   maxTurningAngle: 15
   accelerationFactor: 5
   reverseAcceleration: 1
