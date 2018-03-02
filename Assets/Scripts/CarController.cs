@@ -36,7 +36,10 @@ public class CarController : MonoBehaviour {
 
     public int playerNumber = 1;
 
-    private float wheelOrientation = 0f;
+    public float wheelOrientation {
+        get;
+        private set;
+    }
 
     private bool isReversing = false;
 
@@ -59,6 +62,7 @@ public class CarController : MonoBehaviour {
     void Start() {
         engineSpeed = 0;
         speed = 0;
+        wheelOrientation = 0;
 
         // FIXME: compensate for the XBox's triggers ranging from -1 to 1 instead of 0 to 1,
         // need to move this to somewhere better and make it more generic
