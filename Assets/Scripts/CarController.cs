@@ -8,6 +8,8 @@ public class CarController : MonoBehaviour {
 
     public float maxTurningRate = 2f;
 
+    public float turnVelocityTransferPower = 1f;
+
     public float maxSpeed = 60f;
 
     public float minOrientationCorrectionRate = 0.1f;
@@ -132,6 +134,13 @@ public class CarController : MonoBehaviour {
         var turnMultiplier = Mathf.Lerp(maxTurningRate, minTurningRate, speed / maxSpeed);
         var alignToWheelsForce = Vector3.up * bodyWheelAlignmentDifference * turnMultiplier;
         colliderRb.AddRelativeTorque(alignToWheelsForce * Time.deltaTime, ForceMode.Impulse);
+
+        // Transfer velocity from the direction of movement to the direction of the wheels
+        if (Math.Abs(bodyWheelAlignmentDifference) > 0) {
+            var wheelForwardForce = wheelForwardDirection * turnVelocityTransferPower * (speed / maxSpeed);
+            colliderRb.AddForce(wheelForwardForce);
+            colliderRb.AddForce(colliderRb.velocity.normalized * -turnVelocityTransferPower * (speed / maxSpeed));
+        }
 
         // Turn the car to match the direction of movement
         var motionWheelAlignmentDifference = Vector3.SignedAngle(wheelForwardDirection, colliderRb.velocity, Vector3.up);

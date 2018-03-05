@@ -13,7 +13,12 @@ ModelImporter:
     2300000: Object_1
     3300000: Object_1
     4300000: Object_1
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_2
+    second: {fileID: 2100000, guid: 4141da5b8b9b145bcbc1cf1087dab29f, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
