@@ -113,9 +113,10 @@ public class CarController : MonoBehaviour {
 
     private void ApplyDrivingForces() {
         var transform = GetComponent<Transform>();
-        var colliderRb = GetComponent<Rigidbody>();
+        var rb = GetComponent<Rigidbody>();
+        var mass = rb.mass;
 
-        speed = Vector3.Project(colliderRb.velocity, transform.forward).magnitude;
+        speed = Vector3.Project(rb.velocity, transform.forward).magnitude;
         isReversing = speed < 0;
         isStopped = speed == 0;
 
@@ -126,36 +127,37 @@ public class CarController : MonoBehaviour {
 
         // Drive the car forward in the direction of the wheels
         var forwardDrivingForce = wheelForwardDirection * engineSpeed * enginePower;
-        colliderRb.AddForce(forwardDrivingForce * Time.deltaTime, ForceMode.Impulse);
+        rb.AddForce(forwardDrivingForce * mass * Time.deltaTime, ForceMode.Impulse);
 
         // Turn the car to match the orientation of the wheels depending on forward travel speed
         // FIXME: transform.up instead of Vector3.up?
         var bodyWheelAlignmentDifference = -Vector3.SignedAngle(wheelForwardDirection, transform.forward, Vector3.up);
         var turnMultiplier = Mathf.Lerp(maxTurningRate, minTurningRate, speed / maxSpeed);
         var alignToWheelsForce = Vector3.up * bodyWheelAlignmentDifference * turnMultiplier;
-        colliderRb.AddRelativeTorque(alignToWheelsForce * Time.deltaTime, ForceMode.Impulse);
+        rb.AddRelativeTorque(alignToWheelsForce * mass * Time.deltaTime, ForceMode.Impulse);
 
         // Transfer velocity from the direction of movement to the direction of the wheels
         if (Math.Abs(bodyWheelAlignmentDifference) > 0) {
-            var wheelForwardForce = wheelForwardDirection * turnVelocityTransferPower * (speed / maxSpeed);
-            colliderRb.AddForce(wheelForwardForce);
-            colliderRb.AddForce(colliderRb.velocity.normalized * -turnVelocityTransferPower * (speed / maxSpeed));
+            var wheelForwardForce = wheelForwardDirection * mass * turnVelocityTransferPower * (speed / maxSpeed);
+            rb.AddForce(wheelForwardForce);
+            var velocityDirectionChangeForce = rb.velocity.normalized * mass * -turnVelocityTransferPower * (speed / maxSpeed);
+            rb.AddForce(velocityDirectionChangeForce);
         }
 
         // Turn the car to match the direction of movement, except for at very low speeds where it gets twisty
         if (speed > 2) {
-            var motionWheelAlignmentDifference = Vector3.SignedAngle(wheelForwardDirection, colliderRb.velocity, Vector3.up);
+            var motionWheelAlignmentDifference = Vector3.SignedAngle(wheelForwardDirection, rb.velocity, Vector3.up);
             var orientationCorrectionRate = Mathf.Lerp(maxOrientationCorrectionRate, minOrientationCorrectionRate, speed / maxSpeed);
-            colliderRb.AddRelativeTorque(Vector3.up * motionWheelAlignmentDifference * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
+            rb.AddRelativeTorque(Vector3.up * mass * motionWheelAlignmentDifference * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
         }
 
         // Add resistance to travelling perpendicular to the wheels
-        var sidewaysSpeed = Vector3.Project(colliderRb.velocity, wheelRight);
-        colliderRb.AddForce(-sidewaysSpeed * frictionFactor * Time.deltaTime, ForceMode.Impulse);
+        var sidewaysSpeed = Vector3.Project(rb.velocity, wheelRight);
+        rb.AddForce(-sidewaysSpeed * mass * frictionFactor * Time.deltaTime, ForceMode.Impulse);
 
         var brakingAmount = GetBraking();
-        if (brakingAmount > 0 && colliderRb.velocity.magnitude > 0) {
-            colliderRb.AddForce(-colliderRb.velocity * brakingAmount * brakingPower * Time.deltaTime, ForceMode.Impulse);
+        if (brakingAmount > 0 && rb.velocity.magnitude > 0) {
+            rb.AddForce(-rb.velocity * mass * brakingAmount * brakingPower * Time.deltaTime, ForceMode.Impulse);
         }
     }
 

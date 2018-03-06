@@ -1128,16 +1128,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8afaff0154db482ca0c50ec8bc0ddd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minTurningRate: 0.7
-  maxTurningRate: 0.9
+  minTurningRate: 1
+  maxTurningRate: 2
   turnVelocityTransferPower: 90
   maxSpeed: 80
-  minOrientationCorrectionRate: 0.1
-  maxOrientationCorrectionRate: 0.2
+  minOrientationCorrectionRate: 0
+  maxOrientationCorrectionRate: 0
   maxTurningAngle: 12
   accelerationFactor: 5
   reverseAcceleration: 1
-  enginePower: 8
+  enginePower: 10
   maxEngineSpeed: 2.5
   brakingPower: 0.7
   frictionFactor: 0.5
@@ -1153,7 +1153,7 @@ Rigidbody:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1546519212}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 700
   m_Drag: 0.1
   m_AngularDrag: 6
   m_UseGravity: 1
