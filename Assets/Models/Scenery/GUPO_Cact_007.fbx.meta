@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: f5b61ea794cd146f3a009e0f8430914b
-timeCreated: 1520300379
+guid: 8f8386ee32c2946628502b8f89a8ee64
+timeCreated: 1520309763
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
@@ -9,7 +9,7 @@ ModelImporter:
     100002: Object_1
     400000: //RootNode
     400002: Object_1
-    2100000: Plaster
+    2100000: Material_2
     2300000: Object_1
     3300000: Object_1
     4300000: Object_1
@@ -17,8 +17,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Plaster
-    second: {fileID: 2100000, guid: e6fc3c9a976bc4a40873b0d2244a74b2, type: 2}
+      name: Material_2
+    second: {fileID: 2100000, guid: 8307a65101277420e833027f8cf66ace, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
