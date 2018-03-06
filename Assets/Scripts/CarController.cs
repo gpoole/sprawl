@@ -142,10 +142,12 @@ public class CarController : MonoBehaviour {
             colliderRb.AddForce(colliderRb.velocity.normalized * -turnVelocityTransferPower * (speed / maxSpeed));
         }
 
-        // Turn the car to match the direction of movement
-        var motionWheelAlignmentDifference = Vector3.SignedAngle(wheelForwardDirection, colliderRb.velocity, Vector3.up);
-        var orientationCorrectionRate = Mathf.Lerp(maxOrientationCorrectionRate, minOrientationCorrectionRate, speed / maxSpeed);
-        colliderRb.AddRelativeTorque(Vector3.up * motionWheelAlignmentDifference * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
+        // Turn the car to match the direction of movement, except for at very low speeds where it gets twisty
+        if (speed > 2) {
+            var motionWheelAlignmentDifference = Vector3.SignedAngle(wheelForwardDirection, colliderRb.velocity, Vector3.up);
+            var orientationCorrectionRate = Mathf.Lerp(maxOrientationCorrectionRate, minOrientationCorrectionRate, speed / maxSpeed);
+            colliderRb.AddRelativeTorque(Vector3.up * motionWheelAlignmentDifference * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
+        }
 
         // Add resistance to travelling perpendicular to the wheels
         var sidewaysSpeed = Vector3.Project(colliderRb.velocity, wheelRight);
