@@ -118,7 +118,6 @@ public class CarController : MonoBehaviour {
     private void ApplyDrivingForces() {
         var transform = GetComponent<Transform>();
         var rb = GetComponent<Rigidbody>();
-        var mass = rb.mass;
 
         speed = Vector3.Project(rb.velocity, transform.forward).magnitude;
         debugger.ShowDebugValue("speed", speed);
@@ -132,22 +131,22 @@ public class CarController : MonoBehaviour {
         var wheelRight = transform.TransformDirection(wheelRotation * wheelSidewaysRotation * Vector3.forward);
 
         // Drive the car forward in the direction of the wheels
-        var forwardDrivingForce = wheelForwardDirection * engineSpeed * enginePower * mass * Time.deltaTime;
-        rb.AddForce(forwardDrivingForce, ForceMode.Impulse);
+        var forwardDrivingForce = wheelForwardDirection * engineSpeed * enginePower * Time.deltaTime;
+        rb.AddForce(forwardDrivingForce, ForceMode.VelocityChange);
 
         // Turn the car to match the orientation of the wheels depending on forward travel speed
         // FIXME: transform.up instead of Vector3.up?
         var bodyWheelAlignmentDifference = -Vector3.SignedAngle(wheelForwardDirection, transform.forward, Vector3.up);
         var turnMultiplier = Mathf.Lerp(maxTurningRate, minTurningRate, speed / maxSpeed);
-        var alignToWheelsForce = Vector3.up * wheelOrientation * turnMultiplier * mass * Time.deltaTime;
-        rb.AddRelativeTorque(alignToWheelsForce, ForceMode.Impulse);
+        var alignToWheelsForce = Vector3.up * wheelOrientation * turnMultiplier * Time.deltaTime;
+        rb.AddRelativeTorque(alignToWheelsForce, ForceMode.VelocityChange);
 
         // Transfer velocity from the direction of movement to the direction of the wheels
         if (Math.Abs(bodyWheelAlignmentDifference) > 0) {
-            var wheelForwardForce = wheelForwardDirection * mass * turnVelocityTransferPower * (speed / maxSpeed) * Time.deltaTime;
-            rb.AddForce(wheelForwardForce, ForceMode.Impulse);
-            var velocityDirectionChangeForce = rb.velocity.normalized * mass * -turnVelocityTransferPower * (speed / maxSpeed) * Time.deltaTime;
-            rb.AddForce(velocityDirectionChangeForce, ForceMode.Impulse);
+            var wheelForwardForce = wheelForwardDirection * turnVelocityTransferPower * (speed / maxSpeed) * Time.deltaTime;
+            rb.AddForce(wheelForwardForce, ForceMode.VelocityChange);
+            var velocityDirectionChangeForce = rb.velocity.normalized * -turnVelocityTransferPower * (speed / maxSpeed) * Time.deltaTime;
+            rb.AddForce(velocityDirectionChangeForce, ForceMode.VelocityChange);
         }
 
         // Turn the car to match the direction of movement, except for at very low speeds where it gets twisty
@@ -155,16 +154,16 @@ public class CarController : MonoBehaviour {
             var motionWheelAlignmentDifference = Vector3.SignedAngle(wheelForwardDirection, rb.velocity, Vector3.up);
             var orientationCorrectionRate = Mathf.Lerp(maxOrientationCorrectionRate, minOrientationCorrectionRate, speed / maxSpeed);
             debugger.ShowDebugValue("orientationCorrectionRate", orientationCorrectionRate);
-            rb.AddRelativeTorque(Vector3.up * mass * motionWheelAlignmentDifference * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
+            rb.AddRelativeTorque(Vector3.up * motionWheelAlignmentDifference * orientationCorrectionRate * Time.deltaTime, ForceMode.VelocityChange);
         }
 
         // Add resistance to travelling perpendicular to the wheels
         var sidewaysSpeed = Vector3.Project(rb.velocity, wheelRight);
-        rb.AddForce(-sidewaysSpeed * mass * frictionFactor * Time.deltaTime, ForceMode.Impulse);
+        rb.AddForce(-sidewaysSpeed * frictionFactor * Time.deltaTime, ForceMode.VelocityChange);
 
         var brakingAmount = GetBraking();
         if (brakingAmount > 0 && rb.velocity.magnitude > 0) {
-            rb.AddForce(-rb.velocity * mass * brakingAmount * brakingPower * Time.deltaTime, ForceMode.Impulse);
+            rb.AddForce(-rb.velocity * brakingAmount * brakingPower * Time.deltaTime, ForceMode.VelocityChange);
         }
     }
 

@@ -59,7 +59,7 @@ public class CarWheel : MonoBehaviour {
             var dampingForce = (prevCompression - compressionRatio) * dampingFactor;
             var totalForce = springForce - dampingForce;
             prevCompression = compressionRatio;
-            rb.AddForceAtPosition((transform.TransformDirection(Vector3.up) * totalForce) / Time.deltaTime, transform.position, ForceMode.Impulse);
+            rb.AddForceAtPosition(transform.TransformDirection(Vector3.up) * totalForce, transform.position, ForceMode.Acceleration);
             grounded = true;
         } else {
             grounded = false;
