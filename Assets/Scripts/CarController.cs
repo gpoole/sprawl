@@ -61,10 +61,14 @@ public class CarController : MonoBehaviour {
 
     private float[] joystickRange = { 0f, 1f };
 
+    private CarDebugger debugger;
+
     void Start() {
         engineSpeed = 0;
         speed = 0;
         wheelOrientation = 0;
+
+        debugger = GetComponent<CarDebugger>();
 
         // FIXME: compensate for the XBox's triggers ranging from -1 to 1 instead of 0 to 1,
         // need to move this to somewhere better and make it more generic
@@ -117,6 +121,8 @@ public class CarController : MonoBehaviour {
         var mass = rb.mass;
 
         speed = Vector3.Project(rb.velocity, transform.forward).magnitude;
+        debugger.ShowDebugValue("speed", speed);
+        debugger.ShowDebugValue("speed %", speed / maxSpeed);
         isReversing = speed < 0;
         isStopped = speed == 0;
 
@@ -126,28 +132,29 @@ public class CarController : MonoBehaviour {
         var wheelRight = transform.TransformDirection(wheelRotation * wheelSidewaysRotation * Vector3.forward);
 
         // Drive the car forward in the direction of the wheels
-        var forwardDrivingForce = wheelForwardDirection * engineSpeed * enginePower;
-        rb.AddForce(forwardDrivingForce * mass * Time.deltaTime, ForceMode.Impulse);
+        var forwardDrivingForce = wheelForwardDirection * engineSpeed * enginePower * mass * Time.deltaTime;
+        rb.AddForce(forwardDrivingForce, ForceMode.Impulse);
 
         // Turn the car to match the orientation of the wheels depending on forward travel speed
         // FIXME: transform.up instead of Vector3.up?
         var bodyWheelAlignmentDifference = -Vector3.SignedAngle(wheelForwardDirection, transform.forward, Vector3.up);
         var turnMultiplier = Mathf.Lerp(maxTurningRate, minTurningRate, speed / maxSpeed);
-        var alignToWheelsForce = Vector3.up * bodyWheelAlignmentDifference * turnMultiplier;
-        rb.AddRelativeTorque(alignToWheelsForce * mass * Time.deltaTime, ForceMode.Impulse);
+        var alignToWheelsForce = Vector3.up * wheelOrientation * turnMultiplier * mass * Time.deltaTime;
+        rb.AddRelativeTorque(alignToWheelsForce, ForceMode.Impulse);
 
         // Transfer velocity from the direction of movement to the direction of the wheels
         if (Math.Abs(bodyWheelAlignmentDifference) > 0) {
-            var wheelForwardForce = wheelForwardDirection * mass * turnVelocityTransferPower * (speed / maxSpeed);
-            rb.AddForce(wheelForwardForce);
-            var velocityDirectionChangeForce = rb.velocity.normalized * mass * -turnVelocityTransferPower * (speed / maxSpeed);
-            rb.AddForce(velocityDirectionChangeForce);
+            var wheelForwardForce = wheelForwardDirection * mass * turnVelocityTransferPower * (speed / maxSpeed) * Time.deltaTime;
+            rb.AddForce(wheelForwardForce, ForceMode.Impulse);
+            var velocityDirectionChangeForce = rb.velocity.normalized * mass * -turnVelocityTransferPower * (speed / maxSpeed) * Time.deltaTime;
+            rb.AddForce(velocityDirectionChangeForce, ForceMode.Impulse);
         }
 
         // Turn the car to match the direction of movement, except for at very low speeds where it gets twisty
         if (speed > 2) {
             var motionWheelAlignmentDifference = Vector3.SignedAngle(wheelForwardDirection, rb.velocity, Vector3.up);
             var orientationCorrectionRate = Mathf.Lerp(maxOrientationCorrectionRate, minOrientationCorrectionRate, speed / maxSpeed);
+            debugger.ShowDebugValue("orientationCorrectionRate", orientationCorrectionRate);
             rb.AddRelativeTorque(Vector3.up * mass * motionWheelAlignmentDifference * orientationCorrectionRate * Time.deltaTime, ForceMode.Impulse);
         }
 
@@ -176,10 +183,12 @@ public class CarController : MonoBehaviour {
             engineSpeed += accelerator * reverseAcceleration * Time.deltaTime;
         }
         engineSpeed = Mathf.Min(engineSpeed, maxEngineSpeed);
+        debugger.ShowDebugValue("engineSpeed", engineSpeed);
 
 
         var turning = GetTurning();
         wheelOrientation = Mathf.Lerp(wheelOrientation, maxTurningAngle * turning, Time.deltaTime * 50f);
+        debugger.ShowDebugValue("wheelOrientation", wheelOrientation);
     }
 
 

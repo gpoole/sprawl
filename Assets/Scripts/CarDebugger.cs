@@ -13,6 +13,8 @@ public class CarDebugger : MonoBehaviour {
 
     public Text carStatus;
 
+    private Dictionary<string, object> debugValues = new Dictionary<string, object>();
+
     void Start() {
         initialPosition = GetComponent<Transform>().position;
         initialRotation = GetComponent<Transform>().rotation;
@@ -37,9 +39,14 @@ public class CarDebugger : MonoBehaviour {
             }
         }
 
-        var car = GetComponent<CarController>();
-        carStatus.text = "Engine speed: " + car.engineSpeed.ToString() + "\n";
-        carStatus.text += "Speed: " + car.speed;
+        carStatus.text = "";
+        foreach (KeyValuePair<string, object> entry in debugValues) {
+            carStatus.text += entry.Key + "=" + entry.Value + "\n";
+        }
+    }
+
+    public void ShowDebugValue(string label, object value) {
+        debugValues[label] = value;
     }
 
     void WarpTo(Vector3 position, Quaternion rotation) {
