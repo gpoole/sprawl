@@ -29,7 +29,7 @@ public class CarDebugger : MonoBehaviour {
             rb.AddExplosionForce(750f * rb.mass, t.TransformPoint(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)) + (Vector3.down * 2f), 50f);
         }
 
-        if (Input.GetKeyUp(KeyCode.R)) {
+        if (Input.GetKeyUp(KeyCode.R) || Input.GetButton("P1 Reset")) {
             WarpTo(initialPosition, initialRotation);
         }
 

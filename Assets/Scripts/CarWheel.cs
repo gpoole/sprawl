@@ -45,6 +45,8 @@ public class CarWheel : MonoBehaviour {
         } else {
             visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.engineSpeed / carController.maxEngineSpeed) * Time.deltaTime);
         }
+
+        visualWheel.localPosition = Vector3.down * (1 - prevCompression) * targetLength;
     }
 
     // Update is called once per frame
@@ -69,6 +71,6 @@ public class CarWheel : MonoBehaviour {
     void OnDrawGizmos() {
         var transform = GetComponent<Transform>();
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, new Vector3(0f, (1 - prevCompression) * -targetLength, 0f));
+        Gizmos.DrawRay(transform.position, transform.TransformDirection(new Vector3(0f, (1 - prevCompression) * -targetLength, 0f)));
     }
 }
