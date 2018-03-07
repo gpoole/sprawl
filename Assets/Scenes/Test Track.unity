@@ -1170,7 +1170,7 @@ MonoBehaviour:
   maxTurningAngle: 10
   accelerationFactor: 5
   reverseAcceleration: 1
-  enginePower: 10
+  enginePower: 15
   maxEngineSpeed: 1.6
   brakingPower: 1
   frictionFactor: 0.5
