@@ -129,9 +129,13 @@ public class CarController : MonoBehaviour {
         var wheelSidewaysRotation = Quaternion.AngleAxis(90, Vector3.up);
         wheelForwardDirection = transform.TransformDirection(wheelRotation * Vector3.forward);
         var wheelRight = transform.TransformDirection(wheelRotation * wheelSidewaysRotation * Vector3.forward);
+        var motionWheelAlignmentDifference = Vector3.SignedAngle(wheelForwardDirection, rb.velocity, Vector3.up);
+        debugger.ShowDebugValue("motionWheelAlignmentDifference", motionWheelAlignmentDifference);
 
         // Drive the car forward in the direction of the wheels
-        var forwardDrivingForce = wheelForwardDirection * engineSpeed * enginePower * Time.deltaTime;
+        var forwardDrivingGrip = Math.Abs(motionWheelAlignmentDifference) / maxTurningAngle;
+        var forwardDrivingForce = wheelForwardDirection * engineSpeed * enginePower * forwardDrivingGrip * Time.deltaTime;
+        debugger.ShowDebugValue("forwardDrivingGrip", forwardDrivingGrip);
         rb.AddForce(forwardDrivingForce, ForceMode.VelocityChange);
 
         // Turn the car to match the orientation of the wheels depending on forward travel speed
@@ -151,7 +155,6 @@ public class CarController : MonoBehaviour {
 
         // Turn the car to match the direction of movement, except for at very low speeds where it gets twisty
         if (speed > 2) {
-            var motionWheelAlignmentDifference = Vector3.SignedAngle(wheelForwardDirection, rb.velocity, Vector3.up);
             var orientationCorrectionRate = Mathf.Lerp(maxOrientationCorrectionRate, minOrientationCorrectionRate, speed / maxSpeed);
             debugger.ShowDebugValue("orientationCorrectionRate", orientationCorrectionRate);
             rb.AddRelativeTorque(Vector3.up * motionWheelAlignmentDifference * orientationCorrectionRate * Time.deltaTime, ForceMode.VelocityChange);

@@ -49,6 +49,24 @@ public class CarDebugger : MonoBehaviour {
         debugValues[label] = value;
     }
 
+    public void ShowDebugValue(string label, float value) {
+        debugValues[label] = value;
+
+        var maxLabel = label + " (max)";
+        if (debugValues.ContainsKey(maxLabel)) {
+            debugValues[maxLabel] = Mathf.Max(value, (float)debugValues[maxLabel]);
+        } else {
+            debugValues[maxLabel] = value;
+        }
+
+        var minLabel = label + " (min)";
+        if (debugValues.ContainsKey(minLabel)) {
+            debugValues[minLabel] = Mathf.Min(value, (float)debugValues[minLabel]);
+        } else {
+            debugValues[minLabel] = value;
+        }
+    }
+
     void WarpTo(Vector3 position, Quaternion rotation) {
         var t = GetComponent<Transform>();
         var rb = GetComponent<Rigidbody>();
