@@ -31,6 +31,7 @@ public class CarDebugger : MonoBehaviour {
 
         if (Input.GetKeyUp(KeyCode.R) || Input.GetButton("P1 Reset")) {
             WarpTo(initialPosition, initialRotation);
+            debugValues.Clear();
         }
 
         for (var i = 0; i < warpPoints.Length; i++) {

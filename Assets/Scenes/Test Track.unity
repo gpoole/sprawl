@@ -990,10 +990,10 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -1737.0292, y: 77.85327}
-  m_SizeDelta: {x: -3540, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 36, y: 26.35205}
+  m_SizeDelta: {x: 1000, y: 1000}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &1383451074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1163,7 +1163,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minTurningRate: 0.4
   maxTurningRate: 1.8
-  turnVelocityTransferPower: 15
+  turnVelocityTransferPower: 0
   maxSpeed: 35
   minOrientationCorrectionRate: 0
   maxOrientationCorrectionRate: 0

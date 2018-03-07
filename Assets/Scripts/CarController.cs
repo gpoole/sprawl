@@ -133,7 +133,7 @@ public class CarController : MonoBehaviour {
         debugger.ShowDebugValue("motionWheelAlignmentDifference", motionWheelAlignmentDifference);
 
         // Drive the car forward in the direction of the wheels
-        var forwardDrivingGrip = Math.Abs(motionWheelAlignmentDifference) / maxTurningAngle;
+        var forwardDrivingGrip = Mathf.Max((90f - Math.Abs(motionWheelAlignmentDifference)) / 90f, 0);
         var forwardDrivingForce = wheelForwardDirection * engineSpeed * enginePower * forwardDrivingGrip * Time.deltaTime;
         debugger.ShowDebugValue("forwardDrivingGrip", forwardDrivingGrip);
         rb.AddForce(forwardDrivingForce, ForceMode.VelocityChange);
