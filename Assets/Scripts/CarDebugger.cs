@@ -15,21 +15,25 @@ public class CarDebugger : MonoBehaviour {
 
     private Dictionary<string, object> debugValues = new Dictionary<string, object>();
 
+    private CarPlayerInput input;
+
     void Start() {
         initialPosition = GetComponent<Transform>().position;
         initialRotation = GetComponent<Transform>().rotation;
+        input = GetComponent<CarPlayerInput>();
     }
 
     void Update() {
         var rb = GetComponent<Rigidbody>();
         var t = GetComponent<Transform>();
 
+        // FIXME: change to input
         if (Input.GetKeyUp(KeyCode.B)) {
             var mesh = GetComponent<BoxCollider>();
             rb.AddExplosionForce(750f * rb.mass, t.TransformPoint(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)) + (Vector3.down * 2f), 50f);
         }
 
-        if (Input.GetKeyUp(KeyCode.R) || Input.GetButton("P1 Reset")) {
+        if (input.IsResetting) {
             WarpTo(initialPosition, initialRotation);
             debugValues.Clear();
         }
@@ -55,14 +59,14 @@ public class CarDebugger : MonoBehaviour {
 
         var maxLabel = label + " (max)";
         if (debugValues.ContainsKey(maxLabel)) {
-            debugValues[maxLabel] = Mathf.Max(value, (float)debugValues[maxLabel]);
+            debugValues[maxLabel] = Mathf.Max(value, (float) debugValues[maxLabel]);
         } else {
             debugValues[maxLabel] = value;
         }
 
         var minLabel = label + " (min)";
         if (debugValues.ContainsKey(minLabel)) {
-            debugValues[minLabel] = Mathf.Min(value, (float)debugValues[minLabel]);
+            debugValues[minLabel] = Mathf.Min(value, (float) debugValues[minLabel]);
         } else {
             debugValues[minLabel] = value;
         }

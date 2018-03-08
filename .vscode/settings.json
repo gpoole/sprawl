@@ -51,5 +51,6 @@
     },
     "files.associations": {
         "*.asset": "yaml"
-    }
+    },
+    "csharpfixformat.style.spaces.beforeParenthesis": false,
 }

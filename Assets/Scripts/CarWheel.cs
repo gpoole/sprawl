@@ -37,13 +37,13 @@ public class CarWheel : MonoBehaviour {
     void Update() {
         var carController = car.GetComponent<CarController>();
         if (isFrontWheel) {
-            transform.localRotation = Quaternion.AngleAxis(carController.wheelOrientation * visualTurnMultiplier, Vector3.up);
+            transform.localRotation = Quaternion.AngleAxis(carController.WheelOrientation * visualTurnMultiplier, Vector3.up);
         }
 
         if (grounded) {
-            visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.speed / carController.maxSpeed) * Time.deltaTime);
+            visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.Speed / carController.maxSpeed) * Time.deltaTime);
         } else {
-            visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.engineSpeed / carController.maxEngineSpeed) * Time.deltaTime);
+            visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.EngineSpeed / carController.maxEngineSpeed) * Time.deltaTime);
         }
 
         visualWheel.localPosition = Vector3.down * (1 - prevCompression) * targetLength;
