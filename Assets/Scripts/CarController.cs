@@ -28,7 +28,9 @@ public class CarController : MonoBehaviour {
 
     public float brakingPower = 10f;
 
-    public float frictionFactor = 2f;
+    public float sidewaysFriction = 2f;
+
+    public float forwardFriction = 1f;
 
     public float suspensionSpringLength = 0.7f;
 
@@ -100,8 +102,18 @@ public class CarController : MonoBehaviour {
         debugger.ShowDebugValue("motionWheelAlignmentDifference", motionWheelAlignmentDifference);
 
         // Drive the car forward in the direction of the wheels
-        var forwardDrivingGrip = Mathf.Max((90f - Math.Abs(motionWheelAlignmentDifference)) / 90f, 0);
-        var forwardDrivingForce = wheelForwardDirection * EngineSpeed * enginePower * forwardDrivingGrip * Time.deltaTime;
+        float absWheelAlignmentDifference = Math.Abs(motionWheelAlignmentDifference);
+        if (absWheelAlignmentDifference > 90) {
+            absWheelAlignmentDifference = 180 - absWheelAlignmentDifference;
+        }
+        debugger.ShowDebugValue("absWheelAlignmentDifference", absWheelAlignmentDifference);
+        var forwardDrivingGrip = Mathf.Max((90f - absWheelAlignmentDifference) / 90f, 0f);
+        var forwardMovementForce = EngineSpeed * enginePower * forwardFriction * forwardDrivingGrip;
+        // Only accelerate up to the maximum speed
+        if (Speed + forwardMovementForce > maxSpeed) {
+            forwardMovementForce = Math.Max(maxSpeed - Speed, 0f);
+        }
+        var forwardDrivingForce = wheelForwardDirection * forwardMovementForce * Time.deltaTime;
         debugger.ShowDebugValue("forwardDrivingGrip", forwardDrivingGrip);
         rb.AddForce(forwardDrivingForce, ForceMode.VelocityChange);
 
@@ -129,7 +141,7 @@ public class CarController : MonoBehaviour {
 
         // Add resistance to travelling perpendicular to the wheels
         var sidewaysSpeed = Vector3.Project(rb.velocity, wheelRight);
-        rb.AddForce(-sidewaysSpeed * frictionFactor * Time.deltaTime, ForceMode.VelocityChange);
+        rb.AddForce(-sidewaysSpeed * sidewaysFriction * Time.deltaTime, ForceMode.VelocityChange);
 
         if (braking > 0 && rb.velocity.magnitude > 0) {
             rb.AddForce(-rb.velocity * braking * brakingPower * Time.deltaTime, ForceMode.VelocityChange);

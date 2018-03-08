@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +13,8 @@ public class CarDebugger : MonoBehaviour {
     public Transform[] warpPoints;
 
     public Text carStatus;
+
+    public string[] filterDebugMessages;
 
     private Dictionary<string, object> debugValues = new Dictionary<string, object>();
 
@@ -46,7 +49,9 @@ public class CarDebugger : MonoBehaviour {
 
         carStatus.text = "";
         foreach (KeyValuePair<string, object> entry in debugValues) {
-            carStatus.text += entry.Key + "=" + entry.Value + "\n";
+            if (filterDebugMessages.Length == 0 || filterDebugMessages.Any(search => entry.Key.StartsWith(search))) {
+                carStatus.text += entry.Key + "=" + entry.Value + "\n";
+            }
         }
     }
 

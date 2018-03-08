@@ -985,7 +985,6 @@ GameObject:
   - component: {fileID: 1383451073}
   - component: {fileID: 1383451075}
   - component: {fileID: 1873039085}
-  - component: {fileID: 1383451074}
   m_Layer: 5
   m_Name: DebugInfo
   m_TagString: Untagged
@@ -1010,20 +1009,8 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 36, y: 26.35205}
-  m_SizeDelta: {x: 1000, y: 1000}
+  m_SizeDelta: {x: 500, y: 500}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1383451074
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 114397202692172814, guid: af2834da91e9745168e45939f2db11b5,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1383451072}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!222 &1383451075
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1144,6 +1131,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1546519213}
   - component: {fileID: 1546519216}
+  - component: {fileID: 1546519217}
+  - component: {fileID: 1546519218}
   - component: {fileID: 1546519215}
   - component: {fileID: 1546519214}
   m_Layer: 2
@@ -1185,6 +1174,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   warpPoints: []
   carStatus: {fileID: 1873039085}
+  filterDebugMessages: []
 --- !u!114 &1546519215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1197,7 +1187,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8afaff0154db482ca0c50ec8bc0ddd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minTurningRate: 0.4
+  minTurningRate: 1.4
   maxTurningRate: 1.8
   turnVelocityTransferPower: 0
   maxSpeed: 35
@@ -1209,7 +1199,8 @@ MonoBehaviour:
   enginePower: 15
   maxEngineSpeed: 1.6
   brakingPower: 1
-  frictionFactor: 0.5
+  sidewaysFriction: 0.5
+  forwardFriction: 2
   suspensionSpringLength: 0.35
   suspensionDamping: 30
   suspensionSpring: 20
@@ -1230,6 +1221,35 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &1546519217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1546519212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7b5e8de77c5b4597ae7fbfb49a95e22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  logDebugInfo: 0
+  invertYAxis: 0
+  enableXInput: 0
+  useFixedUpdate: 0
+  dontDestroyOnLoad: 0
+  customProfiles: []
+--- !u!114 &1546519218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1546519212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7df60844014f84cde9b58e6661b231a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerNumber: 1
 --- !u!1 &1642369759
 GameObject:
   m_ObjectHideFlags: 0
@@ -1414,16 +1434,16 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 32
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 3
     m_MaxSize: 40
     m_Alignment: 6
     m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_RichText: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: Debug Info
 --- !u!1 &1944401802
