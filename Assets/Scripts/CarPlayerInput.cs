@@ -38,7 +38,7 @@ public class CarPlayerInput : MonoBehaviour {
 
     private InputDevice controller;
 
-    void Start() {
+    void OnEnable() {
         if (playerNumber <= InputManager.Devices.Count) {
             controller = InputManager.Devices[playerNumber - 1];
         } else {

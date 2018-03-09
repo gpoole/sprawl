@@ -12,6 +12,8 @@ public class CarController : MonoBehaviour {
 
     public float maxSpeed = 60f;
 
+    public float minGrip = 0.2f;
+
     public float minOrientationCorrectionRate = 0.1f;
 
     public float maxOrientationCorrectionRate = 0.2f;
@@ -107,7 +109,7 @@ public class CarController : MonoBehaviour {
             absWheelAlignmentDifference = 180 - absWheelAlignmentDifference;
         }
         debugger.ShowDebugValue("absWheelAlignmentDifference", absWheelAlignmentDifference);
-        var forwardDrivingGrip = Mathf.Max((90f - absWheelAlignmentDifference) / 90f, 0f);
+        var forwardDrivingGrip = Mathf.Max((90f - absWheelAlignmentDifference) / 90f, minGrip);
         var forwardMovementForce = EngineSpeed * enginePower * forwardFriction * forwardDrivingGrip;
         // Only accelerate up to the maximum speed
         if (Speed + forwardMovementForce > maxSpeed) {
