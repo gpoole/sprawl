@@ -6,11 +6,17 @@ public class CarController : MonoBehaviour {
 
     public float turnVelocityTransferRate = 1f;
 
+    public float driftTurnVelocityTransferRate = 2f;
+
     public float maxSpeed = 60f;
 
     public float minGrip = 0.2f;
 
+    public float maxGrip = 1f;
+
     public float maxWheelTurn = 10f;
+
+    public float driftMaxTurnAngle = 80f;
 
     public float maxTurnAngle = 30f;
 
@@ -108,7 +114,7 @@ public class CarController : MonoBehaviour {
         // a = (minGrip - 1) / 8100
         // a = minGrip / 32400
         // Calculate the grip so it increases rapidly as we get towards fully forward-facing
-        var forwardDrivingGrip = (((1 - minGrip) / 8100) * (absWheelAlignmentDifference - 90) * (absWheelAlignmentDifference - 90)) + minGrip;
+        var forwardDrivingGrip = (((maxGrip - minGrip) / 8100) * (absWheelAlignmentDifference - 90) * (absWheelAlignmentDifference - 90)) + minGrip;
         var forwardMovementForce = EngineSpeed * enginePower * forwardFriction * forwardDrivingGrip;
         // Only accelerate up to the maximum speed
         if (Speed + forwardMovementForce > maxSpeed) {
@@ -119,13 +125,15 @@ public class CarController : MonoBehaviour {
         rb.AddForce(forwardDrivingForce, ForceMode.VelocityChange);
 
         // Turn the car up to a maximum angle against the direction of movement
-        if (Mathf.Abs(motionWheelAlignmentDifference) < maxTurnAngle) {
+        var allowedTurnAngle = input.IsHandbraking ? driftMaxTurnAngle : maxTurnAngle;
+        if (Mathf.Abs(motionWheelAlignmentDifference) < allowedTurnAngle) {
             rb.AddTorque(Vector3.Cross(transform.forward, wheelForwardDirection), ForceMode.VelocityChange);
         }
 
         // Transfer velocity from the direction of movement to the direction of the wheels at an increasing rate depending on
         // how far we're turned away from the direction of movement
-        var velocityTransferAmount = Speed * turnVelocityTransferRate * forwardDrivingGrip;
+        var turnTransferRate = input.IsHandbraking ? driftTurnVelocityTransferRate : turnVelocityTransferRate;
+        var velocityTransferAmount = Speed * turnTransferRate * forwardDrivingGrip;
         debugger.ShowDebugValue("velocityTransferAmount", velocityTransferAmount);
         rb.AddForce(wheelForwardDirection * velocityTransferAmount * Time.deltaTime, ForceMode.VelocityChange);
         rb.AddForce(-rb.velocity.normalized * velocityTransferAmount * Time.deltaTime, ForceMode.VelocityChange);
@@ -133,9 +141,9 @@ public class CarController : MonoBehaviour {
         var sidewaysSpeed = Vector3.Project(rb.velocity, wheelRight);
         rb.AddForce(-sidewaysSpeed * sidewaysFriction * Time.deltaTime, ForceMode.VelocityChange);
 
-        if (braking > 0 && rb.velocity.magnitude > 0) {
-            rb.AddForce(-rb.velocity * braking * brakingPower * Time.deltaTime, ForceMode.VelocityChange);
-        }
+        var brakeForce = braking * brakingPower * forwardDrivingGrip;
+        debugger.ShowDebugValue("brakeForce", brakeForce);
+        rb.AddForce(-rb.velocity.normalized * brakeForce * Time.deltaTime, ForceMode.VelocityChange);
     }
 
     void Update() {
