@@ -133,19 +133,11 @@ public class CarController : MonoBehaviour {
 
         // Transfer velocity from the direction of movement to the direction of the wheels at an increasing rate depending on
         // how far we're turned away from the direction of movement
-        // var velocityTransferAmount = Speed * turnVelocityTransferRate * forwardDrivingGrip;
-        // debugger.ShowDebugValue("velocityTransferAmount", velocityTransferAmount);
-        // rb.AddForce(-forwardVelocity.normalized * velocityTransferAmount * Time.deltaTime, ForceMode.VelocityChange);
-        // rb.AddForce(wheelForwardDirection * velocityTransferAmount * Time.deltaTime, ForceMode.VelocityChange);
+        var velocityTransferAmount = Speed * turnVelocityTransferRate * forwardDrivingGrip;
+        debugger.ShowDebugValue("velocityTransferAmount", velocityTransferAmount);
+        rb.AddForce(wheelForwardDirection * velocityTransferAmount * Time.deltaTime, ForceMode.VelocityChange);
+        rb.AddForce(-rb.velocity.normalized * velocityTransferAmount * Time.deltaTime, ForceMode.VelocityChange);
 
-        // Turn the car to match the direction of movement, except for at very low speeds where it gets twisty
-        // if (Speed > 2) {
-        //     var orientationCorrectionRate = Mathf.Lerp(maxOrientationCorrectionRate, minOrientationCorrectionRate, Speed / maxSpeed);
-        //     debugger.ShowDebugValue("orientationCorrectionRate", orientationCorrectionRate);
-        //     rb.AddRelativeTorque(Vector3.up * motionWheelAlignmentDifference * orientationCorrectionRate * Time.deltaTime, ForceMode.VelocityChange);
-        // }
-
-        // Add resistance to travelling perpendicular to the wheels
         var sidewaysSpeed = Vector3.Project(rb.velocity, wheelRight);
         rb.AddForce(-sidewaysSpeed * sidewaysFriction * Time.deltaTime, ForceMode.VelocityChange);
 

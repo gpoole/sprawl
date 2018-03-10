@@ -867,10 +867,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetLength: 0.5
-  dampingFactor: 0.01
-  springFactor: 0.1
+  dampingFactor: 0
+  springFactor: 0
   visualTurnMultiplier: 1.5
-  visualRotationSpeed: 1500
+  visualRotationSpeed: 1
 --- !u!1 &1309749878
 GameObject:
   m_ObjectHideFlags: 0
@@ -917,10 +917,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetLength: 0.5
-  dampingFactor: 0.01
-  springFactor: 0.1
+  dampingFactor: 0
+  springFactor: 0
   visualTurnMultiplier: 1.5
-  visualRotationSpeed: 1500
+  visualRotationSpeed: 1
 --- !u!23 &1309749881
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1046,10 +1046,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetLength: 0.5
-  dampingFactor: 0.01
-  springFactor: 0.1
+  dampingFactor: 0
+  springFactor: 0
   visualTurnMultiplier: 1.5
-  visualRotationSpeed: 1500
+  visualRotationSpeed: 1
 --- !u!23 &1452232237
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1151,22 +1151,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8afaff0154db482ca0c50ec8bc0ddd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minTurningRate: 0
+  minTurningRate: 1
   maxTurningRate: 2
-  turnVelocityTransferRate: 1
+  turnVelocityTransferRate: 0.5
   maxSpeed: 70
-  minGrip: 0.4
-  minOrientationCorrectionRate: 0.3
-  maxOrientationCorrectionRate: 0.4
+  minGrip: 0.2
+  minOrientationCorrectionRate: 0
+  maxOrientationCorrectionRate: 0
   maxWheelTurn: 10
-  maxTurnAngle: 60
-  accelerationFactor: 1
-  reverseAcceleration: 1
+  maxTurnAngle: 40
+  accelerationFactor: 10
+  reverseAcceleration: 3
   enginePower: 15
   maxEngineSpeed: 1.6
   brakingPower: 1
-  sidewaysFriction: 0.35
-  forwardFriction: 2
+  sidewaysFriction: 2
+  forwardFriction: 1
   suspensionSpringLength: 0.35
   suspensionDamping: 30
   suspensionSpring: 20
@@ -1278,10 +1278,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetLength: 0.5
-  dampingFactor: 0.01
-  springFactor: 0.1
+  dampingFactor: 0
+  springFactor: 0
   visualTurnMultiplier: 1.5
-  visualRotationSpeed: 1500
+  visualRotationSpeed: 1
 --- !u!23 &1772219026
 MeshRenderer:
   m_ObjectHideFlags: 0
