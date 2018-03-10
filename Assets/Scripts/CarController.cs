@@ -4,19 +4,11 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour {
 
-    public float minTurningRate = 1f;
-
-    public float maxTurningRate = 2f;
-
     public float turnVelocityTransferRate = 1f;
 
     public float maxSpeed = 60f;
 
     public float minGrip = 0.2f;
-
-    public float minOrientationCorrectionRate = 0.1f;
-
-    public float maxOrientationCorrectionRate = 0.2f;
 
     public float maxWheelTurn = 10f;
 
