@@ -67,11 +67,17 @@ public class CarController : MonoBehaviour {
 
     private float braking;
 
+    private Vector3 originalCentreOfMass;
+
     private CarPlayerInput input;
 
     private Vector3 wheelForwardDirection;
 
     private CarDebugger debugger;
+
+    private Rigidbody rb;
+
+    private Vector3 prevVelocity = Vector3.zero;
 
     void Start() {
         EngineSpeed = 0;
@@ -80,6 +86,8 @@ public class CarController : MonoBehaviour {
 
         debugger = GetComponent<CarDebugger>();
         input = GetComponent<CarPlayerInput>();
+        rb = GetComponent<Rigidbody>();
+        originalCentreOfMass = transform.Find("CentreOfMass").localPosition;
     }
 
     private CarWheel[] GetWheels() {
@@ -90,10 +98,13 @@ public class CarController : MonoBehaviour {
         return GetWheels().Any(wheel => wheel.grounded);
     }
 
-    private void ApplyDrivingForces() {
-        var transform = GetComponent<Transform>();
-        var rb = GetComponent<Rigidbody>();
+    private void UpdateCentreOfMass() {
+        var forwardAcceleration = Vector3.Project(rb.velocity, transform.forward).magnitude - Vector3.Project(prevVelocity, transform.forward).magnitude;
+        var sidewaysAcceleration = Vector3.Project(rb.velocity, transform.right).magnitude - Vector3.Project(prevVelocity, transform.right).magnitude;
+        rb.centerOfMass = originalCentreOfMass - (Vector3.forward * forwardAcceleration * 3f) - (Vector3.right * sidewaysAcceleration * 1f);
+    }
 
+    private void ApplyDrivingForces() {
         var forwardVelocity = Vector3.Project(rb.velocity, transform.forward);
         Speed = forwardVelocity.magnitude;
         debugger.ShowDebugValue("speed", Speed);
@@ -177,6 +188,8 @@ public class CarController : MonoBehaviour {
     void FixedUpdate() {
         if (IsGrounded()) {
             ApplyDrivingForces();
+            UpdateCentreOfMass();
+            prevVelocity = rb.velocity;
         } else {
             Speed = 0;
         }
@@ -184,8 +197,10 @@ public class CarController : MonoBehaviour {
 
     void OnDrawGizmos() {
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(GetComponent<Transform>().position, GetComponent<Rigidbody>().velocity);
+        Gizmos.DrawRay(transform.position, GetComponent<Rigidbody>().velocity);
         Gizmos.color = Color.green;
-        Gizmos.DrawRay(GetComponent<Transform>().position, wheelForwardDirection * 5f);
+        Gizmos.DrawRay(transform.position, wheelForwardDirection * 5f);
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawSphere(transform.TransformPoint(rb.centerOfMass), 0.5f);
     }
 }
