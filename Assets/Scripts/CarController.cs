@@ -98,10 +98,20 @@ public class CarController : MonoBehaviour {
         return GetWheels().Any(wheel => wheel.grounded);
     }
 
+    public void Reset() {
+        rb.centerOfMass = originalCentreOfMass;
+        EngineSpeed = 0;
+        Speed = 0;
+        WheelOrientation = 0;
+        rb.ResetInertiaTensor();
+    }
+
     private void UpdateCentreOfMass() {
-        var forwardAcceleration = Vector3.Project(rb.velocity, transform.forward).magnitude - Vector3.Project(prevVelocity, transform.forward).magnitude;
-        var sidewaysAcceleration = Vector3.Project(rb.velocity, transform.right).magnitude - Vector3.Project(prevVelocity, transform.right).magnitude;
-        rb.centerOfMass = originalCentreOfMass - (Vector3.forward * forwardAcceleration * 3f) - (Vector3.right * sidewaysAcceleration * 1f);
+        var forwardAcceleration = Mathf.Clamp(Vector3.Project(rb.velocity, transform.forward).magnitude - Vector3.Project(prevVelocity, transform.forward).magnitude, -0.4f, 0.4f);
+        var sidewaysAcceleration = Mathf.Clamp(Vector3.Project(rb.velocity, transform.right).magnitude - Vector3.Project(prevVelocity, transform.right).magnitude, -0.4f, 0.4f);
+        rb.centerOfMass = Vector3.Lerp(rb.centerOfMass, originalCentreOfMass - (Vector3.forward * forwardAcceleration * 2f), Time.deltaTime);
+        rb.centerOfMass = Vector3.Lerp(rb.centerOfMass, originalCentreOfMass + (Vector3.up * forwardAcceleration * 1.5f), Time.deltaTime);
+        rb.centerOfMass = Vector3.Lerp(rb.centerOfMass, originalCentreOfMass - (Vector3.right * sidewaysAcceleration * 2.5f), Time.deltaTime);
     }
 
     private void ApplyDrivingForces() {
@@ -201,6 +211,6 @@ public class CarController : MonoBehaviour {
         Gizmos.color = Color.green;
         Gizmos.DrawRay(transform.position, wheelForwardDirection * 5f);
         Gizmos.color = Color.magenta;
-        Gizmos.DrawSphere(transform.TransformPoint(rb.centerOfMass), 0.5f);
+        Gizmos.DrawSphere(transform.TransformPoint(rb.centerOfMass), 0.1f);
     }
 }

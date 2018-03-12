@@ -55,13 +55,13 @@ public class CarWheel : MonoBehaviour {
         // FIXME: probably better way to do that...
         var rb = car.GetComponent<Rigidbody>();
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, targetLength * 2)) {
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, targetLength)) {
             var compressionRatio = 1f - (hit.distance / targetLength);
             var springForce = compressionRatio * springFactor;
             var dampingForce = (prevCompression - compressionRatio) * dampingFactor;
             var totalForce = springForce - dampingForce;
             prevCompression = compressionRatio;
-            rb.AddForceAtPosition(transform.TransformDirection(Vector3.up) * totalForce, transform.position, ForceMode.Acceleration);
+            rb.AddForceAtPosition(transform.TransformDirection(Vector3.up) * totalForce * Time.deltaTime, transform.position, ForceMode.VelocityChange);
             grounded = true;
         } else {
             grounded = false;
@@ -71,6 +71,6 @@ public class CarWheel : MonoBehaviour {
     void OnDrawGizmos() {
         var transform = GetComponent<Transform>();
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, transform.TransformDirection(new Vector3(0f, (1 - prevCompression) * -targetLength, 0f)));
+        Gizmos.DrawRay(transform.position, transform.TransformDirection(Vector3.down * (1 - prevCompression) * targetLength));
     }
 }

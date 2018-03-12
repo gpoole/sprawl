@@ -39,6 +39,7 @@ public class CarDebugger : MonoBehaviour {
         if (input.IsResetting) {
             WarpTo(initialPosition, initialRotation);
             debugValues.Clear();
+            GetComponent<CarController>().Reset();
         }
 
         for (var i = 0; i < warpPoints.Length; i++) {

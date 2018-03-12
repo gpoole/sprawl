@@ -505,6 +505,34 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &478258839
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 478258840}
+  m_Layer: 2
+  m_Name: CentreOfMass
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &478258840
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 478258839}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1546519213}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &500492862
 GameObject:
   m_ObjectHideFlags: 0
@@ -1113,17 +1141,18 @@ Transform:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1546519212}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 32.9, y: 22.1, z: -5.6}
+  m_LocalRotation: {x: -0, y: 0.025081072, z: -0, w: -0.99968547}
+  m_LocalPosition: {x: 32.869194, y: 22.1, z: -5.6778116}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2125576961}
   - {fileID: 1147153892}
   - {fileID: 941396673}
   - {fileID: 273179220}
+  - {fileID: 478258840}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 357.126, z: 0}
 --- !u!114 &1546519214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1138,7 +1167,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   warpPoints: []
   carStatus: {fileID: 1873039085}
-  filterDebugMessages: []
+  filterDebugMessages:
+  - sideways
+  - velocityRight
 --- !u!114 &1546519215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1154,7 +1185,7 @@ MonoBehaviour:
   turnVelocityTransferRate: 2
   driftTurnVelocityTransferRate: 0.5
   turnSpeed: 50
-  driftTurnSpeed: 100
+  driftTurnSpeed: 150
   maxSpeed: 70
   minGrip: 0.5
   maxGrip: 1
@@ -1165,12 +1196,12 @@ MonoBehaviour:
   reverseAcceleration: 3
   enginePower: 15
   maxEngineSpeed: 1.6
-  brakingPower: 20
+  brakingPower: 10
   sidewaysFriction: 0.5
   forwardFriction: 1
   suspensionSpringLength: 0.35
-  suspensionDamping: 30
-  suspensionSpring: 20
+  suspensionDamping: 28
+  suspensionSpring: 30
   playerNumber: 1
 --- !u!54 &1546519216
 Rigidbody:
@@ -1180,7 +1211,7 @@ Rigidbody:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1546519212}
   serializedVersion: 2
-  m_Mass: 700
+  m_Mass: 10000
   m_Drag: 0.1
   m_AngularDrag: 6
   m_UseGravity: 1
