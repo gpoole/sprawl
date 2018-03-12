@@ -1151,21 +1151,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8afaff0154db482ca0c50ec8bc0ddd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minTurningRate: 1
-  maxTurningRate: 2
-  turnVelocityTransferRate: 0.5
+  turnVelocityTransferRate: 2
+  driftTurnVelocityTransferRate: 0.5
+  turnSpeed: 50
+  driftTurnSpeed: 100
   maxSpeed: 70
-  minGrip: 0.2
-  minOrientationCorrectionRate: 0
-  maxOrientationCorrectionRate: 0
+  minGrip: 0.5
+  maxGrip: 1
   maxWheelTurn: 10
+  driftMaxTurnAngle: 80
   maxTurnAngle: 40
   accelerationFactor: 10
   reverseAcceleration: 3
   enginePower: 15
   maxEngineSpeed: 1.6
-  brakingPower: 1
-  sidewaysFriction: 2
+  brakingPower: 20
+  sidewaysFriction: 0.5
   forwardFriction: 1
   suspensionSpringLength: 0.35
   suspensionDamping: 30

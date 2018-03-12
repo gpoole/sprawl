@@ -8,6 +8,10 @@ public class CarController : MonoBehaviour {
 
     public float driftTurnVelocityTransferRate = 2f;
 
+    public float turnSpeed = 1f;
+
+    public float driftTurnSpeed = 2f;
+
     public float maxSpeed = 60f;
 
     public float minGrip = 0.2f;
@@ -126,8 +130,10 @@ public class CarController : MonoBehaviour {
 
         // Turn the car up to a maximum angle against the direction of movement
         var allowedTurnAngle = input.IsHandbraking ? driftMaxTurnAngle : maxTurnAngle;
+        var turnSpeed = input.IsHandbraking ? driftTurnSpeed : this.turnSpeed;
         if (Mathf.Abs(motionWheelAlignmentDifference) < allowedTurnAngle) {
-            rb.AddTorque(Vector3.Cross(transform.forward, wheelForwardDirection), ForceMode.VelocityChange);
+            // rb.AddRelativeTorque(Vector3.up * WheelOrientation * turnSpeed * Time.deltaTime, ForceMode.VelocityChange);
+            rb.AddTorque(Vector3.Cross(transform.forward, wheelForwardDirection) * turnSpeed * Time.deltaTime, ForceMode.VelocityChange);
         }
 
         // Transfer velocity from the direction of movement to the direction of the wheels at an increasing rate depending on
