@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 public class CarController : MonoBehaviour {
 
@@ -33,8 +33,6 @@ public class CarController : MonoBehaviour {
 
     public float maxEngineSpeed = 3f;
 
-    public float brakingPower = 10f;
-
     public float sidewaysFriction = 2f;
 
     public float forwardFriction = 1f;
@@ -46,6 +44,10 @@ public class CarController : MonoBehaviour {
     public float minSlideSpeed = 40f;
 
     public int playerNumber = 1;
+
+    public AnimationCurve brakingPower;
+
+    public float brakingForceMultiplier = 10f;
 
     public float WheelOrientation {
         get;
@@ -166,7 +168,7 @@ public class CarController : MonoBehaviour {
         var sidewaysSpeed = Vector3.Project(rb.velocity, wheelRight);
         rb.AddForce(-sidewaysSpeed * sidewaysFriction * Time.deltaTime, ForceMode.VelocityChange);
 
-        var brakeForce = braking * brakingPower * forwardDrivingGrip;
+        var brakeForce = braking * brakingPower.Evaluate(Speed / maxSpeed) * brakingForceMultiplier * forwardDrivingGrip;
         debugger.ShowDebugValue("brakeForce", brakeForce);
         rb.AddForce(-rb.velocity.normalized * brakeForce * Time.deltaTime, ForceMode.VelocityChange);
     }

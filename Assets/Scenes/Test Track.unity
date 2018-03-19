@@ -1562,8 +1562,8 @@ MonoBehaviour:
   warpPoints: []
   carStatus: {fileID: 1873039085}
   filterDebugMessages:
-  - isSliding
-  - slideTimer
+  - brakeForce
+  - speed
   autoMinMax: 1
 --- !u!114 &1546519215
 MonoBehaviour:
@@ -1591,13 +1591,31 @@ MonoBehaviour:
   reverseAcceleration: 3
   enginePower: 15
   maxEngineSpeed: 1.6
-  brakingPower: 20
   sidewaysFriction: 0.5
   forwardFriction: 1
   straightenUpTime: 0.3
   straightenUpAngle: 20
   minSlideSpeed: 40
   playerNumber: 1
+  brakingPower:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 2.925663
+      outSlope: 2.925663
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: -0.024867423
+      outSlope: -0.024867423
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  brakingForceMultiplier: 10
 --- !u!54 &1546519216
 Rigidbody:
   m_ObjectHideFlags: 0
