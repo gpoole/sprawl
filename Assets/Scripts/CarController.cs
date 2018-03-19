@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
+using UnityEditor;
 
 public class CarController : MonoBehaviour {
 
@@ -38,12 +39,6 @@ public class CarController : MonoBehaviour {
 
     public float forwardFriction = 1f;
 
-    public float suspensionSpringLength = 0.7f;
-
-    public float suspensionDamping = 0f;
-
-    public float suspensionSpring = 0f;
-
     public int playerNumber = 1;
 
     public float WheelOrientation {
@@ -67,8 +62,6 @@ public class CarController : MonoBehaviour {
 
     private float braking;
 
-    private Vector3 originalCentreOfMass;
-
     private CarPlayerInput input;
 
     private Vector3 wheelForwardDirection;
@@ -90,26 +83,13 @@ public class CarController : MonoBehaviour {
         input = GetComponent<CarPlayerInput>();
         rb = GetComponent<Rigidbody>();
         wheels = GetComponentsInChildren<CarWheel>();
-        originalCentreOfMass = transform.Find("CentreOfMass").localPosition;
-
-        rb.centerOfMass = Vector3.zero;
     }
 
     public void Reset() {
-        rb.centerOfMass = originalCentreOfMass;
         EngineSpeed = 0;
         Speed = 0;
         WheelOrientation = 0;
         rb.ResetInertiaTensor();
-    }
-
-    private void UpdateCentreOfMass() {
-        var forwardAcceleration = Vector3.Project(rb.velocity, transform.forward).magnitude / maxSpeed;
-        var sidewaysAcceleration = Vector3.Project(rb.velocity, transform.right).magnitude / maxSpeed;
-        var newCentre = originalCentreOfMass - (Vector3.forward * forwardAcceleration * 0.75f);
-        newCentre = newCentre - (Vector3.up * forwardAcceleration * 0.5f);
-        newCentre = newCentre - (Vector3.right * sidewaysAcceleration * 1f);
-        rb.centerOfMass = Vector3.Lerp(rb.centerOfMass, newCentre, Time.deltaTime);
     }
 
     private void ApplyDrivingForces() {
@@ -168,12 +148,6 @@ public class CarController : MonoBehaviour {
     }
 
     void Update() {
-        foreach (var wheel in wheels) {
-            wheel.springFactor = suspensionSpring;
-            wheel.dampingFactor = suspensionDamping;
-            wheel.targetLength = suspensionSpringLength;
-        }
-
         EngineSpeed = Mathf.Lerp(EngineSpeed, 0, Time.deltaTime);
         if (input.Accelerator > 0) {
             EngineSpeed += input.Accelerator * accelerationFactor * Time.deltaTime;
@@ -193,7 +167,6 @@ public class CarController : MonoBehaviour {
         var isGrounded = wheels.Any(wheel => wheel.grounded);
         if (isGrounded) {
             ApplyDrivingForces();
-            UpdateCentreOfMass();
             prevVelocity = rb.velocity;
         } else {
             Speed = 0;
@@ -206,9 +179,5 @@ public class CarController : MonoBehaviour {
         Gizmos.color = Color.green;
         Gizmos.DrawRay(transform.position, wheelForwardDirection * 5f);
         Gizmos.color = Color.magenta;
-
-        if (rb != null) {
-            Gizmos.DrawSphere(transform.TransformPoint(rb.centerOfMass), 0.1f);
-        }
     }
 }

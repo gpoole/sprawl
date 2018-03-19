@@ -26,35 +26,45 @@ public class CarWheel : MonoBehaviour {
 
     private GameObject car;
 
+    private Rigidbody carRigidBody;
+
+    private CarController carController;
+
     private Transform visualWheel;
 
-    private CarDebugger debugger;
+    private float wheelHeight;
 
     void Start() {
-        visualWheel = transform.GetChild(0);
+        if (transform.childCount > 0) {
+            visualWheel = transform.GetChild(0);
+            wheelHeight = visualWheel.GetComponent<MeshRenderer>().bounds.extents.y;
+        }
         car = transform.parent.parent.gameObject;
-        debugger = car.GetComponent<CarDebugger>();
+        carRigidBody = car.GetComponent<Rigidbody>();
         isFrontWheel = transform.localPosition.z > 0;
+        carController = car.GetComponent<CarController>();
     }
 
     void Update() {
-        var carController = car.GetComponent<CarController>();
-        if (isFrontWheel) {
-            transform.localRotation = Quaternion.AngleAxis(carController.WheelOrientation * visualTurnMultiplier, Vector3.up);
-        }
+        if (carController) {
+            if (isFrontWheel) {
+                transform.localRotation = Quaternion.AngleAxis(carController.WheelOrientation * visualTurnMultiplier, Vector3.up);
+            }
 
-        if (grounded) {
-            visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.Speed / carController.maxSpeed) * Time.deltaTime);
-        } else {
-            visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.EngineSpeed / carController.maxEngineSpeed) * Time.deltaTime);
-        }
+            if (visualWheel) {
+                if (grounded) {
+                    visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.Speed / carController.maxSpeed) * Time.deltaTime);
+                } else {
+                    visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.EngineSpeed / carController.maxEngineSpeed) * Time.deltaTime);
+                }
 
-        visualWheel.localPosition = Vector3.down * (1 - prevCompression) * targetLength;
+                visualWheel.localPosition = (Vector3.down * (1 - prevCompression) * targetLength) + new Vector3(0, wheelHeight, 0);
+            }
+        }
     }
 
     // Update is called once per frame
     void FixedUpdate() {
-        var rb = car.GetComponent<Rigidbody>();
         var tyreId = String.Format("wheel{0}{1}", isFrontWheel ? "Front" : "Back", transform.localPosition.x > 0 ? "Left" : "Right");
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, targetLength)) {
@@ -62,11 +72,8 @@ public class CarWheel : MonoBehaviour {
             var springForce = compressionRatio * springFactor;
             var dampingForce = (prevCompression - compressionRatio) * dampingFactor;
             var totalForce = springForce - dampingForce;
-            debugger.ShowDebugValue(tyreId + "Compression", compressionRatio);
-            debugger.ShowDebugValue(tyreId + "SpringForce", springForce);
-            debugger.ShowDebugValue(tyreId + "DampingForce", springForce);
             prevCompression = compressionRatio;
-            rb.AddForceAtPosition(transform.TransformDirection(Vector3.up) * totalForce * Time.deltaTime, transform.position, ForceMode.VelocityChange);
+            carRigidBody.AddForceAtPosition(transform.TransformDirection(Vector3.up) * totalForce * Time.deltaTime, transform.position, ForceMode.VelocityChange);
             grounded = true;
         } else {
             prevCompression = 0f;
