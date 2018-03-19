@@ -79,6 +79,8 @@ public class CarController : MonoBehaviour {
 
     private Vector3 prevVelocity = Vector3.zero;
 
+    private CarWheel[] wheels;
+
     void Start() {
         EngineSpeed = 0;
         Speed = 0;
@@ -87,17 +89,10 @@ public class CarController : MonoBehaviour {
         debugger = GetComponent<CarDebugger>();
         input = GetComponent<CarPlayerInput>();
         rb = GetComponent<Rigidbody>();
+        wheels = GetComponentsInChildren<CarWheel>();
         originalCentreOfMass = transform.Find("CentreOfMass").localPosition;
 
         rb.centerOfMass = Vector3.zero;
-    }
-
-    private CarWheel[] GetWheels() {
-        return GetComponentsInChildren<CarWheel>();
-    }
-
-    private bool IsGrounded() {
-        return GetWheels().Any(wheel => wheel.grounded);
     }
 
     public void Reset() {
@@ -138,9 +133,6 @@ public class CarController : MonoBehaviour {
             absWheelAlignmentDifference = 180 - absWheelAlignmentDifference;
         }
         debugger.ShowDebugValue("absWheelAlignmentDifference", absWheelAlignmentDifference);
-        // a = y - 1 / 8100
-        // a = (minGrip - 1) / 8100
-        // a = minGrip / 32400
         // Calculate the grip so it increases rapidly as we get towards fully forward-facing
         var forwardDrivingGrip = (((maxGrip - minGrip) / 8100) * (absWheelAlignmentDifference - 90) * (absWheelAlignmentDifference - 90)) + minGrip;
         var forwardMovementForce = EngineSpeed * enginePower * forwardFriction * forwardDrivingGrip;
@@ -176,7 +168,7 @@ public class CarController : MonoBehaviour {
     }
 
     void Update() {
-        foreach (var wheel in GetWheels()) {
+        foreach (var wheel in wheels) {
             wheel.springFactor = suspensionSpring;
             wheel.dampingFactor = suspensionDamping;
             wheel.targetLength = suspensionSpringLength;
@@ -198,7 +190,8 @@ public class CarController : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        if (IsGrounded()) {
+        var isGrounded = wheels.Any(wheel => wheel.grounded);
+        if (isGrounded) {
             ApplyDrivingForces();
             UpdateCentreOfMass();
             prevVelocity = rb.velocity;
