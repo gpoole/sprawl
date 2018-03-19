@@ -996,7 +996,7 @@ MeshCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 967193016}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: c6f54a0c0b69f4b6db80b444d944a628, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -1565,6 +1565,7 @@ MonoBehaviour:
   - forwardGrip
   - sidewaysGrip
   - absWheelAlignmentDifference
+  - surfaceFriction
   autoMinMax: 1
 --- !u!114 &1546519215
 MonoBehaviour:
@@ -1608,7 +1609,7 @@ MonoBehaviour:
   reverseAcceleration: 3
   enginePower: 15
   maxEngineSpeed: 1.6
-  surfaceFriction: 1
+  defaultSurfaceFriction: 1
   straightenUpTime: 0.3
   straightenUpAngle: 20
   minSlideSpeed: 40

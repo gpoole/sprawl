@@ -31,7 +31,7 @@ public class CarController : MonoBehaviour {
 
     public float maxEngineSpeed = 3f;
 
-    public float surfaceFriction = 1f;
+    public float defaultSurfaceFriction = 1f;
 
     public float straightenUpTime = 3f;
 
@@ -81,6 +81,8 @@ public class CarController : MonoBehaviour {
     private bool isSliding;
 
     private float slideTimer;
+
+    private float surfaceFriction = 1f;
 
     void Start() {
         EngineSpeed = 0;
@@ -190,7 +192,17 @@ public class CarController : MonoBehaviour {
     void FixedUpdate() {
         var isGrounded = wheels.Any(wheel => wheel.grounded);
         if (isGrounded) {
+            RaycastHit roadSurface;
+            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out roadSurface, 1f)) {
+                Debug.Log(roadSurface.collider.gameObject.name);
+                surfaceFriction = roadSurface.collider.material.dynamicFriction;
+            } else {
+                surfaceFriction = defaultSurfaceFriction;
+            }
+            debugger.ShowDebugValue("surfaceFriction", surfaceFriction);
+
             ApplyDrivingForces();
+
             prevVelocity = rb.velocity;
         } else {
             Speed = 0;
