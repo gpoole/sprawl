@@ -62,10 +62,10 @@ public class CarDebugger : MonoBehaviour {
         debugValues[label] = value;
     }
 
-    public void ShowDebugValue(string label, float value) {
+    public void ShowDebugValue(string label, float value, bool showMinMax = true) {
         debugValues[label] = value;
 
-        if (autoMinMax) {
+        if (autoMinMax && showMinMax) {
             var maxLabel = label + " (max)";
             if (debugValues.ContainsKey(maxLabel)) {
                 debugValues[maxLabel] = Mathf.Max(value, (float) debugValues[maxLabel]);

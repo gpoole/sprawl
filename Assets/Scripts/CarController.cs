@@ -39,6 +39,12 @@ public class CarController : MonoBehaviour {
 
     public float forwardFriction = 1f;
 
+    public float straightenUpTime = 3f;
+
+    public float straightenUpAngle = 15f;
+
+    public float minSlideSpeed = 40f;
+
     public int playerNumber = 1;
 
     public float WheelOrientation {
@@ -73,6 +79,10 @@ public class CarController : MonoBehaviour {
     private Vector3 prevVelocity = Vector3.zero;
 
     private CarWheel[] wheels;
+
+    private bool isSliding;
+
+    private float slideTimer;
 
     void Start() {
         EngineSpeed = 0;
@@ -124,16 +134,30 @@ public class CarController : MonoBehaviour {
         debugger.ShowDebugValue("forwardDrivingGrip", forwardDrivingGrip);
         rb.AddForce(forwardDrivingForce, ForceMode.VelocityChange);
 
+        if (input.IsHandbraking && Speed > minSlideSpeed) {
+            isSliding = true;
+            slideTimer = straightenUpTime;
+        } else if (absWheelAlignmentDifference < straightenUpAngle) {
+            if (slideTimer > 0) {
+                slideTimer -= Time.deltaTime;
+            } else {
+                isSliding = false;
+            }
+        }
+
+        debugger.ShowDebugValue("isSliding", isSliding);
+        debugger.ShowDebugValue("slideTimer", slideTimer, false);
+
         // Turn the car up to a maximum angle against the direction of movement
-        var allowedTurnAngle = input.IsHandbraking ? driftMaxTurnAngle : maxTurnAngle;
-        var turnSpeed = input.IsHandbraking ? driftTurnSpeed : this.turnSpeed;
+        var allowedTurnAngle = isSliding ? driftMaxTurnAngle : maxTurnAngle;
+        var turnSpeed = isSliding ? driftTurnSpeed : this.turnSpeed;
         if (Mathf.Abs(motionWheelAlignmentDifference) < allowedTurnAngle) {
             rb.AddTorque(Vector3.Cross(transform.forward, wheelForwardDirection) * turnSpeed * Time.deltaTime, ForceMode.VelocityChange);
         }
 
         // Transfer velocity from the direction of movement to the direction of the wheels at an increasing rate depending on
         // how far we're turned away from the direction of movement
-        var turnTransferRate = input.IsHandbraking ? driftTurnVelocityTransferRate : turnVelocityTransferRate;
+        var turnTransferRate = isSliding ? driftTurnVelocityTransferRate : turnVelocityTransferRate;
         var velocityTransferAmount = Speed * turnTransferRate * forwardDrivingGrip;
         debugger.ShowDebugValue("velocityTransferAmount", velocityTransferAmount);
         rb.AddForce(wheelForwardDirection * velocityTransferAmount * Time.deltaTime, ForceMode.VelocityChange);
@@ -170,14 +194,19 @@ public class CarController : MonoBehaviour {
             prevVelocity = rb.velocity;
         } else {
             Speed = 0;
+            slideTimer = 0;
+            isSliding = false;
         }
     }
 
     void OnDrawGizmos() {
         Gizmos.color = Color.red;
         Gizmos.DrawRay(transform.position, GetComponent<Rigidbody>().velocity);
-        Gizmos.color = Color.green;
+        if (isSliding) {
+            Gizmos.color = Color.magenta;
+        } else {
+            Gizmos.color = Color.green;
+        }
         Gizmos.DrawRay(transform.position, wheelForwardDirection * 5f);
-        Gizmos.color = Color.magenta;
     }
 }

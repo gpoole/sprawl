@@ -26,7 +26,7 @@ public class CarPlayerInput : MonoBehaviour {
 
     public bool IsHandbraking {
         get {
-            return controller.LeftTrigger; // x button
+            return controller.Action2; // b button
         }
     }
 
