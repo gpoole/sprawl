@@ -1562,8 +1562,8 @@ MonoBehaviour:
   warpPoints: []
   carStatus: {fileID: 1873039085}
   filterDebugMessages:
-  - brakeForce
-  - speed
+  - forwardDrivingGrip
+  - absWheelAlignmentDifference
   autoMinMax: 1
 --- !u!114 &1546519215
 MonoBehaviour:
@@ -1582,8 +1582,24 @@ MonoBehaviour:
   turnSpeed: 50
   driftTurnSpeed: 150
   maxSpeed: 70
-  minGrip: 0.5
-  maxGrip: 1
+  gripPower:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 2.166624
+      outSlope: 2.166624
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.99523926
+      value: 0.68141556
+      inSlope: 0.0289972
+      outSlope: 0.0289972
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
   maxWheelTurn: 10
   driftMaxTurnAngle: 70
   maxTurnAngle: 40
@@ -1615,7 +1631,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  brakingForceMultiplier: 10
+  brakingForceMultiplier: 20
 --- !u!54 &1546519216
 Rigidbody:
   m_ObjectHideFlags: 0
