@@ -31,9 +31,7 @@ public class CarController : MonoBehaviour {
 
     public float maxEngineSpeed = 3f;
 
-    public float sidewaysFriction = 2f;
-
-    public float forwardFriction = 1f;
+    public float surfaceFriction = 1f;
 
     public float straightenUpTime = 3f;
 
@@ -124,14 +122,16 @@ public class CarController : MonoBehaviour {
         }
         debugger.ShowDebugValue("absWheelAlignmentDifference", absWheelAlignmentDifference);
         // Calculate the grip so it increases rapidly as we get towards fully forward-facing
-        var forwardDrivingGrip = 1 - gripPower.Evaluate(absWheelAlignmentDifference / 90);
-        var forwardMovementForce = EngineSpeed * enginePower * forwardFriction * forwardDrivingGrip;
+        var forwardGrip = gripPower.Evaluate(absWheelAlignmentDifference / 90);
+        var sidewaysGrip = (1 - forwardGrip);
+        var forwardMovementForce = EngineSpeed * forwardGrip * surfaceFriction * enginePower * forwardGrip;
         // Only accelerate up to the maximum speed
         if (Speed + forwardMovementForce > maxSpeed) {
             forwardMovementForce = Math.Max(maxSpeed - Speed, 0f);
         }
         var forwardDrivingForce = wheelForwardDirection * forwardMovementForce * Time.deltaTime;
-        debugger.ShowDebugValue("forwardDrivingGrip", forwardDrivingGrip);
+        debugger.ShowDebugValue("forwardGrip", forwardGrip);
+        debugger.ShowDebugValue("sidewaysGrip", sidewaysGrip);
         rb.AddForce(forwardDrivingForce, ForceMode.VelocityChange);
 
         if (input.IsHandbraking && Speed > minSlideSpeed) {
@@ -158,15 +158,15 @@ public class CarController : MonoBehaviour {
         // Transfer velocity from the direction of movement to the direction of the wheels at an increasing rate depending on
         // how far we're turned away from the direction of movement
         var turnTransferRate = isSliding ? driftTurnVelocityTransferRate : turnVelocityTransferRate;
-        var velocityTransferAmount = Speed * turnTransferRate * forwardDrivingGrip;
+        var velocityTransferAmount = Speed * turnTransferRate * forwardGrip;
         debugger.ShowDebugValue("velocityTransferAmount", velocityTransferAmount);
         rb.AddForce(wheelForwardDirection * velocityTransferAmount * Time.deltaTime, ForceMode.VelocityChange);
         rb.AddForce(-rb.velocity.normalized * velocityTransferAmount * Time.deltaTime, ForceMode.VelocityChange);
 
         var sidewaysSpeed = Vector3.Project(rb.velocity, wheelRight);
-        rb.AddForce(-sidewaysSpeed * sidewaysFriction * Time.deltaTime, ForceMode.VelocityChange);
+        rb.AddForce(-sidewaysSpeed * sidewaysGrip * surfaceFriction * Time.deltaTime, ForceMode.VelocityChange);
 
-        var brakeForce = braking * brakingPower.Evaluate(Speed / maxSpeed) * brakingForceMultiplier * forwardDrivingGrip;
+        var brakeForce = braking * brakingPower.Evaluate(Speed / maxSpeed) * brakingForceMultiplier * forwardGrip * surfaceFriction;
         debugger.ShowDebugValue("brakeForce", brakeForce);
         rb.AddForce(-rb.velocity.normalized * brakeForce * Time.deltaTime, ForceMode.VelocityChange);
     }

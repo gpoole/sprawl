@@ -1562,7 +1562,8 @@ MonoBehaviour:
   warpPoints: []
   carStatus: {fileID: 1873039085}
   filterDebugMessages:
-  - forwardDrivingGrip
+  - forwardGrip
+  - sidewaysGrip
   - absWheelAlignmentDifference
   autoMinMax: 1
 --- !u!114 &1546519215
@@ -1586,14 +1587,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0
-      value: 0
-      inSlope: 2.166624
-      outSlope: 2.166624
+      time: 0.0024480922
+      value: 0.9987016
+      inSlope: -0.013769216
+      outSlope: -0.013769216
       tangentMode: 0
     - serializedVersion: 2
       time: 0.99523926
-      value: 0.68141556
+      value: 0.49609756
       inSlope: 0.0289972
       outSlope: 0.0289972
       tangentMode: 0
@@ -1607,8 +1608,7 @@ MonoBehaviour:
   reverseAcceleration: 3
   enginePower: 15
   maxEngineSpeed: 1.6
-  sidewaysFriction: 0.5
-  forwardFriction: 1
+  surfaceFriction: 1
   straightenUpTime: 0.3
   straightenUpAngle: 20
   minSlideSpeed: 40
