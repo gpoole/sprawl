@@ -16,6 +16,8 @@ public class CarDebugger : MonoBehaviour {
 
     public string[] filterDebugMessages;
 
+    public bool autoMinMax = true;
+
     private Dictionary<string, object> debugValues = new Dictionary<string, object>();
 
     private CarPlayerInput input;
@@ -63,18 +65,20 @@ public class CarDebugger : MonoBehaviour {
     public void ShowDebugValue(string label, float value) {
         debugValues[label] = value;
 
-        var maxLabel = label + " (max)";
-        if (debugValues.ContainsKey(maxLabel)) {
-            debugValues[maxLabel] = Mathf.Max(value, (float) debugValues[maxLabel]);
-        } else {
-            debugValues[maxLabel] = value;
-        }
+        if (autoMinMax) {
+            var maxLabel = label + " (max)";
+            if (debugValues.ContainsKey(maxLabel)) {
+                debugValues[maxLabel] = Mathf.Max(value, (float) debugValues[maxLabel]);
+            } else {
+                debugValues[maxLabel] = value;
+            }
 
-        var minLabel = label + " (min)";
-        if (debugValues.ContainsKey(minLabel)) {
-            debugValues[minLabel] = Mathf.Min(value, (float) debugValues[minLabel]);
-        } else {
-            debugValues[minLabel] = value;
+            var minLabel = label + " (min)";
+            if (debugValues.ContainsKey(minLabel)) {
+                debugValues[minLabel] = Mathf.Min(value, (float) debugValues[minLabel]);
+            } else {
+                debugValues[minLabel] = value;
+            }
         }
     }
 

@@ -88,6 +88,8 @@ public class CarController : MonoBehaviour {
         input = GetComponent<CarPlayerInput>();
         rb = GetComponent<Rigidbody>();
         originalCentreOfMass = transform.Find("CentreOfMass").localPosition;
+
+        rb.centerOfMass = Vector3.zero;
     }
 
     private CarWheel[] GetWheels() {
@@ -107,11 +109,12 @@ public class CarController : MonoBehaviour {
     }
 
     private void UpdateCentreOfMass() {
-        var forwardAcceleration = Mathf.Clamp(Vector3.Project(rb.velocity, transform.forward).magnitude - Vector3.Project(prevVelocity, transform.forward).magnitude, -0.4f, 0.4f);
-        var sidewaysAcceleration = Mathf.Clamp(Vector3.Project(rb.velocity, transform.right).magnitude - Vector3.Project(prevVelocity, transform.right).magnitude, -0.4f, 0.4f);
-        rb.centerOfMass = Vector3.Lerp(rb.centerOfMass, originalCentreOfMass - (Vector3.forward * forwardAcceleration * 2f), Time.deltaTime);
-        rb.centerOfMass = Vector3.Lerp(rb.centerOfMass, originalCentreOfMass + (Vector3.up * forwardAcceleration * 1.5f), Time.deltaTime);
-        rb.centerOfMass = Vector3.Lerp(rb.centerOfMass, originalCentreOfMass - (Vector3.right * sidewaysAcceleration * 2.5f), Time.deltaTime);
+        var forwardAcceleration = Vector3.Project(rb.velocity, transform.forward).magnitude / maxSpeed;
+        var sidewaysAcceleration = Vector3.Project(rb.velocity, transform.right).magnitude / maxSpeed;
+        var newCentre = originalCentreOfMass - (Vector3.forward * forwardAcceleration * 0.75f);
+        newCentre = newCentre - (Vector3.up * forwardAcceleration * 0.5f);
+        newCentre = newCentre - (Vector3.right * sidewaysAcceleration * 1f);
+        rb.centerOfMass = Vector3.Lerp(rb.centerOfMass, newCentre, Time.deltaTime);
     }
 
     private void ApplyDrivingForces() {
@@ -153,7 +156,6 @@ public class CarController : MonoBehaviour {
         var allowedTurnAngle = input.IsHandbraking ? driftMaxTurnAngle : maxTurnAngle;
         var turnSpeed = input.IsHandbraking ? driftTurnSpeed : this.turnSpeed;
         if (Mathf.Abs(motionWheelAlignmentDifference) < allowedTurnAngle) {
-            // rb.AddRelativeTorque(Vector3.up * WheelOrientation * turnSpeed * Time.deltaTime, ForceMode.VelocityChange);
             rb.AddTorque(Vector3.Cross(transform.forward, wheelForwardDirection) * turnSpeed * Time.deltaTime, ForceMode.VelocityChange);
         }
 
@@ -211,6 +213,9 @@ public class CarController : MonoBehaviour {
         Gizmos.color = Color.green;
         Gizmos.DrawRay(transform.position, wheelForwardDirection * 5f);
         Gizmos.color = Color.magenta;
-        Gizmos.DrawSphere(transform.TransformPoint(rb.centerOfMass), 0.1f);
+
+        if (rb != null) {
+            Gizmos.DrawSphere(transform.TransformPoint(rb.centerOfMass), 0.1f);
+        }
     }
 }

@@ -53,4 +53,5 @@
         "*.asset": "yaml"
     },
     "csharpfixformat.style.spaces.beforeParenthesis": false,
+    "csharp.format.enable": false
 }

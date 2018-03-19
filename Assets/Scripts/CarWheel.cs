@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,19 +19,21 @@ public class CarWheel : MonoBehaviour {
 
     private bool isFrontWheel;
 
-    private GameObject car;
-
-    private Transform visualWheel;
-
     public bool grounded {
         get;
         private set;
     }
 
+    private GameObject car;
+
+    private Transform visualWheel;
+
+    private CarDebugger debugger;
+
     void Start() {
-        var transform = GetComponent<Transform>();
         visualWheel = transform.GetChild(0);
         car = transform.parent.parent.gameObject;
+        debugger = car.GetComponent<CarDebugger>();
         isFrontWheel = transform.localPosition.z > 0;
     }
 
@@ -51,19 +54,22 @@ public class CarWheel : MonoBehaviour {
 
     // Update is called once per frame
     void FixedUpdate() {
-        var transform = GetComponent<Transform>();
-        // FIXME: probably better way to do that...
         var rb = car.GetComponent<Rigidbody>();
+        var tyreId = String.Format("wheel{0}{1}", isFrontWheel ? "Front" : "Back", transform.localPosition.x > 0 ? "Left" : "Right");
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, targetLength)) {
             var compressionRatio = 1f - (hit.distance / targetLength);
             var springForce = compressionRatio * springFactor;
             var dampingForce = (prevCompression - compressionRatio) * dampingFactor;
             var totalForce = springForce - dampingForce;
+            debugger.ShowDebugValue(tyreId + "Compression", compressionRatio);
+            debugger.ShowDebugValue(tyreId + "SpringForce", springForce);
+            debugger.ShowDebugValue(tyreId + "DampingForce", springForce);
             prevCompression = compressionRatio;
             rb.AddForceAtPosition(transform.TransformDirection(Vector3.up) * totalForce * Time.deltaTime, transform.position, ForceMode.VelocityChange);
             grounded = true;
         } else {
+            prevCompression = 0f;
             grounded = false;
         }
     }
