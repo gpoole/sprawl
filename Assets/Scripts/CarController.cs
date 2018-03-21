@@ -47,6 +47,11 @@ public class CarController : MonoBehaviour {
 
     public float brakingForceMultiplier = 10f;
 
+    public float WheelAlignmentDifference {
+        get;
+        private set;
+    }
+
     public float WheelOrientation {
         get;
         private set;
@@ -60,6 +65,10 @@ public class CarController : MonoBehaviour {
     public float Speed {
         get;
         private set;
+    }
+
+    public bool IsGrounded {
+        get { return wheels.Any(wheel => wheel.Grounded); }
     }
 
     private bool isReversing = false;
@@ -114,17 +123,15 @@ public class CarController : MonoBehaviour {
         var wheelSidewaysRotation = Quaternion.AngleAxis(90, Vector3.up);
         wheelForwardDirection = transform.TransformDirection(wheelRotation * Vector3.forward).normalized;
         var wheelRight = transform.TransformDirection(wheelRotation * wheelSidewaysRotation * Vector3.forward);
-        var motionWheelAlignmentDifference = Vector3.SignedAngle(wheelForwardDirection, rb.velocity, Vector3.up);
-        debugger.ShowDebugValue("motionWheelAlignmentDifference", motionWheelAlignmentDifference);
 
         // Drive the car forward in the direction of the wheels
-        float absWheelAlignmentDifference = Math.Abs(motionWheelAlignmentDifference);
-        if (absWheelAlignmentDifference > 90) {
-            absWheelAlignmentDifference = 180 - absWheelAlignmentDifference;
+        WheelAlignmentDifference = Math.Abs(Vector3.SignedAngle(wheelForwardDirection, rb.velocity, Vector3.up));
+        if (WheelAlignmentDifference > 90) {
+            WheelAlignmentDifference = 180 - WheelAlignmentDifference;
         }
-        debugger.ShowDebugValue("absWheelAlignmentDifference", absWheelAlignmentDifference);
+        debugger.ShowDebugValue("absWheelAlignmentDifference", WheelAlignmentDifference);
         // Calculate the grip so it increases rapidly as we get towards fully forward-facing
-        var forwardGrip = gripPower.Evaluate(absWheelAlignmentDifference / 90);
+        var forwardGrip = gripPower.Evaluate(WheelAlignmentDifference / 90);
         var sidewaysGrip = (1 - forwardGrip);
         var forwardMovementForce = EngineSpeed * forwardGrip * surfaceFriction * enginePower * forwardGrip;
         // Only accelerate up to the maximum speed
@@ -139,7 +146,7 @@ public class CarController : MonoBehaviour {
         if (input.IsHandbraking && Speed > minSlideSpeed) {
             isSliding = true;
             slideTimer = straightenUpTime;
-        } else if (absWheelAlignmentDifference < straightenUpAngle) {
+        } else if (WheelAlignmentDifference < straightenUpAngle) {
             if (slideTimer > 0) {
                 slideTimer -= Time.deltaTime;
             } else {
@@ -153,7 +160,7 @@ public class CarController : MonoBehaviour {
         // Turn the car up to a maximum angle against the direction of movement
         var allowedTurnAngle = isSliding ? driftMaxTurnAngle : maxTurnAngle;
         var turnSpeed = isSliding ? driftTurnSpeed : this.turnSpeed;
-        if (Mathf.Abs(motionWheelAlignmentDifference) < allowedTurnAngle) {
+        if (WheelAlignmentDifference < allowedTurnAngle) {
             rb.AddTorque(Vector3.Cross(transform.forward, wheelForwardDirection) * turnSpeed * Time.deltaTime, ForceMode.VelocityChange);
         }
 
@@ -197,8 +204,7 @@ public class CarController : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        var isGrounded = wheels.Any(wheel => wheel.Grounded);
-        if (isGrounded) {
+        if (IsGrounded) {
             RaycastHit roadSurface;
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out roadSurface, 1f)) {
                 surfaceFriction = roadSurface.collider.material.dynamicFriction;

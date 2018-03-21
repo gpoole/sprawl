@@ -1276,6 +1276,7 @@ GameObject:
   - component: {fileID: 1546519220}
   - component: {fileID: 1546519214}
   - component: {fileID: 1546519219}
+  - component: {fileID: 1546519221}
   m_Layer: 2
   m_Name: Buggy1
   m_TagString: Untagged
@@ -1462,6 +1463,22 @@ MonoBehaviour:
   engineLowPitch: 0.59
   engineHighPitch: 1.51
   engineIdlePitch: 1.06
+--- !u!114 &1546519221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1546519212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2474e08b1e47f4d7aaecfd7acaccc3ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  start: {fileID: 8300000, guid: 37734b78f5e804c6db0284e68a4f64cc, type: 3}
+  loop: {fileID: 8300000, guid: b153a386582c14eb5847da75c22e708e, type: 3}
+  end: {fileID: 8300000, guid: 8dd02ef01473a41c1b095b0f455c1a98, type: 3}
+  skidBeginSpeed: 20
+  skidBeginAngle: 25
 --- !u!1 &1642369759
 GameObject:
   m_ObjectHideFlags: 0
