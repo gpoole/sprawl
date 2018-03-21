@@ -19,6 +19,8 @@ public class CarController : MonoBehaviour {
 
     public float maxWheelTurn = 10f;
 
+    public float driftBrakePower = 1f;
+
     public float driftMaxTurnAngle = 80f;
 
     public float maxTurnAngle = 30f;
@@ -168,7 +170,14 @@ public class CarController : MonoBehaviour {
         var sidewaysSpeed = Vector3.Project(rb.velocity, wheelRight);
         rb.AddForce(-sidewaysSpeed * sidewaysGrip * surfaceFriction * Time.deltaTime, ForceMode.VelocityChange);
 
-        var brakeForce = braking * brakingPower.Evaluate(Speed / maxSpeed) * brakingForceMultiplier * forwardGrip * surfaceFriction;
+        float baseBraking = 0;
+        if (isSliding) {
+            baseBraking = driftBrakePower;
+        } else {
+            baseBraking = braking;
+        }
+
+        var brakeForce = baseBraking * brakingPower.Evaluate(Speed / maxSpeed) * brakingForceMultiplier * forwardGrip * surfaceFriction;
         debugger.ShowDebugValue("brakeForce", brakeForce);
         rb.AddForce(-rb.velocity.normalized * brakeForce * Time.deltaTime, ForceMode.VelocityChange);
     }
