@@ -4,47 +4,64 @@ using UnityEngine;
 
 public class CarSkidSound : MonoBehaviour {
 
-	public AudioClip start;
+	public AudioClip slideStart;
 
-	public AudioClip loop;
+	public AudioClip slideLoop;
 
-	public AudioClip end;
+	public AudioClip slideEnd;
 
-	public float skidBeginSpeed;
+	public AudioClip[] skids;
 
-	public float skidBeginAngle;
+	public float slideBeginSpeed;
 
-	private AudioSource audioSource;
+	public float slideBeginAngle;
+
+	public float skidVelocity;
+
+	private AudioSource slideAudioSource;
+
+	private AudioSource skidAudioSource;
 
 	private CarController car;
 
 	new private Rigidbody rigidbody;
 
+	private float prevAngularVelocity = 0f;
+
 	// Use this for initialization
 	void Start () {
-		audioSource = (AudioSource)gameObject.AddComponent(typeof(AudioSource));
+		slideAudioSource = (AudioSource)gameObject.AddComponent(typeof(AudioSource));
+		skidAudioSource = (AudioSource)gameObject.AddComponent(typeof(AudioSource));
 		car = GetComponent<CarController>();
 		rigidbody = GetComponent<Rigidbody>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		var isSkidding = car.IsGrounded && rigidbody.velocity.magnitude > skidBeginSpeed && car.WheelAlignmentDifference > skidBeginAngle;
+		var isSliding = car.IsGrounded && rigidbody.velocity.magnitude > slideBeginSpeed && car.WheelAlignmentDifference > slideBeginAngle;
 
-		if (isSkidding) {
-			if (!audioSource.isPlaying) {
-				audioSource.clip = start;
-				audioSource.loop = false;
-				audioSource.Play();
-			} else if (audioSource.clip != loop) {
-				audioSource.loop = true;
-				audioSource.clip = loop;
-				audioSource.Play();
+		if (isSliding) {
+			if (!slideAudioSource.isPlaying) {
+				slideAudioSource.clip = slideStart;
+				slideAudioSource.loop = false;
+				slideAudioSource.Play();
+			} else if (slideAudioSource.clip != slideLoop) {
+				slideAudioSource.loop = true;
+				slideAudioSource.clip = slideLoop;
+				slideAudioSource.Play();
 			}
-		} else if (audioSource.isPlaying && audioSource.clip != end) {
-			audioSource.clip = end;
-			audioSource.loop = false;
-			audioSource.Play();
+		} else if (slideAudioSource.isPlaying && slideAudioSource.clip != slideEnd) {
+			slideAudioSource.clip = slideEnd;
+			slideAudioSource.loop = false;
+			slideAudioSource.Play();
 		}
+
+		// var wheelAlignmentChange = prevWheelAlignmentDifference - car.WheelAlignmentDifference;
+		var angularVelocityChange = rigidbody.angularVelocity.magnitude - prevAngularVelocity;
+		if (car.IsGrounded && angularVelocityChange > skidVelocity && !skidAudioSource.isPlaying) {
+			skidAudioSource.clip = skids[Random.Range(0, skids.Length)];
+			skidAudioSource.Play();
+		}
+		prevAngularVelocity = rigidbody.angularVelocity.magnitude;
 	}
 }

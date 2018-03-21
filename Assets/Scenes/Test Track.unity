@@ -477,10 +477,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
+  m_Radius: 0.3848816
   m_Height: 2.0926378
   m_Direction: 0
-  m_Center: {x: -0.6052699, y: -0.0043417043, z: 0.5146954}
+  m_Center: {x: -0.6052699, y: -0.02382557, z: 0.38009322}
 --- !u!1 &614630226
 GameObject:
   m_ObjectHideFlags: 0
@@ -645,7 +645,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 500492862}
   m_LocalRotation: {x: -0.5, y: 0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: 0.029, y: -0.32, z: -0.58}
+  m_LocalPosition: {x: 0.029, y: -0.091, z: -0.58}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1016034049}
@@ -673,7 +673,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: cf6e54cfbb3f443a3b0f247bca511741, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.544
+      value: 0.296
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: cf6e54cfbb3f443a3b0f247bca511741, type: 3}
       propertyPath: m_LocalRotation.x
@@ -1091,12 +1091,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   compress:
-  - {fileID: 8300000, guid: 1dfe558d52b4d444984a682c02e6e3b8, type: 3}
-  - {fileID: 8300000, guid: b4c998f1e7984436688a69c71c8abcdc, type: 3}
-  - {fileID: 8300000, guid: 9c5ef68cd755a4f1d935b29f827397bb, type: 3}
+  - {fileID: 8300000, guid: 4ca051fbef8c24133a79c522acac445f, type: 3}
   extend:
-  - {fileID: 8300000, guid: 645437cc2ed9a4fd181efcd7f411b6e0, type: 3}
-  - {fileID: 8300000, guid: dee8af13fe3b948c18670f62ee342295, type: 3}
+  - {fileID: 8300000, guid: fce30baebc04d4e3793a5be9ad4ec1a8, type: 3}
   changeTrigger: 0.221
 --- !u!1 &1309749878
 GameObject:
@@ -1160,12 +1157,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   compress:
-  - {fileID: 8300000, guid: 1dfe558d52b4d444984a682c02e6e3b8, type: 3}
-  - {fileID: 8300000, guid: b4c998f1e7984436688a69c71c8abcdc, type: 3}
-  - {fileID: 8300000, guid: 9c5ef68cd755a4f1d935b29f827397bb, type: 3}
+  - {fileID: 8300000, guid: 4ca051fbef8c24133a79c522acac445f, type: 3}
   extend:
-  - {fileID: 8300000, guid: 645437cc2ed9a4fd181efcd7f411b6e0, type: 3}
-  - {fileID: 8300000, guid: dee8af13fe3b948c18670f62ee342295, type: 3}
+  - {fileID: 8300000, guid: fce30baebc04d4e3793a5be9ad4ec1a8, type: 3}
   changeTrigger: 0.221
 --- !u!1 &1383451072
 GameObject:
@@ -1273,12 +1267,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   compress:
-  - {fileID: 8300000, guid: 1dfe558d52b4d444984a682c02e6e3b8, type: 3}
-  - {fileID: 8300000, guid: b4c998f1e7984436688a69c71c8abcdc, type: 3}
-  - {fileID: 8300000, guid: 9c5ef68cd755a4f1d935b29f827397bb, type: 3}
+  - {fileID: 8300000, guid: 4ca051fbef8c24133a79c522acac445f, type: 3}
   extend:
-  - {fileID: 8300000, guid: 645437cc2ed9a4fd181efcd7f411b6e0, type: 3}
-  - {fileID: 8300000, guid: dee8af13fe3b948c18670f62ee342295, type: 3}
+  - {fileID: 8300000, guid: fce30baebc04d4e3793a5be9ad4ec1a8, type: 3}
   changeTrigger: 0.221
 --- !u!1 &1546519212
 GameObject:
@@ -1494,11 +1485,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2474e08b1e47f4d7aaecfd7acaccc3ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  start: {fileID: 8300000, guid: 37734b78f5e804c6db0284e68a4f64cc, type: 3}
-  loop: {fileID: 8300000, guid: b153a386582c14eb5847da75c22e708e, type: 3}
-  end: {fileID: 8300000, guid: 8dd02ef01473a41c1b095b0f455c1a98, type: 3}
-  skidBeginSpeed: 20
-  skidBeginAngle: 25
+  slideStart: {fileID: 8300000, guid: 37734b78f5e804c6db0284e68a4f64cc, type: 3}
+  slideLoop: {fileID: 8300000, guid: b153a386582c14eb5847da75c22e708e, type: 3}
+  slideEnd: {fileID: 8300000, guid: 8dd02ef01473a41c1b095b0f455c1a98, type: 3}
+  skids:
+  - {fileID: 8300000, guid: 6c1ace4ea764148fa9a6b148ce2828b8, type: 3}
+  - {fileID: 8300000, guid: b3ef0996547bb4c9f9c803b78d4a9f31, type: 3}
+  slideBeginSpeed: 10
+  slideBeginAngle: 45
+  skidVelocity: 0.5
 --- !u!1 &1642369759
 GameObject:
   m_ObjectHideFlags: 0
@@ -1577,12 +1572,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   compress:
-  - {fileID: 8300000, guid: 1dfe558d52b4d444984a682c02e6e3b8, type: 3}
-  - {fileID: 8300000, guid: b4c998f1e7984436688a69c71c8abcdc, type: 3}
-  - {fileID: 8300000, guid: 9c5ef68cd755a4f1d935b29f827397bb, type: 3}
+  - {fileID: 8300000, guid: 4ca051fbef8c24133a79c522acac445f, type: 3}
   extend:
-  - {fileID: 8300000, guid: 645437cc2ed9a4fd181efcd7f411b6e0, type: 3}
-  - {fileID: 8300000, guid: dee8af13fe3b948c18670f62ee342295, type: 3}
+  - {fileID: 8300000, guid: fce30baebc04d4e3793a5be9ad4ec1a8, type: 3}
   changeTrigger: 0.221
 --- !u!1001 &1818412095
 Prefab:
