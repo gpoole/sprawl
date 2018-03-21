@@ -1592,7 +1592,9 @@ GameObject:
   - component: {fileID: 1546519217}
   - component: {fileID: 1546519218}
   - component: {fileID: 1546519215}
+  - component: {fileID: 1546519220}
   - component: {fileID: 1546519214}
+  - component: {fileID: 1546519219}
   m_Layer: 2
   m_Name: Buggy1
   m_TagString: Untagged
@@ -1633,7 +1635,7 @@ MonoBehaviour:
   warpPoints: []
   carStatus: {fileID: 1873039085}
   filterDebugMessages:
-  - aaaaaa
+  - engineSpeed
   autoMinMax: 1
 --- !u!114 &1546519215
 MonoBehaviour:
@@ -1747,6 +1749,102 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerNumber: 1
+--- !u!82 &1546519219
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1546519212}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+--- !u!114 &1546519220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1546519212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17e71791f65674b27a668886ed05032d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  engineIdle: {fileID: 8300000, guid: ffb00f2f7f6914def8ff92e599c3c51e, type: 3}
+  engineMid: {fileID: 8300000, guid: bf1ab3243e3af4f5dbb5d833650f2985, type: 3}
+  engineLowPitch: 0.59
+  engineHighPitch: 1.51
+  engineIdlePitch: 1.06
 --- !u!1 &1594426733
 GameObject:
   m_ObjectHideFlags: 0
@@ -2081,6 +2179,8 @@ MonoBehaviour:
   useFixedUpdate: 1
   useLateUpdate: 1
   spin: 0
+  centreOfMass: {fileID: 0}
+  rigidbody: {fileID: 0}
 --- !u!23 &2069337942
 MeshRenderer:
   m_ObjectHideFlags: 0

@@ -19,9 +19,13 @@ public class CarWheel : MonoBehaviour {
 
     private bool isFrontWheel;
 
-    public bool grounded {
+    public bool Grounded {
         get;
         private set;
+    }
+
+    public float Compression {
+        get { return prevCompression; }
     }
 
     private GameObject car;
@@ -52,7 +56,7 @@ public class CarWheel : MonoBehaviour {
             }
 
             if (visualWheel) {
-                if (grounded) {
+                if (Grounded) {
                     visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.Speed / carController.maxSpeed) * Time.deltaTime);
                 } else {
                     visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.EngineSpeed / carController.maxEngineSpeed) * Time.deltaTime);
@@ -74,10 +78,10 @@ public class CarWheel : MonoBehaviour {
             var totalForce = springForce - dampingForce;
             prevCompression = compressionRatio;
             carRigidBody.AddForceAtPosition(transform.TransformDirection(Vector3.up) * totalForce * Time.deltaTime, transform.position, ForceMode.VelocityChange);
-            grounded = true;
+            Grounded = true;
         } else {
             prevCompression = 0f;
-            grounded = false;
+            Grounded = false;
         }
     }
 
