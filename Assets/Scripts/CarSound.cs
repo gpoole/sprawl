@@ -22,22 +22,30 @@ public class CarSound : MonoBehaviour {
 	private AudioSource carEngineSource;
 
 	// Use this for initialization
-	void Start () {
+	void Start() {
 		car = GetComponent<CarController>();
 
-		carEngineSource = (AudioSource)gameObject.AddComponent(typeof(AudioSource));
+		carEngineSource = (AudioSource) gameObject.AddComponent(typeof(AudioSource));
 		carEngineSource.loop = true;
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	void Update() {
 		if (car.EngineSpeed > 0.05) {
 			var pitchRange = engineHighPitch - engineLowPitch;
 			carEngineSource.pitch = engineLowPitch + (pitchRange * (car.EngineSpeed / car.maxEngineSpeed));
+			carEngineSource.loop = true;
 			ChangeClip(engineMid);
 		} else {
-			carEngineSource.pitch = engineIdlePitch;
-			ChangeClip(engineIdle);
+			if (carEngineSource.isPlaying) {
+				if (carEngineSource.clip != engineIdle) {
+					carEngineSource.loop = false;
+				}
+			} else {
+				carEngineSource.pitch = engineIdlePitch;
+				carEngineSource.loop = true;
+				ChangeClip(engineIdle);
+			}
 		}
 	}
 

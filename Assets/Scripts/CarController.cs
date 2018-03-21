@@ -25,9 +25,9 @@ public class CarController : MonoBehaviour {
 
     public float maxTurnAngle = 30f;
 
-    public float accelerationFactor = 10f;
+    public float engineSpeedIncreaseRate = 1f;
 
-    public float reverseAcceleration = 3f;
+    public float engineSpeedDecreaseRate = 1f;
 
     public float enginePower = 10f;
 
@@ -188,13 +188,12 @@ public class CarController : MonoBehaviour {
     }
 
     void Update() {
-        EngineSpeed = Mathf.Lerp(EngineSpeed, 0, Time.deltaTime);
         if (input.Accelerator > 0) {
-            EngineSpeed += input.Accelerator * accelerationFactor * Time.deltaTime;
+            EngineSpeed += input.Accelerator * engineSpeedIncreaseRate * Time.deltaTime;
         } else {
-            EngineSpeed += input.Accelerator * reverseAcceleration * Time.deltaTime;
+            EngineSpeed -= engineSpeedDecreaseRate * Time.deltaTime;
         }
-        EngineSpeed = Mathf.Min(EngineSpeed, maxEngineSpeed);
+        EngineSpeed = Mathf.Clamp(EngineSpeed, 0, maxEngineSpeed);
         debugger.ShowDebugValue("engineSpeed", EngineSpeed);
 
         WheelOrientation = Mathf.Lerp(WheelOrientation, maxWheelTurn * input.Turning, Time.deltaTime * 50f);
