@@ -26,6 +26,7 @@ public class CarSound : MonoBehaviour {
 		car = GetComponent<CarController>();
 
 		carEngineSource = (AudioSource)gameObject.AddComponent(typeof(AudioSource));
+		carEngineSource.loop = true;
 	}
 	
 	// Update is called once per frame
