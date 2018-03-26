@@ -1317,6 +1317,8 @@ MonoBehaviour:
   filterDebugMessages:
   - speed
   - engineSpeed
+  - isReversing
+  - sidewaysness
   autoMinMax: 1
 --- !u!114 &1546519215
 MonoBehaviour:
@@ -1330,11 +1332,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8afaff0154db482ca0c50ec8bc0ddd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turnVelocityTransferRate: 2
+  turnVelocityTransferRate: 1
   driftTurnVelocityTransferRate: 1
+  stoppedSpeed: 0.5
   turnSpeed: 50
   driftTurnSpeed: 150
   maxSpeed: 70
+  maxReverseSpeed: -10
   gripPower:
     serializedVersion: 2
     m_Curve:
@@ -1353,13 +1357,31 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+  sidewaysFriction:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.998291
+      value: 1.00177
+      inSlope: 0.03252515
+      outSlope: 0.03252515
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
   maxWheelTurn: 10
   driftBrakePower: 0.7
   driftMaxTurnAngle: 70
   maxTurnAngle: 40
   engineSpeedIncreaseRate: 0.8
-  engineSpeedDecreaseRate: 0.3
-  enginePower: 15
+  engineSpeedDecreaseRate: 0.7
+  enginePower: 1000
   maxEngineSpeed: 1.6
   defaultSurfaceFriction: 1
   straightenUpTime: 0.3
@@ -1370,10 +1392,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0
-      value: 0
-      inSlope: 2.925663
-      outSlope: 2.925663
+      time: 0.0023918152
+      value: 0.29937744
+      inSlope: 2.0291102
+      outSlope: 2.0291102
       tangentMode: 0
     - serializedVersion: 2
       time: 1
