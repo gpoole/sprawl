@@ -23,6 +23,8 @@ public class CarController : MonoBehaviour {
 
     public AnimationCurve sidewaysFriction;
 
+    public AnimationCurve accelerationSpeed;
+
     public float maxWheelTurn = 10f;
 
     public float driftBrakePower = 1f;
@@ -53,7 +55,7 @@ public class CarController : MonoBehaviour {
 
     public float brakingForceMultiplier = 10f;
 
-    public float WheelAlignmentDifference {
+    public float VelocityAlignmentDifference {
         get;
         private set;
     }
@@ -80,8 +82,6 @@ public class CarController : MonoBehaviour {
     private bool isReversing = false;
 
     private bool isStopped = true;
-
-    private float braking;
 
     private CarPlayerInput input;
 
@@ -118,36 +118,46 @@ public class CarController : MonoBehaviour {
     }
 
     private void ApplyDrivingForces() {
-        var forwardVelocity = Vector3.Project(rb.velocity, transform.forward);
-        Speed = forwardVelocity.z;
+        var surfaceVelocity = transform.InverseTransformDirection(rb.velocity);
+        surfaceVelocity.y = 0;
+        Speed = surfaceVelocity.z;
         debugger.ShowDebugValue("speed", Speed);
-        isReversing = Speed < 0;
         isStopped = Math.Abs(Speed) < stoppedSpeed;
+        WheelOrientation = input.Turning * maxWheelTurn;
+
+        if (input.Accelerator > 0) {
+            isReversing = false;
+        }
+
+        if ((isReversing || isStopped) && input.Brakes > 0) {
+            isReversing = true;
+        }
         debugger.ShowDebugValue("isReversing", isReversing);
 
         var wheelRotation = Quaternion.AngleAxis(WheelOrientation, Vector3.up);
-        var wheelSidewaysRotation = Quaternion.AngleAxis(90, Vector3.up);
-        wheelForwardDirection = transform.TransformDirection(wheelRotation * Vector3.forward).normalized;
-        var wheelRight = transform.TransformDirection(wheelRotation * wheelSidewaysRotation * Vector3.forward);
+        wheelForwardDirection = (wheelRotation * Vector3.forward).normalized;
 
         // Drive the car forward in the direction of the wheels
-        WheelAlignmentDifference = Math.Abs(Vector3.SignedAngle(wheelForwardDirection, rb.velocity, transform.up));
-        if (WheelAlignmentDifference > 90) {
-            WheelAlignmentDifference = 180 - WheelAlignmentDifference;
+        VelocityAlignmentDifference = Vector3.Angle(wheelForwardDirection, surfaceVelocity);
+        if (VelocityAlignmentDifference > 90) {
+            VelocityAlignmentDifference = 180 - VelocityAlignmentDifference;
         }
-        debugger.ShowDebugValue("absWheelAlignmentDifference", WheelAlignmentDifference);
+
+        float acceleration;
+        if (!isReversing) {
+            acceleration = accelerationSpeed.Evaluate((maxSpeed - Speed) / maxSpeed) * input.Accelerator;
+        } else {
+            acceleration = -accelerationSpeed.Evaluate((maxReverseSpeed - Speed) / maxReverseSpeed) * input.Brakes;
+        }
         // Calculate the grip so it increases rapidly as we get towards fully forward-facing
-        var forwardGrip = gripPower.Evaluate(WheelAlignmentDifference / 90);
-        var forwardMovementForce = EngineSpeed * forwardGrip * surfaceFriction * enginePower * forwardGrip;
-        debugger.ShowDebugValue("forwardMovementForce", forwardMovementForce);
-        var forwardDrivingForce = wheelForwardDirection * forwardMovementForce * Time.deltaTime;
-        debugger.ShowDebugValue("forwardGrip", forwardGrip);
-        rb.AddForce(forwardDrivingForce, ForceMode.Acceleration);
+        var forwardGrip = gripPower.Evaluate(VelocityAlignmentDifference / 90) * surfaceFriction;
+        var forwardDrivingForce = wheelForwardDirection * forwardGrip * acceleration * enginePower * Time.deltaTime;
+        rb.AddRelativeForce(forwardDrivingForce, ForceMode.VelocityChange);
 
         if (!isReversing && input.IsHandbraking && Speed > minSlideSpeed) {
             isSliding = true;
             slideTimer = straightenUpTime;
-        } else if (WheelAlignmentDifference < straightenUpAngle) {
+        } else if (VelocityAlignmentDifference < straightenUpAngle) {
             if (slideTimer > 0) {
                 slideTimer -= Time.deltaTime;
             } else {
@@ -155,63 +165,32 @@ public class CarController : MonoBehaviour {
             }
         }
 
-        debugger.ShowDebugValue("isSliding", isSliding);
-        debugger.ShowDebugValue("slideTimer", slideTimer, false);
-
-        var angleToMovement = Mathf.Abs(Vector3.SignedAngle(transform.forward, rb.velocity, transform.up));
-        if (angleToMovement > 90) {
-            angleToMovement = 180 - angleToMovement;
-        }
-        var sidewaysness = angleToMovement / 90;
-
-        // Transfer velocity from the direction of movement to the direction of the wheels at an increasing rate depending on
-        // how far we're turned away from the direction of movement
-        var velocityTransferAmount = Speed * turnVelocityTransferRate * sidewaysness * forwardGrip;
-        debugger.ShowDebugValue("velocityTransferAmount", velocityTransferAmount);
-        rb.AddForce(wheelForwardDirection * velocityTransferAmount * Time.deltaTime, ForceMode.VelocityChange);
+        // Transfer velocity as we turn
+        var velocityTransferAmount = Speed * turnVelocityTransferRate * (WheelOrientation / maxWheelTurn) * forwardGrip;
+        rb.AddRelativeForce(Vector3.right * velocityTransferAmount * Time.deltaTime, ForceMode.VelocityChange);
+        rb.AddRelativeForce(-Vector3.forward * Math.Abs(velocityTransferAmount) * Time.deltaTime, ForceMode.VelocityChange);
 
         // Turn the car up to a maximum angle against the direction of movement
         var allowedTurnAngle = isSliding ? driftMaxTurnAngle : maxTurnAngle;
         var turnSpeed = isSliding ? driftTurnSpeed : this.turnSpeed;
-        if (WheelAlignmentDifference < allowedTurnAngle) {
-            rb.AddTorque(Vector3.Cross(transform.forward, wheelForwardDirection) * turnSpeed * Time.deltaTime, ForceMode.VelocityChange);
-        }
+        rb.AddRelativeTorque(Vector3.Cross(Vector3.forward, wheelForwardDirection) * Mathf.Clamp01((allowedTurnAngle - VelocityAlignmentDifference) / allowedTurnAngle) * turnSpeed * Time.deltaTime, ForceMode.VelocityChange);
 
-        var sideFriction = sidewaysFriction.Evaluate(sidewaysness);
-        var sideways = Vector3.Project(transform.InverseTransformDirection(rb.velocity), Vector3.right);
-        rb.AddForce(-sideways * sideFriction * surfaceFriction * Time.deltaTime, ForceMode.VelocityChange);
+        var sideFriction = sidewaysFriction.Evaluate(VelocityAlignmentDifference / 90);
+        var sidewaysVelocity = Vector3.Project(surfaceVelocity, Vector3.right);
+        rb.AddRelativeForce(-sidewaysVelocity * sideFriction * surfaceFriction * Time.deltaTime, ForceMode.VelocityChange);
 
         if (!isReversing) {
             float baseBraking = 0;
             if (isSliding) {
                 baseBraking = driftBrakePower;
             } else {
-                baseBraking = braking;
+                baseBraking = input.Brakes;
             }
 
-            var brakeForce = baseBraking * brakingPower.Evaluate(Speed / maxSpeed) * brakingForceMultiplier * forwardGrip * surfaceFriction;
+            var brakeForce = baseBraking * brakingForceMultiplier * forwardGrip;
             debugger.ShowDebugValue("brakeForce", brakeForce);
-            rb.AddForce(-rb.velocity.normalized * brakeForce * Time.deltaTime, ForceMode.VelocityChange);
+            rb.AddForce(-surfaceVelocity.normalized * brakeForce * Time.deltaTime, ForceMode.VelocityChange);
         }
-    }
-
-    void Update() {
-        if (input.Accelerator > 0) {
-            EngineSpeed += input.Accelerator * engineSpeedIncreaseRate * Time.deltaTime;
-        }
-
-        if ((isReversing || isStopped) && input.Brakes > 0) {
-            EngineSpeed -= input.Brakes * engineSpeedIncreaseRate * Time.deltaTime;
-        }
-
-        EngineSpeed = Mathf.Clamp(EngineSpeed, -maxEngineSpeed, maxEngineSpeed);
-        EngineSpeed = Mathf.Lerp(EngineSpeed, 0, engineSpeedDecreaseRate * Time.deltaTime);
-        debugger.ShowDebugValue("engineSpeed", EngineSpeed);
-
-        WheelOrientation = Mathf.Lerp(WheelOrientation, maxWheelTurn * input.Turning, Time.deltaTime * 50f);
-        debugger.ShowDebugValue("wheelOrientation", WheelOrientation);
-
-        braking = input.Brakes;
     }
 
     void FixedUpdate() {
@@ -240,6 +219,6 @@ public class CarController : MonoBehaviour {
         } else {
             Gizmos.color = Color.green;
         }
-        Gizmos.DrawRay(transform.position, wheelForwardDirection * 5f);
+        Gizmos.DrawRay(transform.position, transform.TransformDirection(wheelForwardDirection) * 5f);
     }
 }

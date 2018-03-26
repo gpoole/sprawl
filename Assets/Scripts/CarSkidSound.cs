@@ -29,16 +29,16 @@ public class CarSkidSound : MonoBehaviour {
 	private float prevAngularVelocity = 0f;
 
 	// Use this for initialization
-	void Start () {
-		slideAudioSource = (AudioSource)gameObject.AddComponent(typeof(AudioSource));
-		skidAudioSource = (AudioSource)gameObject.AddComponent(typeof(AudioSource));
+	void Start() {
+		slideAudioSource = (AudioSource) gameObject.AddComponent(typeof(AudioSource));
+		skidAudioSource = (AudioSource) gameObject.AddComponent(typeof(AudioSource));
 		car = GetComponent<CarController>();
 		rigidbody = GetComponent<Rigidbody>();
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
-		var isSliding = car.IsGrounded && rigidbody.velocity.magnitude > slideBeginSpeed && car.WheelAlignmentDifference > slideBeginAngle;
+	void Update() {
+		var isSliding = car.IsGrounded && rigidbody.velocity.magnitude > slideBeginSpeed && car.VelocityAlignmentDifference > slideBeginAngle;
 
 		if (isSliding) {
 			if (!slideAudioSource.isPlaying) {

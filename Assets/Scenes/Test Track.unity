@@ -1270,8 +1270,8 @@ GameObject:
   - component: {fileID: 1546519217}
   - component: {fileID: 1546519218}
   - component: {fileID: 1546519215}
-  - component: {fileID: 1546519220}
   - component: {fileID: 1546519214}
+  - component: {fileID: 1546519220}
   - component: {fileID: 1546519219}
   - component: {fileID: 1546519221}
   - component: {fileID: 1546519222}
@@ -1316,9 +1316,6 @@ MonoBehaviour:
   carStatus: {fileID: 1873039085}
   filterDebugMessages:
   - speed
-  - engineSpeed
-  - isReversing
-  - sidewaysness
   autoMinMax: 1
 --- !u!114 &1546519215
 MonoBehaviour:
@@ -1332,7 +1329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8afaff0154db482ca0c50ec8bc0ddd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turnVelocityTransferRate: 1
+  turnVelocityTransferRate: 0.75
   driftTurnVelocityTransferRate: 1
   stoppedSpeed: 0.5
   turnSpeed: 50
@@ -1363,11 +1360,11 @@ MonoBehaviour:
     - serializedVersion: 2
       time: 0
       value: 0
-      inSlope: 0
-      outSlope: 0
+      inSlope: 3.2200933
+      outSlope: 3.2200933
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.998291
+      time: 0.5362549
       value: 1.00177
       inSlope: 0.03252515
       outSlope: 0.03252515
@@ -1375,18 +1372,36 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  maxWheelTurn: 10
+  accelerationSpeed:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 3.5959
+      outSlope: 3.5959
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1.0009766
+      value: 1
+      inSlope: 0.10615685
+      outSlope: 0.10615685
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  maxWheelTurn: 20
   driftBrakePower: 0.7
   driftMaxTurnAngle: 70
   maxTurnAngle: 40
-  engineSpeedIncreaseRate: 0.8
-  engineSpeedDecreaseRate: 0.7
-  enginePower: 1000
+  engineSpeedIncreaseRate: 0.7
+  engineSpeedDecreaseRate: 0.3
+  enginePower: 20
   maxEngineSpeed: 1.6
   defaultSurfaceFriction: 1
   straightenUpTime: 0.3
   straightenUpAngle: 20
-  minSlideSpeed: 40
+  minSlideSpeed: 30
   playerNumber: 1
   brakingPower:
     serializedVersion: 2
@@ -1436,9 +1451,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logDebugInfo: 0
   invertYAxis: 0
-  enableXInput: 0
   useFixedUpdate: 0
   dontDestroyOnLoad: 0
+  suspendInBackground: 0
+  enableICade: 0
+  enableXInput: 0
+  xInputOverrideUpdateRate: 0
+  xInputUpdateRate: 0
+  xInputOverrideBufferSize: 0
+  xInputBufferSize: 0
+  enableNativeInput: 0
+  nativeInputEnableXInput: 1
+  nativeInputPreventSleep: 0
+  nativeInputOverrideUpdateRate: 0
+  nativeInputUpdateRate: 0
   customProfiles: []
 --- !u!114 &1546519218
 MonoBehaviour:

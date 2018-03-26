@@ -32,7 +32,7 @@ public class CarPlayerInput : MonoBehaviour {
 
     public bool IsResetting {
         get {
-            return controller.GetControl(InputControlType.Back);
+            return controller.GetControl(InputControlType.Back) || Input.GetKey(KeyCode.R);
         }
     }
 
