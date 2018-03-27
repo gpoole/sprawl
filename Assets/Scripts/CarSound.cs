@@ -33,7 +33,7 @@ public class CarSound : MonoBehaviour {
 	void Update() {
 		if (car.EngineSpeed > 0.05) {
 			var pitchRange = engineHighPitch - engineLowPitch;
-			carEngineSource.pitch = engineLowPitch + (pitchRange * (car.EngineSpeed / car.maxEngineSpeed));
+			// carEngineSource.pitch = engineLowPitch + (pitchRange * (car.EngineSpeed / car.maxEngineSpeed));
 			carEngineSource.loop = true;
 			ChangeClip(engineMid);
 		} else {

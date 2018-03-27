@@ -979,7 +979,7 @@ MeshCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1265157391}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: c6f54a0c0b69f4b6db80b444d944a628, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -993,7 +993,7 @@ MeshCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1265157392}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: c6f54a0c0b69f4b6db80b444d944a628, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -1007,7 +1007,7 @@ MeshCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1265157393}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: c6f54a0c0b69f4b6db80b444d944a628, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -1290,7 +1290,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1546519212}
   m_LocalRotation: {x: -0, y: -0.14483146, z: -0, w: 0.9894564}
-  m_LocalPosition: {x: 28.304329, y: 12.51, z: -6.549006}
+  m_LocalPosition: {x: 22.29, y: 12.51, z: -8.35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2125576961}
@@ -1315,8 +1315,8 @@ MonoBehaviour:
   warpPoints: []
   carStatus: {fileID: 1873039085}
   filterDebugMessages:
-  - forwardGrip
-  - surfaceFriction
+  - sidewaysVelocity
+  - sidewaysFrictionForce
   autoMinMax: 1
 --- !u!114 &1546519215
 MonoBehaviour:
@@ -1330,11 +1330,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8afaff0154db482ca0c50ec8bc0ddd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turnVelocityTransferRate: 0.75
-  driftTurnVelocityTransferRate: 1
+  turnVelocityTransferRate: 0.8
+  turnSpeedLoss: 0.5
   stoppedSpeed: 0.5
   turnSpeed: 50
-  driftTurnSpeed: 150
+  turnToVelocitySpeed: 0.1
+  driftTurnSpeed: 100
   maxSpeed: 70
   maxReverseSpeed: -10
   gripPower:
@@ -1342,13 +1343,13 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 2
       time: 0.0024480922
-      value: 0.9987016
-      inSlope: -0.013769216
-      outSlope: -0.013769216
+      value: 1.0001664
+      inSlope: -2.0009606
+      outSlope: -2.0009606
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.9857178
-      value: 0.6473427
+      time: 0.9929545
+      value: 0.10394246
       inSlope: 0.0289972
       outSlope: 0.0289972
       tangentMode: 0
@@ -1373,56 +1374,34 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+  sidewaysFrictionForceMultiplier: 10
   accelerationSpeed:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0
-      value: 0
-      inSlope: 3.5959
-      outSlope: 3.5959
+      time: 0.0024480922
+      value: 0.9987016
+      inSlope: -0.013769216
+      outSlope: -0.013769216
       tangentMode: 0
     - serializedVersion: 2
-      time: 1.0009766
-      value: 1
-      inSlope: 0.10615685
-      outSlope: 0.10615685
+      time: 1
+      value: 0
+      inSlope: -3.6752548
+      outSlope: -3.6752548
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
   maxWheelTurn: 20
-  driftBrakePower: 0.7
   driftMaxTurnAngle: 70
   maxTurnAngle: 40
-  engineSpeedIncreaseRate: 0.7
-  engineSpeedDecreaseRate: 0.3
   enginePower: 20
-  maxEngineSpeed: 1.6
-  defaultSurfaceFriction: 1
-  straightenUpTime: 0.3
+  straightenUpTime: 0.5
   straightenUpAngle: 20
   minSlideSpeed: 30
   playerNumber: 1
-  brakingPower:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0.0023918152
-      value: 0.29937744
-      inSlope: 2.0291102
-      outSlope: 2.0291102
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1
-      value: 1
-      inSlope: -0.024867423
-      outSlope: -0.024867423
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  brakingForceMultiplier: 20
+  brakingForceMultiplier: 10
 --- !u!54 &1546519216
 Rigidbody:
   m_ObjectHideFlags: 0

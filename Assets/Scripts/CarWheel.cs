@@ -59,7 +59,7 @@ public class CarWheel : MonoBehaviour {
                 if (Grounded) {
                     visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.Speed / carController.maxSpeed) * Time.deltaTime);
                 } else {
-                    visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.EngineSpeed / carController.maxEngineSpeed) * Time.deltaTime);
+                    // visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.EngineSpeed / carController.maxEngineSpeed) * Time.deltaTime);
                 }
 
                 visualWheel.localPosition = (Vector3.down * (1 - prevCompression) * targetLength) + new Vector3(0, wheelHeight, 0);
