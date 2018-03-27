@@ -1315,7 +1315,11 @@ MonoBehaviour:
   warpPoints: []
   carStatus: {fileID: 1873039085}
   filterDebugMessages:
-  - sidewaysVelocity
+  - brakeForce
+  - speed
+  - turnForceRight
+  - turnForceForward
+  - forwardGrip
   - sidewaysFrictionForce
   autoMinMax: 1
 --- !u!114 &1546519215
@@ -1331,11 +1335,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turnVelocityTransferRate: 0.8
-  turnSpeedLoss: 0.5
+  turnSpeedLoss: 0.9
   stoppedSpeed: 0.5
-  turnSpeed: 50
-  turnToVelocitySpeed: 0.1
-  driftTurnSpeed: 100
+  turnSpeed: 20
+  turnToVelocitySpeed: 0.025
+  driftTurnSpeed: 40
   maxSpeed: 70
   maxReverseSpeed: -10
   gripPower:
@@ -1344,14 +1348,14 @@ MonoBehaviour:
     - serializedVersion: 2
       time: 0.0024480922
       value: 1.0001664
-      inSlope: -2.0009606
-      outSlope: -2.0009606
+      inSlope: -1.4334557
+      outSlope: -1.4334557
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.9929545
-      value: 0.10394246
-      inSlope: 0.0289972
-      outSlope: 0.0289972
+      time: 0.9971049
+      value: 0.40130574
+      inSlope: -0.36445087
+      outSlope: -0.36445087
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -1362,8 +1366,8 @@ MonoBehaviour:
     - serializedVersion: 2
       time: 0
       value: 0.1
-      inSlope: 1.0323544
-      outSlope: 1.0323544
+      inSlope: 0.60900754
+      outSlope: 0.60900754
       tangentMode: 0
     - serializedVersion: 2
       time: 2
@@ -1374,28 +1378,28 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  sidewaysFrictionForceMultiplier: 10
+  sidewaysFrictionForceMultiplier: 5
   accelerationSpeed:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
       time: 0.0024480922
       value: 0.9987016
-      inSlope: -0.013769216
-      outSlope: -0.013769216
+      inSlope: 2.4622798
+      outSlope: 2.4622798
       tangentMode: 0
     - serializedVersion: 2
       time: 1
       value: 0
-      inSlope: -3.6752548
-      outSlope: -3.6752548
+      inSlope: -5.3158193
+      outSlope: -5.3158193
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
   maxWheelTurn: 20
   driftMaxTurnAngle: 70
-  maxTurnAngle: 40
+  maxTurnAngle: 50
   enginePower: 20
   straightenUpTime: 0.5
   straightenUpAngle: 20

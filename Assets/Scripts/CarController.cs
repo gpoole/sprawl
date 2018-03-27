@@ -148,9 +148,9 @@ public class CarController : MonoBehaviour {
         }
         // Calculate the grip so it increases rapidly as we get towards fully forward-facing
         debugger.ShowDebugValue("surfaceFriction", surfaceFriction);
-        var forwardGrip = gripPower.Evaluate((absVelocityAlignmentDifference / 90) * relativeSpeed) * surfaceFriction;
+        var forwardGrip = gripPower.Evaluate((absVelocityAlignmentDifference / 90) * (1f - relativeSpeed)) * (surfaceFriction * (1f - relativeSpeed));
         debugger.ShowDebugValue("forwardGrip", forwardGrip);
-        var forwardDrivingForce = wheelForwardDirection * acceleration * enginePower;
+        var forwardDrivingForce = wheelForwardDirection * acceleration * forwardGrip * enginePower;
         rb.AddRelativeForce(forwardDrivingForce * Time.deltaTime, ForceMode.VelocityChange);
         debugger.ShowDebugValue("forwardDrivingForce", forwardDrivingForce, isSliding ? Color.magenta : Color.green);
 
@@ -182,22 +182,23 @@ public class CarController : MonoBehaviour {
         rb.AddRelativeForce(turnForceForward * Time.deltaTime, ForceMode.VelocityChange);
 
         // Turn the car towards the direction it's travelling
+        // FIXME: increase influence of forward grip?
         rb.AddRelativeTorque(Vector3.Cross(Vector3.forward, surfaceVelocity) * turnToVelocitySpeed * forwardGrip * Time.deltaTime, ForceMode.VelocityChange);
 
         // Turn the car up to a maximum angle against the direction of movement
         var allowedTurnAngle = isSliding ? driftMaxTurnAngle : maxTurnAngle;
         var turnSpeed = isSliding ? driftTurnSpeed : this.turnSpeed;
-        rb.AddRelativeTorque(Vector3.Cross(Vector3.forward, wheelForwardDirection) * Mathf.Clamp01((allowedTurnAngle - absVelocityAlignmentDifference) / allowedTurnAngle) * turnSpeed * Time.deltaTime, ForceMode.VelocityChange);
+        rb.AddRelativeTorque(Vector3.up * (WheelOrientation / maxWheelTurn) * Mathf.Clamp((allowedTurnAngle - absVelocityAlignmentDifference) / allowedTurnAngle, 0.2f, 1f) * turnSpeed * Time.deltaTime, ForceMode.VelocityChange);
 
         var sidewaysVelocity = Vector3.Project(surfaceVelocity, Vector3.right);
-        var sideFriction = sidewaysFriction.Evaluate(sidewaysVelocity.magnitude) * sidewaysFrictionForceMultiplier;
+        var sideFriction = sidewaysFriction.Evaluate(sidewaysVelocity.magnitude * surfaceFriction) * sidewaysFrictionForceMultiplier;
         var sidewaysFrictionForce = -sidewaysVelocity.normalized * sideFriction * surfaceFriction;
         debugger.ShowDebugValue("sidewaysVelocity", sidewaysVelocity, Color.magenta);
         debugger.ShowDebugValue("sidewaysFrictionForce", sidewaysFrictionForce, Color.red);
         rb.AddRelativeForce(sidewaysFrictionForce * Time.deltaTime, ForceMode.VelocityChange);
 
         if (!isReversing) {
-            var brakeForce = Vector3.back * input.Brakes * brakingForceMultiplier * forwardGrip;
+            var brakeForce = Vector3.back * input.Brakes * brakingForceMultiplier * forwardGrip * Mathf.Clamp01((90f - absVelocityAlignmentDifference) / 90f);
             debugger.ShowDebugValue("brakeForce", brakeForce, Color.red);
             rb.AddRelativeForce(brakeForce * Time.deltaTime, ForceMode.VelocityChange);
         }
