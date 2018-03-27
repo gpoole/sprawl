@@ -1315,7 +1315,8 @@ MonoBehaviour:
   warpPoints: []
   carStatus: {fileID: 1873039085}
   filterDebugMessages:
-  - speed
+  - forwardGrip
+  - surfaceFriction
   autoMinMax: 1
 --- !u!114 &1546519215
 MonoBehaviour:
@@ -1359,13 +1360,13 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 2
       time: 0
-      value: 0
-      inSlope: 3.2200933
-      outSlope: 3.2200933
+      value: 0.1
+      inSlope: 1.0323544
+      outSlope: 1.0323544
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.5362549
-      value: 1.00177
+      time: 2
+      value: 1
       inSlope: 0.03252515
       outSlope: 0.03252515
       tangentMode: 0
