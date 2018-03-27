@@ -6,7 +6,7 @@ PhysicMaterial:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Concrete
-  dynamicFriction: 0.6
+  dynamicFriction: 0.9
   staticFriction: 1
   bounciness: 0
   frictionCombine: 0

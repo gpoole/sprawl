@@ -5,47 +5,47 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour {
 
-    public float turnVelocityTransferRate = 1f;
-
-    public float turnSpeedLoss = 0.5f;
-
     public float stoppedSpeed = 0.5f;
-
-    public float turnSpeed = 1f;
-
-    public float turnToVelocitySpeed = 0.1f;
-
-    public float driftTurnSpeed = 2f;
 
     public float maxSpeed = 60f;
 
     public float maxReverseSpeed = -30f;
 
+    public AnimationCurve accelerationSpeed;
+
+    public float accelerationMultiplier = 10f;
+
+    public float brakingForceMultiplier = 10f;
+
     public AnimationCurve gripPower;
 
     public AnimationCurve sidewaysFriction;
 
-    public float sidewaysFrictionForceMultiplier = 3f;
+    public float sidewaysFrictionMultiplier = 3f;
 
-    public AnimationCurve accelerationSpeed;
+    public AnimationCurve turning;
+
+    public float turnMultiplier = 15f;
+
+    public float turnToVelocitySpeed = 0.1f;
+
+    public float turnVelocityTransferRate = 1f;
 
     public float maxWheelTurn = 10f;
 
-    public float driftMaxTurnAngle = 80f;
-
     public float maxTurnAngle = 30f;
 
-    public float enginePower = 10f;
+    public float driftTurnMultiplier = 33f;
+
+    public float driftMaxTurnAngle = 80f;
+
+    public float minDriftSpeed = 40f;
 
     public float straightenUpTime = 3f;
 
     public float straightenUpAngle = 15f;
 
-    public float minSlideSpeed = 40f;
-
     public int playerNumber = 1;
-
-    public float brakingForceMultiplier = 10f;
 
     public float VelocityAlignmentDifference {
         get;
@@ -75,6 +75,8 @@ public class CarController : MonoBehaviour {
 
     private bool isStopped = true;
 
+    private bool isDrifting;
+
     private CarPlayerInput input;
 
     private Vector3 wheelForwardDirection;
@@ -85,9 +87,7 @@ public class CarController : MonoBehaviour {
 
     private CarWheel[] wheels;
 
-    private bool isSliding;
-
-    private float slideTimer;
+    private float driftTimer;
 
     private float surfaceFriction = 1f;
 
@@ -147,58 +147,56 @@ public class CarController : MonoBehaviour {
             acceleration = -accelerationSpeed.Evaluate(relativeSpeed) * input.Brakes;
         }
         // Calculate the grip so it increases rapidly as we get towards fully forward-facing
-        debugger.ShowDebugValue("surfaceFriction", surfaceFriction);
-        var forwardGrip = gripPower.Evaluate((absVelocityAlignmentDifference / 90) * (1f - relativeSpeed)) * (surfaceFriction * (1f - relativeSpeed));
-        debugger.ShowDebugValue("forwardGrip", forwardGrip);
-        var forwardDrivingForce = wheelForwardDirection * acceleration * forwardGrip * enginePower;
+        debugger.ShowDebugValue("relativeSpeed", relativeSpeed);
+        var forwardDrivingForce = wheelForwardDirection * acceleration * accelerationMultiplier * gripPower.Evaluate(((90 - absVelocityAlignmentDifference) / 90) / surfaceFriction);
         rb.AddRelativeForce(forwardDrivingForce * Time.deltaTime, ForceMode.VelocityChange);
-        debugger.ShowDebugValue("forwardDrivingForce", forwardDrivingForce, isSliding ? Color.magenta : Color.green);
+        debugger.ShowDebugValue("forwardDrivingForce", forwardDrivingForce, isDrifting ? Color.magenta : Color.green);
 
-        if (!isReversing && input.IsHandbraking && Speed > minSlideSpeed) {
-            isSliding = true;
-            slideTimer = straightenUpTime;
-        } else if (isSliding) {
-            if (absVelocityAlignmentDifference < straightenUpAngle && slideTimer > 0) {
-                slideTimer -= Time.deltaTime;
-            } else if (absVelocityAlignmentDifference > straightenUpAngle && slideTimer < straightenUpTime) {
-                slideTimer += Time.deltaTime;
-            } else if (slideTimer <= 0) {
-                isSliding = false;
+        if (!isReversing && input.IsHandbraking && Speed > minDriftSpeed) {
+            isDrifting = true;
+            driftTimer = straightenUpTime;
+        } else if (isDrifting) {
+            if (absVelocityAlignmentDifference < straightenUpAngle && driftTimer > 0) {
+                driftTimer -= Time.deltaTime;
+            } else if (absVelocityAlignmentDifference > straightenUpAngle && driftTimer < straightenUpTime) {
+                driftTimer += Time.deltaTime;
+            } else if (driftTimer <= 0) {
+                isDrifting = false;
             }
         }
 
-        debugger.ShowDebugValue("slideTimer", slideTimer, false);
-        debugger.ShowDebugValue("isSliding", isSliding);
+        debugger.ShowDebugValue("slideTimer", driftTimer, false);
+        debugger.ShowDebugValue("isSliding", isDrifting);
 
         debugger.ShowDebugValue("VelocityAlignmentDifference", VelocityAlignmentDifference);
 
         // Transfer velocity as we turn
-        var velocityTransferAmount = Speed * Mathf.Clamp(VelocityAlignmentDifference / 1f, -1, 1) * turnVelocityTransferRate * forwardGrip;
+        var velocityTransferAmount = Speed * Mathf.Clamp(VelocityAlignmentDifference / 45f, -1, 1) * turnVelocityTransferRate * surfaceFriction;
         var turnForceRight = Vector3.right * velocityTransferAmount;
         debugger.ShowDebugValue("turnForceRight", turnForceRight, Color.blue, 0.5f);
         rb.AddRelativeForce(turnForceRight * Time.deltaTime, ForceMode.VelocityChange);
-        var turnForceForward = -Vector3.forward * Math.Abs(velocityTransferAmount) * turnSpeedLoss;
-        debugger.ShowDebugValue("turnForceForward", turnForceForward, Color.red, 0.5f);
-        rb.AddRelativeForce(turnForceForward * Time.deltaTime, ForceMode.VelocityChange);
 
         // Turn the car towards the direction it's travelling
-        // FIXME: increase influence of forward grip?
-        rb.AddRelativeTorque(Vector3.Cross(Vector3.forward, surfaceVelocity) * turnToVelocitySpeed * forwardGrip * Time.deltaTime, ForceMode.VelocityChange);
+        rb.AddRelativeTorque(Vector3.Cross(Vector3.forward, surfaceVelocity) * turnToVelocitySpeed * surfaceFriction * Time.deltaTime, ForceMode.VelocityChange);
 
         // Turn the car up to a maximum angle against the direction of movement
-        var allowedTurnAngle = isSliding ? driftMaxTurnAngle : maxTurnAngle;
-        var turnSpeed = isSliding ? driftTurnSpeed : this.turnSpeed;
+        var allowedTurnAngle = isDrifting ? driftMaxTurnAngle : maxTurnAngle;
+        var turnSpeed = turning.Evaluate(relativeSpeed) * (isDrifting ? driftTurnMultiplier : turnMultiplier);
         rb.AddRelativeTorque(Vector3.up * (WheelOrientation / maxWheelTurn) * Mathf.Clamp((allowedTurnAngle - absVelocityAlignmentDifference) / allowedTurnAngle, 0.2f, 1f) * turnSpeed * Time.deltaTime, ForceMode.VelocityChange);
 
         var sidewaysVelocity = Vector3.Project(surfaceVelocity, Vector3.right);
-        var sideFriction = sidewaysFriction.Evaluate(sidewaysVelocity.magnitude * surfaceFriction) * sidewaysFrictionForceMultiplier;
+        var sideFriction = sidewaysFriction.Evaluate(sidewaysVelocity.magnitude * surfaceFriction) * sidewaysFrictionMultiplier;
         var sidewaysFrictionForce = -sidewaysVelocity.normalized * sideFriction * surfaceFriction;
         debugger.ShowDebugValue("sidewaysVelocity", sidewaysVelocity, Color.magenta);
         debugger.ShowDebugValue("sidewaysFrictionForce", sidewaysFrictionForce, Color.red);
         rb.AddRelativeForce(sidewaysFrictionForce * Time.deltaTime, ForceMode.VelocityChange);
 
         if (!isReversing) {
-            var brakeForce = Vector3.back * input.Brakes * brakingForceMultiplier * forwardGrip * Mathf.Clamp01((90f - absVelocityAlignmentDifference) / 90f);
+            float baseBrakeForce = input.Brakes;
+            if (isDrifting) {
+                baseBrakeForce = 1.0f;
+            }
+            var brakeForce = Vector3.back * baseBrakeForce * brakingForceMultiplier * surfaceFriction * Mathf.Clamp01((90f - absVelocityAlignmentDifference) / 90f);
             debugger.ShowDebugValue("brakeForce", brakeForce, Color.red);
             rb.AddRelativeForce(brakeForce * Time.deltaTime, ForceMode.VelocityChange);
         }
@@ -215,8 +213,8 @@ public class CarController : MonoBehaviour {
             ApplyDrivingForces();
         } else {
             Speed = 0;
-            slideTimer = 0;
-            isSliding = false;
+            driftTimer = 0;
+            isDrifting = false;
         }
     }
 }

@@ -1321,6 +1321,7 @@ MonoBehaviour:
   - turnForceForward
   - forwardGrip
   - sidewaysFrictionForce
+  - relativeSpeed
   autoMinMax: 1
 --- !u!114 &1546519215
 MonoBehaviour:
@@ -1334,14 +1335,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8afaff0154db482ca0c50ec8bc0ddd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turnVelocityTransferRate: 0.8
-  turnSpeedLoss: 0.9
   stoppedSpeed: 0.5
-  turnSpeed: 20
-  turnToVelocitySpeed: 0.025
-  driftTurnSpeed: 40
   maxSpeed: 70
   maxReverseSpeed: -10
+  accelerationSpeed:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0.0024480922
+      value: 0.9987016
+      inSlope: 2.4622798
+      outSlope: 2.4622798
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: -5.3158193
+      outSlope: -5.3158193
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  accelerationMultiplier: 20
+  brakingForceMultiplier: 10
   gripPower:
     serializedVersion: 2
     m_Curve:
@@ -1378,34 +1394,42 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  sidewaysFrictionForceMultiplier: 5
-  accelerationSpeed:
+  sidewaysFrictionMultiplier: 5
+  turning:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0.0024480922
-      value: 0.9987016
-      inSlope: 2.4622798
-      outSlope: 2.4622798
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.052307088
+      value: 1
+      inSlope: -0.28003213
+      outSlope: -0.28003213
       tangentMode: 0
     - serializedVersion: 2
       time: 1
-      value: 0
-      inSlope: -5.3158193
-      outSlope: -5.3158193
+      value: 0.6
+      inSlope: -0.5964973
+      outSlope: -0.5964973
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+  turnMultiplier: 15
+  turnToVelocitySpeed: 0.025
+  turnVelocityTransferRate: 0.8
   maxWheelTurn: 20
-  driftMaxTurnAngle: 70
   maxTurnAngle: 50
-  enginePower: 20
+  driftTurnMultiplier: 33
+  driftMaxTurnAngle: 70
+  minDriftSpeed: 30
   straightenUpTime: 0.5
   straightenUpAngle: 20
-  minSlideSpeed: 30
   playerNumber: 1
-  brakingForceMultiplier: 10
 --- !u!54 &1546519216
 Rigidbody:
   m_ObjectHideFlags: 0
