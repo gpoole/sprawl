@@ -1322,6 +1322,9 @@ MonoBehaviour:
   - forwardGrip
   - sidewaysFrictionForce
   - relativeSpeed
+  - turnSpeed
+  - isDrifting
+  - driftTimer
   autoMinMax: 1
 --- !u!114 &1546519215
 MonoBehaviour:
@@ -1405,16 +1408,16 @@ MonoBehaviour:
       outSlope: 2
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.052307088
+      time: 0.02606197
       value: 1
-      inSlope: -0.28003213
-      outSlope: -0.28003213
+      inSlope: -0.076457426
+      outSlope: -0.076457426
       tangentMode: 0
     - serializedVersion: 2
-      time: 1
-      value: 0.6
-      inSlope: -0.5964973
-      outSlope: -0.5964973
+      time: 0.99816895
+      value: 0.8070618
+      inSlope: -0.3620532
+      outSlope: -0.3620532
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -1427,7 +1430,7 @@ MonoBehaviour:
   driftTurnMultiplier: 33
   driftMaxTurnAngle: 70
   minDriftSpeed: 30
-  straightenUpTime: 0.5
+  straightenUpTime: 2
   straightenUpAngle: 20
   playerNumber: 1
 --- !u!54 &1546519216
