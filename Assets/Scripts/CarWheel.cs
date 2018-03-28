@@ -19,13 +19,27 @@ public class CarWheel : MonoBehaviour {
 
     private bool isFrontWheel;
 
-    public bool Grounded {
+    public bool IsGrounded {
         get;
         private set;
     }
 
     public float Compression {
         get { return prevCompression; }
+    }
+
+    public float WheelHeight {
+        get;
+        private set;
+    }
+
+    public Vector3 WheelBottom {
+        get { return visualWheel.position + new Vector3(0, WheelHeight, 0); }
+    }
+
+    public RaycastHit HitSurface {
+        get;
+        private set;
     }
 
     private GameObject car;
@@ -36,12 +50,10 @@ public class CarWheel : MonoBehaviour {
 
     private Transform visualWheel;
 
-    private float wheelHeight;
-
     void Start() {
         if (transform.childCount > 0) {
             visualWheel = transform.GetChild(0);
-            wheelHeight = visualWheel.GetComponent<MeshRenderer>().bounds.extents.y;
+            WheelHeight = visualWheel.GetComponent<MeshRenderer>().bounds.extents.y;
         }
         car = transform.parent.parent.gameObject;
         carRigidBody = car.GetComponent<Rigidbody>();
@@ -56,20 +68,19 @@ public class CarWheel : MonoBehaviour {
             }
 
             if (visualWheel) {
-                if (Grounded) {
+                if (IsGrounded) {
                     visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.Speed / carController.maxSpeed) * Time.deltaTime);
                 } else {
-                    // visualWheel.Rotate(Vector3.forward, visualRotationSpeed * (carController.EngineSpeed / carController.maxEngineSpeed) * Time.deltaTime);
+                    visualWheel.Rotate(Vector3.forward, visualRotationSpeed * carController.EngineSpeed * Time.deltaTime);
                 }
 
-                visualWheel.localPosition = (Vector3.down * (1 - prevCompression) * targetLength) + new Vector3(0, wheelHeight, 0);
+                visualWheel.localPosition = (Vector3.down * (1 - prevCompression) * targetLength) + new Vector3(0, WheelHeight, 0);
             }
         }
     }
 
     // Update is called once per frame
     void FixedUpdate() {
-        var tyreId = String.Format("wheel{0}{1}", isFrontWheel ? "Front" : "Back", transform.localPosition.x > 0 ? "Left" : "Right");
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, targetLength)) {
             var compressionRatio = 1f - (hit.distance / targetLength);
@@ -78,10 +89,11 @@ public class CarWheel : MonoBehaviour {
             var totalForce = springForce - dampingForce;
             prevCompression = compressionRatio;
             carRigidBody.AddForceAtPosition(transform.TransformDirection(Vector3.up) * totalForce * Time.deltaTime, transform.position, ForceMode.VelocityChange);
-            Grounded = true;
+            IsGrounded = true;
+            HitSurface = hit;
         } else {
             prevCompression = 0f;
-            Grounded = false;
+            IsGrounded = false;
         }
     }
 

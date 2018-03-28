@@ -68,7 +68,7 @@ public class CarController : MonoBehaviour {
     }
 
     public bool IsGrounded {
-        get { return wheels.Any(wheel => wheel.Grounded); }
+        get { return wheels.Any(wheel => wheel.IsGrounded); }
     }
 
     public bool IsDrifting {
@@ -90,8 +90,6 @@ public class CarController : MonoBehaviour {
 
     private CarWheel[] wheels;
 
-    private ParticleSystem[] smokeEffects;
-
     private float driftTimer;
 
     private float surfaceFriction = 1f;
@@ -104,8 +102,6 @@ public class CarController : MonoBehaviour {
         input = GetComponent<CarPlayerInput>();
         rb = GetComponent<Rigidbody>();
         wheels = GetComponentsInChildren<CarWheel>();
-
-        smokeEffects = GetComponentsInChildren<ParticleSystem>();
     }
 
     public void Reset() {
@@ -172,14 +168,6 @@ public class CarController : MonoBehaviour {
             }
         }
 
-        foreach (var smokeEffect in smokeEffects) {
-            if (IsDrifting && !smokeEffect.isPlaying) {
-                smokeEffect.Play();
-            } else if (!IsDrifting && smokeEffect.isPlaying) {
-                smokeEffect.Stop();
-            }
-        }
-
         debugger.ShowDebugValue("driftTimer", driftTimer, false);
         debugger.ShowDebugValue("isDrifting", IsDrifting);
 
@@ -233,5 +221,9 @@ public class CarController : MonoBehaviour {
             driftTimer = 0;
             IsDrifting = false;
         }
+    }
+
+    void OnCollisionEnter() {
+        IsDrifting = false;
     }
 }
