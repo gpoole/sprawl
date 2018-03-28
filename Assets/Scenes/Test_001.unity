@@ -675,6 +675,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114292611484862078, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: filterDebugMessages.Array.size
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4917932679583966, guid: 7bd01c019ac78464d8d108ece10fe61a, type: 2}
       propertyPath: m_LocalPosition.x
       value: 22.29
@@ -712,6 +717,96 @@ Prefab:
       propertyPath: carStatus
       value: 
       objectReference: {fileID: 1873039085}
+    - target: {fileID: 114806923617446882, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: slideBeginAngle
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 114292611484862078, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: filterDebugMessages.Array.data[1]
+      value: acceleration
+      objectReference: {fileID: 0}
+    - target: {fileID: 114292611484862078, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: filterDebugMessages.Array.data[2]
+      value: relativeSpeed
+      objectReference: {fileID: 0}
+    - target: {fileID: 114292611484862078, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: filterDebugMessages.Array.data[3]
+      value: turnForceForward
+      objectReference: {fileID: 0}
+    - target: {fileID: 114292611484862078, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: filterDebugMessages.Array.data[4]
+      value: forwardGrip
+      objectReference: {fileID: 0}
+    - target: {fileID: 114292611484862078, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: filterDebugMessages.Array.data[5]
+      value: sidewaysFrictionForce
+      objectReference: {fileID: 0}
+    - target: {fileID: 114292611484862078, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: filterDebugMessages.Array.data[6]
+      value: relativeSpeed
+      objectReference: {fileID: 0}
+    - target: {fileID: 114292611484862078, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: filterDebugMessages.Array.data[7]
+      value: turnSpeed
+      objectReference: {fileID: 0}
+    - target: {fileID: 114292611484862078, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: filterDebugMessages.Array.data[8]
+      value: isDrifting
+      objectReference: {fileID: 0}
+    - target: {fileID: 114292611484862078, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: filterDebugMessages.Array.data[9]
+      value: driftTimer
+      objectReference: {fileID: 0}
+    - target: {fileID: 114292611484862078, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: filterDebugMessages.Array.data[0]
+      value: EngineSpeed
+      objectReference: {fileID: 0}
+    - target: {fileID: 114359710907538384, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: accelerationSpeed.m_Curve.Array.data[0].time
+      value: 0.00070096087
+      objectReference: {fileID: 0}
+    - target: {fileID: 114359710907538384, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: accelerationSpeed.m_Curve.Array.data[0].value
+      value: 0.5096421
+      objectReference: {fileID: 0}
+    - target: {fileID: 114359710907538384, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: accelerationSpeed.m_Curve.Array.data[1].inSlope
+      value: -3.2079163
+      objectReference: {fileID: 0}
+    - target: {fileID: 114359710907538384, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: accelerationSpeed.m_Curve.Array.data[1].outSlope
+      value: -3.2079163
+      objectReference: {fileID: 0}
+    - target: {fileID: 114359710907538384, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: accelerationSpeed.m_Curve.Array.data[0].inSlope
+      value: 2.456326
+      objectReference: {fileID: 0}
+    - target: {fileID: 114359710907538384, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: accelerationSpeed.m_Curve.Array.data[0].outSlope
+      value: 2.456326
+      objectReference: {fileID: 0}
+    - target: {fileID: 114359710907538384, guid: 7bd01c019ac78464d8d108ece10fe61a,
+        type: 2}
+      propertyPath: accelerationMultiplier
+      value: 30
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7bd01c019ac78464d8d108ece10fe61a, type: 2}
   m_IsPrefabParent: 0

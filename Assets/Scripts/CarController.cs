@@ -71,11 +71,14 @@ public class CarController : MonoBehaviour {
         get { return wheels.Any(wheel => wheel.Grounded); }
     }
 
+    public bool IsDrifting {
+        get;
+        private set;
+    }
+
     private bool isReversing = false;
 
     private bool isStopped = true;
-
-    private bool isDrifting;
 
     private CarPlayerInput input;
 
@@ -92,7 +95,6 @@ public class CarController : MonoBehaviour {
     private float surfaceFriction = 1f;
 
     void Start() {
-        EngineSpeed = 0;
         Speed = 0;
         WheelOrientation = 0;
 
@@ -103,7 +105,6 @@ public class CarController : MonoBehaviour {
     }
 
     public void Reset() {
-        EngineSpeed = 0;
         Speed = 0;
         WheelOrientation = 0;
         rb.ResetInertiaTensor();
@@ -144,27 +145,31 @@ public class CarController : MonoBehaviour {
         } else {
             acceleration = -accelerationSpeed.Evaluate(Speed / maxReverseSpeed) * input.Brakes;
         }
+        debugger.ShowDebugValue("acceleration", acceleration);
         // Calculate the grip so it increases rapidly as we get towards fully forward-facing
         debugger.ShowDebugValue("relativeSpeed", relativeSpeed);
         var forwardDrivingForce = wheelForwardDirection * acceleration * accelerationMultiplier * gripPower.Evaluate(((90 - absVelocityAlignmentDifference) / 90) / surfaceFriction);
         rb.AddRelativeForce(forwardDrivingForce * Time.deltaTime, ForceMode.VelocityChange);
-        debugger.ShowDebugValue("forwardDrivingForce", forwardDrivingForce, isDrifting ? Color.magenta : Color.green);
+        debugger.ShowDebugValue("forwardDrivingForce", forwardDrivingForce, IsDrifting ? Color.magenta : Color.green);
+
+        EngineSpeed = Mathf.Clamp01((Math.Abs(acceleration) * Mathf.Clamp01(0.2f / relativeSpeed) * 0.8f) + relativeSpeed);
+        debugger.ShowDebugValue("EngineSpeed", EngineSpeed);
 
         if (!isReversing && input.IsHandbraking && Speed > minDriftSpeed) {
-            isDrifting = true;
+            IsDrifting = true;
             driftTimer = straightenUpTime;
-        } else if (isDrifting) {
+        } else if (IsDrifting) {
             if ((absVelocityAlignmentDifference < straightenUpAngle || Speed < minDriftSpeed) && driftTimer > 0) {
                 driftTimer -= Time.deltaTime;
             } else if ((absVelocityAlignmentDifference > straightenUpAngle && Speed > minDriftSpeed) && driftTimer < straightenUpTime) {
                 driftTimer += Time.deltaTime;
             } else if (driftTimer <= 0) {
-                isDrifting = false;
+                IsDrifting = false;
             }
         }
 
         debugger.ShowDebugValue("driftTimer", driftTimer, false);
-        debugger.ShowDebugValue("isDrifting", isDrifting);
+        debugger.ShowDebugValue("isDrifting", IsDrifting);
 
         debugger.ShowDebugValue("VelocityAlignmentDifference", VelocityAlignmentDifference);
 
@@ -181,8 +186,8 @@ public class CarController : MonoBehaviour {
         rb.AddRelativeTorque(Vector3.Cross(Vector3.forward, surfaceVelocity) * turnToVelocitySpeed * surfaceFriction * Time.deltaTime, ForceMode.VelocityChange);
 
         // Turn the car up to a maximum angle against the direction of movement
-        var allowedTurnAngle = isDrifting ? driftMaxTurnAngle : maxTurnAngle;
-        rb.AddRelativeTorque(Vector3.up * input.Turning * Mathf.Clamp((allowedTurnAngle - absVelocityAlignmentDifference) / allowedTurnAngle, 0.2f, 1f) * turnSpeed * (isDrifting ? driftTurnMultiplier : turnMultiplier) * Time.deltaTime, ForceMode.VelocityChange);
+        var allowedTurnAngle = IsDrifting ? driftMaxTurnAngle : maxTurnAngle;
+        rb.AddRelativeTorque(Vector3.up * input.Turning * Mathf.Clamp((allowedTurnAngle - absVelocityAlignmentDifference) / allowedTurnAngle, 0.2f, 1f) * turnSpeed * (IsDrifting ? driftTurnMultiplier : turnMultiplier) * Time.deltaTime, ForceMode.VelocityChange);
 
         var sidewaysVelocity = Vector3.Project(surfaceVelocity, Vector3.right);
         var sideFriction = sidewaysFriction.Evaluate(sidewaysVelocity.magnitude * surfaceFriction) * sidewaysFrictionMultiplier;
@@ -193,7 +198,7 @@ public class CarController : MonoBehaviour {
 
         if (!isReversing) {
             float baseBrakeForce = input.Brakes;
-            if (isDrifting) {
+            if (IsDrifting) {
                 baseBrakeForce = 1.0f;
             }
             var brakeForce = Vector3.back * baseBrakeForce * brakingForceMultiplier * surfaceFriction * Mathf.Clamp01((90f - absVelocityAlignmentDifference) / 90f);
@@ -214,7 +219,7 @@ public class CarController : MonoBehaviour {
         } else {
             Speed = 0;
             driftTimer = 0;
-            isDrifting = false;
+            IsDrifting = false;
         }
     }
 }

@@ -38,9 +38,7 @@ public class CarSkidSound : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
-		var isSliding = car.IsGrounded && rigidbody.velocity.magnitude > slideBeginSpeed && car.VelocityAlignmentDifference > slideBeginAngle;
-
-		if (isSliding) {
+		if (car.IsDrifting) {
 			if (!slideAudioSource.isPlaying) {
 				slideAudioSource.clip = slideStart;
 				slideAudioSource.loop = false;
