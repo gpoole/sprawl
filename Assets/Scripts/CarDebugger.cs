@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -77,7 +79,9 @@ public class CarDebugger : MonoBehaviour {
                 Gizmos.color = entry.Value.Color;
                 var vector = transform.TransformDirection(entry.Value.Vector) * entry.Value.Scale;
                 Gizmos.DrawRay(transform.position, vector);
+#if UNITY_EDITOR
                 Handles.Label(transform.position + vector, entry.Key + "\n" + entry.Value.Vector);
+#endif
             }
         }
     }
