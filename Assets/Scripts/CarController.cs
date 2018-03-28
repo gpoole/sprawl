@@ -90,6 +90,8 @@ public class CarController : MonoBehaviour {
 
     private CarWheel[] wheels;
 
+    private ParticleSystem[] smokeEffects;
+
     private float driftTimer;
 
     private float surfaceFriction = 1f;
@@ -102,6 +104,8 @@ public class CarController : MonoBehaviour {
         input = GetComponent<CarPlayerInput>();
         rb = GetComponent<Rigidbody>();
         wheels = GetComponentsInChildren<CarWheel>();
+
+        smokeEffects = GetComponentsInChildren<ParticleSystem>();
     }
 
     public void Reset() {
@@ -165,6 +169,14 @@ public class CarController : MonoBehaviour {
                 driftTimer += Time.deltaTime;
             } else if (driftTimer <= 0) {
                 IsDrifting = false;
+            }
+        }
+
+        foreach (var smokeEffect in smokeEffects) {
+            if (IsDrifting && !smokeEffect.isPlaying) {
+                smokeEffect.Play();
+            } else if (!IsDrifting && smokeEffect.isPlaying) {
+                smokeEffect.Stop();
             }
         }
 
