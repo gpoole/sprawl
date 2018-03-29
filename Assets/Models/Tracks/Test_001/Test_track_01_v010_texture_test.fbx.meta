@@ -1,28 +1,18 @@
 fileFormatVersion: 2
-guid: 620c569c3a9ab4e63ac21e1dcafaef1e
-timeCreated: 1521596600
+guid: de9578ab14cf4493e8df924bca4e83cd
+timeCreated: 1522291606
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: Object_1
-    100004: Object_3
-    100006: Object_4
-    400000: //RootNode
-    400002: Object_1
-    400004: Object_3
-    400006: Object_4
+    100000: Object_1
+    100002: //RootNode
+    400000: Object_1
+    400002: //RootNode
     2100000: Material_2
     2300000: Object_1
-    2300002: Object_3
-    2300004: Object_4
     3300000: Object_1
-    3300002: Object_3
-    3300004: Object_4
     4300000: Object_1
-    4300002: Object_3
-    4300004: Object_4
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -76,7 +66,7 @@ ModelImporter:
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
-    tangentImportMode: 0
+    tangentImportMode: 3
     normalCalculationMode: 4
   importAnimation: 1
   copyAvatar: 0

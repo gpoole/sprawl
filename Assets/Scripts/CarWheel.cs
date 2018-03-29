@@ -34,12 +34,7 @@ public class CarWheel : MonoBehaviour {
     }
 
     public Vector3 WheelBottom {
-        get { return visualWheel.position + new Vector3(0, WheelHeight, 0); }
-    }
-
-    public RaycastHit HitSurface {
-        get;
-        private set;
+        get { return visualWheel.position - new Vector3(0, WheelHeight, 0); }
     }
 
     private GameObject car;
@@ -53,12 +48,12 @@ public class CarWheel : MonoBehaviour {
     void Start() {
         if (transform.childCount > 0) {
             visualWheel = transform.GetChild(0);
-            WheelHeight = visualWheel.GetComponent<MeshRenderer>().bounds.extents.y;
+            WheelHeight = visualWheel.TransformVector(visualWheel.GetComponent<MeshRenderer>().bounds.extents).y;
         }
-        car = transform.parent.parent.gameObject;
+        carController = GetComponentInParent<CarController>();
+        car = carController.gameObject;
         carRigidBody = car.GetComponent<Rigidbody>();
         isFrontWheel = transform.localPosition.z > 0;
-        carController = car.GetComponent<CarController>();
     }
 
     void Update() {
@@ -90,7 +85,6 @@ public class CarWheel : MonoBehaviour {
             prevCompression = compressionRatio;
             carRigidBody.AddForceAtPosition(transform.TransformDirection(Vector3.up) * totalForce * Time.deltaTime, transform.position, ForceMode.VelocityChange);
             IsGrounded = true;
-            HitSurface = hit;
         } else {
             prevCompression = 0f;
             IsGrounded = false;

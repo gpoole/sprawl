@@ -6,8 +6,6 @@ public class CarTyreSkidEffect : MonoBehaviour {
 
 	private ParticleSystem smokeEffect;
 
-	private TrailRenderer skidMark;
-
 	private CarController car;
 
 	private CarWheel wheel;
@@ -15,23 +13,22 @@ public class CarTyreSkidEffect : MonoBehaviour {
 	// Use this for initialization
 	void Start() {
 		smokeEffect = GetComponentInChildren<ParticleSystem>();
-		skidMark = GetComponentInChildren<TrailRenderer>();
 		car = GetComponentInParent<CarController>();
 		wheel = GetComponentInParent<CarWheel>();
-
-		transform.SetParent(null, true);
 	}
 
 	// Update is called once per frame
-	void Update() {
+	void FixedUpdate() {
 		if (car.IsDrifting && wheel.IsGrounded) {
-			if (!smokeEffect.isPlaying) {
+			if (smokeEffect && !smokeEffect.isPlaying) {
 				smokeEffect.Play();
 			}
-			transform.position = wheel.HitSurface.point;
-			transform.rotation = Quaternion.FromToRotation(Vector3.up, wheel.HitSurface.normal);
+
+			var position = transform.position;
+			position.y = wheel.WheelBottom.y;
+			transform.position = position;
 		} else {
-			if (smokeEffect.isPlaying) {
+			if (smokeEffect && smokeEffect.isPlaying) {
 				smokeEffect.Stop();
 			}
 		}
