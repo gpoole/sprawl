@@ -4,46 +4,46 @@ using UnityEngine;
 
 public class CarPlayerInput : MonoBehaviour {
 
-    public int playerNumber = 1;
-
     public float Accelerator {
         get {
-            return controller.RightTrigger;
+            return input.RightTrigger;
         }
     }
 
     public float Brakes {
         get {
-            return controller.LeftTrigger;
+            return input.LeftTrigger;
         }
     }
 
     public float Turning {
         get {
-            return controller.LeftStickX;
+            return input.LeftStickX;
         }
     }
 
     public bool IsHandbraking {
         get {
-            return controller.Action2; // b button
+            return input.Action2; // b button
         }
     }
 
     public bool IsResetting {
         get {
-            return controller.GetControl(InputControlType.Back) || Input.GetKey(KeyCode.R);
+            return input.GetControl(InputControlType.Back) || Input.GetKey(KeyCode.R);
         }
     }
 
-    private InputDevice controller;
-
-    void OnEnable() {
-        if (playerNumber <= InputManager.Devices.Count) {
-            controller = InputManager.Devices[playerNumber - 1];
-        } else {
-            Debug.LogWarning(String.Format("PlayerInput: player {0} is greater than the number of controlers ({1})", playerNumber, InputManager.Devices.Count));
+    private InputDevice input {
+        get {
+            return GameManager.Instance.players[car.playerId].device;
         }
+    }
+
+    private CarController car;
+
+    void Awake() {
+        car = GetComponent<CarController>();
     }
 
 }

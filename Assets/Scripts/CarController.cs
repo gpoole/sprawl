@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour {
 
+    public int playerId;
+
     public float stoppedSpeed = 0.5f;
 
     public float maxSpeed = 60f;
@@ -43,8 +45,6 @@ public class CarController : MonoBehaviour {
     public float straightenUpTime = 3f;
 
     public float straightenUpAngle = 15f;
-
-    public int playerNumber = 1;
 
     public float VelocityAlignmentDifference {
         get;
@@ -113,8 +113,8 @@ public class CarController : MonoBehaviour {
         var surfaceVelocity = transform.InverseTransformDirection(rb.velocity);
         surfaceVelocity.y = 0;
         Speed = surfaceVelocity.z;
-        debugger.ShowDebugValue("speed", Speed);
-        debugger.ShowDebugValue("surfaceVelocity", surfaceVelocity, Color.yellow);
+        Debug("speed", Speed);
+        Debug("surfaceVelocity", surfaceVelocity, Color.yellow);
         isStopped = surfaceVelocity.magnitude < stoppedSpeed;
         WheelOrientation = input.Turning * maxWheelTurn;
 
@@ -125,7 +125,7 @@ public class CarController : MonoBehaviour {
         if ((isReversing || isStopped) && input.Brakes > 0) {
             isReversing = true;
         }
-        debugger.ShowDebugValue("isReversing", isReversing);
+        Debug("isReversing", isReversing);
 
         var wheelRotation = Quaternion.AngleAxis(WheelOrientation, Vector3.up);
         wheelForwardDirection = (wheelRotation * Vector3.forward).normalized;
@@ -144,15 +144,15 @@ public class CarController : MonoBehaviour {
         } else {
             acceleration = -accelerationSpeed.Evaluate(Speed / maxReverseSpeed) * input.Brakes;
         }
-        debugger.ShowDebugValue("acceleration", acceleration);
+        Debug("acceleration", acceleration);
         // Calculate the grip so it increases rapidly as we get towards fully forward-facing
-        debugger.ShowDebugValue("relativeSpeed", relativeSpeed);
+        Debug("relativeSpeed", relativeSpeed);
         var forwardDrivingForce = wheelForwardDirection * acceleration * accelerationMultiplier * gripPower.Evaluate(((90 - absVelocityAlignmentDifference) / 90) / surfaceFriction);
         rb.AddRelativeForce(forwardDrivingForce * Time.deltaTime, ForceMode.VelocityChange);
-        debugger.ShowDebugValue("forwardDrivingForce", forwardDrivingForce, IsDrifting ? Color.magenta : Color.green);
+        Debug("forwardDrivingForce", forwardDrivingForce, IsDrifting ? Color.magenta : Color.green);
 
         EngineSpeed = Mathf.Clamp01((Math.Abs(acceleration) * Mathf.Clamp01(0.2f / relativeSpeed) * 0.8f) + relativeSpeed);
-        debugger.ShowDebugValue("EngineSpeed", EngineSpeed);
+        Debug("EngineSpeed", EngineSpeed);
 
         if (!isReversing && input.IsHandbraking && Speed > minDriftSpeed) {
             IsDrifting = true;
@@ -167,18 +167,18 @@ public class CarController : MonoBehaviour {
             }
         }
 
-        debugger.ShowDebugValue("driftTimer", driftTimer, false);
-        debugger.ShowDebugValue("isDrifting", IsDrifting);
+        Debug("driftTimer", driftTimer, false);
+        Debug("isDrifting", IsDrifting);
 
-        debugger.ShowDebugValue("VelocityAlignmentDifference", VelocityAlignmentDifference);
+        Debug("VelocityAlignmentDifference", VelocityAlignmentDifference);
 
         var turnSpeed = turning.Evaluate(relativeSpeed);
-        debugger.ShowDebugValue("turnSpeed", turnSpeed);
+        Debug("turnSpeed", turnSpeed);
 
         // Transfer velocity as we turn
         var velocityTransferAmount = Speed * Mathf.Clamp(VelocityAlignmentDifference / 45f, -1, 1) * turnVelocityTransferRate * turnSpeed * surfaceFriction;
         var turnForceRight = Vector3.right * velocityTransferAmount;
-        debugger.ShowDebugValue("turnForceRight", turnForceRight, Color.blue, 0.5f);
+        Debug("turnForceRight", turnForceRight, Color.blue, 0.5f);
         rb.AddRelativeForce(turnForceRight * Time.deltaTime, ForceMode.VelocityChange);
 
         // Turn the car towards the direction it's travelling
@@ -191,8 +191,8 @@ public class CarController : MonoBehaviour {
         var sidewaysVelocity = Vector3.Project(surfaceVelocity, Vector3.right);
         var sideFriction = sidewaysFriction.Evaluate(sidewaysVelocity.magnitude * surfaceFriction) * sidewaysFrictionMultiplier;
         var sidewaysFrictionForce = -sidewaysVelocity.normalized * sideFriction * surfaceFriction;
-        debugger.ShowDebugValue("sidewaysVelocity", sidewaysVelocity, Color.magenta);
-        debugger.ShowDebugValue("sidewaysFrictionForce", sidewaysFrictionForce, Color.red);
+        Debug("sidewaysVelocity", sidewaysVelocity, Color.magenta);
+        Debug("sidewaysFrictionForce", sidewaysFrictionForce, Color.red);
         rb.AddRelativeForce(sidewaysFrictionForce * Time.deltaTime, ForceMode.VelocityChange);
 
         if (!isReversing) {
@@ -201,7 +201,7 @@ public class CarController : MonoBehaviour {
                 baseBrakeForce = 1.0f;
             }
             var brakeForce = Vector3.back * baseBrakeForce * brakingForceMultiplier * surfaceFriction * Mathf.Clamp01((45f - absVelocityAlignmentDifference) / 45f);
-            debugger.ShowDebugValue("brakeForce", brakeForce, Color.red);
+            Debug("brakeForce", brakeForce, Color.red);
             rb.AddRelativeForce(brakeForce * Time.deltaTime, ForceMode.VelocityChange);
         }
     }
@@ -212,13 +212,31 @@ public class CarController : MonoBehaviour {
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out roadSurface, 1f)) {
                 surfaceFriction = roadSurface.collider.material.dynamicFriction;
             }
-            debugger.ShowDebugValue("surfaceFriction", surfaceFriction);
+            Debug("surfaceFriction", surfaceFriction);
 
             ApplyDrivingForces();
         } else {
             Speed = 0;
             driftTimer = 0;
             IsDrifting = false;
+        }
+    }
+
+    void Debug(string label, object value) {
+        if (debugger) {
+            debugger.ShowDebugValue(label, value);
+        }
+    }
+
+    void Debug(string label, float value, bool showMinMax = true) {
+        if (debugger) {
+            debugger.ShowDebugValue(label, value, showMinMax);
+        }
+    }
+
+    void Debug(string label, Vector3 vector, Color color, float scale = 1f) {
+        if (debugger) {
+            debugger.ShowDebugValue(label, vector, color, scale);
         }
     }
 
