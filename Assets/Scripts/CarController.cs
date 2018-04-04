@@ -107,6 +107,7 @@ public class CarController : MonoBehaviour {
         Speed = 0;
         WheelOrientation = 0;
         rb.ResetInertiaTensor();
+        rb.velocity = Vector3.zero;
     }
 
     private void ApplyDrivingForces() {
@@ -115,7 +116,7 @@ public class CarController : MonoBehaviour {
         Speed = surfaceVelocity.z;
         Debug("speed", Speed);
         Debug("surfaceVelocity", surfaceVelocity, Color.yellow);
-        isStopped = surfaceVelocity.magnitude < stoppedSpeed;
+        isStopped = Math.Abs(Speed) < stoppedSpeed;
         WheelOrientation = input.Turning * maxWheelTurn;
 
         if (input.Accelerator > 0) {
@@ -177,8 +178,8 @@ public class CarController : MonoBehaviour {
 
         // Transfer velocity as we turn
         var velocityTransferAmount = Speed * Mathf.Clamp(VelocityAlignmentDifference / 45f, -1, 1) * turnVelocityTransferRate * turnSpeed * surfaceFriction;
-        var turnForceRight = Vector3.right * velocityTransferAmount;
-        Debug("turnForceRight", turnForceRight, Color.blue, 0.5f);
+        var turnForceRight = (isReversing ? Vector3.left : Vector3.right) * velocityTransferAmount;
+        Debug("turnForceRight", turnForceRight, Color.blue);
         rb.AddRelativeForce(turnForceRight * Time.deltaTime, ForceMode.VelocityChange);
 
         // Turn the car towards the direction it's travelling
@@ -195,15 +196,16 @@ public class CarController : MonoBehaviour {
         Debug("sidewaysFrictionForce", sidewaysFrictionForce, Color.red);
         rb.AddRelativeForce(sidewaysFrictionForce * Time.deltaTime, ForceMode.VelocityChange);
 
+        Vector3 brakeForce = Vector3.zero;
         if (!isReversing) {
             float baseBrakeForce = input.Brakes;
             if (IsDrifting) {
                 baseBrakeForce = 1.0f;
             }
-            var brakeForce = Vector3.back * baseBrakeForce * brakingForceMultiplier * surfaceFriction * Mathf.Clamp01((45f - absVelocityAlignmentDifference) / 45f);
-            Debug("brakeForce", brakeForce, Color.red);
-            rb.AddRelativeForce(brakeForce * Time.deltaTime, ForceMode.VelocityChange);
+            brakeForce = Vector3.back * baseBrakeForce * brakingForceMultiplier * surfaceFriction * Mathf.Clamp01((45f - absVelocityAlignmentDifference) / 45f);
         }
+        Debug("brakeForce", brakeForce, Color.red);
+        rb.AddRelativeForce(brakeForce * Time.deltaTime, ForceMode.VelocityChange);
     }
 
     void FixedUpdate() {
@@ -220,23 +222,27 @@ public class CarController : MonoBehaviour {
             driftTimer = 0;
             IsDrifting = false;
         }
+
+        if (input.IsResetting) {
+            RaceManager.Instance.ResetPlayer(playerId);
+        }
     }
 
     void Debug(string label, object value) {
         if (debugger) {
-            debugger.ShowDebugValue(label, value);
+            debugger.Log(label, value);
         }
     }
 
     void Debug(string label, float value, bool showMinMax = true) {
         if (debugger) {
-            debugger.ShowDebugValue(label, value, showMinMax);
+            debugger.Log(label, value, showMinMax);
         }
     }
 
-    void Debug(string label, Vector3 vector, Color color, float scale = 1f) {
+    void Debug(string label, Vector3 vector, Color color) {
         if (debugger) {
-            debugger.ShowDebugValue(label, vector, color, scale);
+            debugger.Log(label, vector, color);
         }
     }
 

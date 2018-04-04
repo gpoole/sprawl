@@ -12,7 +12,6 @@ public class CarDebugger : MonoBehaviour {
     protected struct VectorDebug {
         public Color Color;
         public Vector3 Vector;
-        public float Scale;
     }
 
     Vector3 initialPosition;
@@ -33,10 +32,17 @@ public class CarDebugger : MonoBehaviour {
 
     private CarPlayerInput input;
 
+    private bool showMessages {
+        get { return carStatus; }
+    }
+
+    private int playerId;
+
     void Start() {
         initialPosition = GetComponent<Transform>().position;
         initialRotation = GetComponent<Transform>().rotation;
         input = GetComponent<CarPlayerInput>();
+        playerId = GetComponent<CarController>().playerId;
     }
 
     void Update() {
@@ -49,22 +55,12 @@ public class CarDebugger : MonoBehaviour {
             rb.AddExplosionForce(750f * rb.mass, t.TransformPoint(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)) + (Vector3.down * 2f), 50f);
         }
 
-        if (input.IsResetting) {
-            WarpTo(initialPosition, initialRotation);
-            debugValues.Clear();
-            GetComponent<CarController>().Reset();
-        }
-
-        for (var i = 0; i < warpPoints.Length; i++) {
-            if (Input.GetKeyUp(i.ToString())) {
-                WarpTo(warpPoints[i].position, warpPoints[i].rotation);
-            }
-        }
-
-        carStatus.text = "";
-        foreach (KeyValuePair<string, object> entry in debugValues) {
-            if (ShowValue(entry.Key)) {
-                carStatus.text += entry.Key + "=" + entry.Value + "\n";
+        if (showMessages) {
+            carStatus.text = "";
+            foreach (KeyValuePair<string, object> entry in debugValues) {
+                if (ShowValue(entry.Key)) {
+                    carStatus.text += entry.Key + "=" + entry.Value + "\n";
+                }
             }
         }
     }
@@ -77,32 +73,37 @@ public class CarDebugger : MonoBehaviour {
         foreach (KeyValuePair<string, VectorDebug> entry in debugVectors) {
             if (ShowValue(entry.Key)) {
                 Gizmos.color = entry.Value.Color;
-                var vector = transform.TransformDirection(entry.Value.Vector) * entry.Value.Scale;
-                Gizmos.DrawRay(transform.position, vector);
+                var debugRay = transform.TransformDirection(entry.Value.Vector).normalized * Mathf.Log((entry.Value.Vector.magnitude * 10) + 1);
+                Gizmos.DrawRay(transform.position, debugRay);
 #if UNITY_EDITOR
-                Handles.Label(transform.position + vector, entry.Key + "\n" + entry.Value.Vector);
+                Handles.Label(transform.position + debugRay, entry.Key + "\n" + entry.Value.Vector);
 #endif
             }
         }
     }
 
-    public void ShowDebugValue(string label, object value) {
-        debugValues[label] = value;
-    }
-
-    public void ShowDebugValue(string label, Vector3 value, Color color, float scale = 1f) {
+    public void Log(string label, Vector3 value, Color color) {
         if (debugVectors.ContainsKey(label)) {
             VectorDebug existing = debugVectors[label];
             existing.Vector = value;
             existing.Color = color;
-            existing.Scale = scale;
             debugVectors[label] = existing;
         } else {
-            debugVectors[label] = new VectorDebug { Vector = value, Color = color, Scale = scale };
+            debugVectors[label] = new VectorDebug { Vector = value, Color = color };
         }
     }
 
-    public void ShowDebugValue(string label, float value, bool showMinMax = true) {
+    public void Log(string label, object value) {
+        if (!showMessages) {
+            return;
+        }
+        debugValues[label] = value;
+    }
+
+    public void Log(string label, float value, bool showMinMax = true) {
+        if (!showMessages) {
+            return;
+        }
         debugValues[label] = value;
 
         if (autoMinMax && showMinMax) {
@@ -120,13 +121,5 @@ public class CarDebugger : MonoBehaviour {
                 debugValues[minLabel] = value;
             }
         }
-    }
-
-    void WarpTo(Vector3 position, Quaternion rotation) {
-        var t = GetComponent<Transform>();
-        var rb = GetComponent<Rigidbody>();
-        t.position = position;
-        t.rotation = rotation;
-        rb.velocity = Vector3.zero;
     }
 }
