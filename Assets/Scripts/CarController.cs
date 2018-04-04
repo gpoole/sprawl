@@ -115,7 +115,7 @@ public class CarController : MonoBehaviour {
         Speed = surfaceVelocity.z;
         debugger.ShowDebugValue("speed", Speed);
         debugger.ShowDebugValue("surfaceVelocity", surfaceVelocity, Color.yellow);
-        isStopped = Math.Abs(Speed) < stoppedSpeed;
+        isStopped = surfaceVelocity.magnitude < stoppedSpeed;
         WheelOrientation = input.Turning * maxWheelTurn;
 
         if (input.Accelerator > 0) {
@@ -200,7 +200,7 @@ public class CarController : MonoBehaviour {
             if (IsDrifting) {
                 baseBrakeForce = 1.0f;
             }
-            var brakeForce = Vector3.back * baseBrakeForce * brakingForceMultiplier * surfaceFriction * Mathf.Clamp01((90f - absVelocityAlignmentDifference) / 90f);
+            var brakeForce = Vector3.back * baseBrakeForce * brakingForceMultiplier * surfaceFriction * Mathf.Clamp01((45f - absVelocityAlignmentDifference) / 45f);
             debugger.ShowDebugValue("brakeForce", brakeForce, Color.red);
             rb.AddRelativeForce(brakeForce * Time.deltaTime, ForceMode.VelocityChange);
         }
