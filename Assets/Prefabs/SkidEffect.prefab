@@ -11,16 +11,16 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1804111316823844}
   m_IsPrefabParent: 1
---- !u!1 &1472904664125558
+--- !u!1 &1545773921620810
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4910950145904880}
-  - component: {fileID: 198774742389201782}
-  - component: {fileID: 199669580761959042}
+  - component: {fileID: 4396229309814022}
+  - component: {fileID: 198701436473718478}
+  - component: {fileID: 199313922075785744}
   m_Layer: 0
   m_Name: TyreSmokeEffect
   m_TagString: Untagged
@@ -54,18 +54,18 @@ Transform:
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4910950145904880}
+  - {fileID: 4396229309814022}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4910950145904880
+--- !u!4 &4396229309814022
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1472904664125558}
+  m_GameObject: {fileID: 1545773921620810}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.0000005066395, y: -0.2089996, z: -0.205}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4069689535561440}
@@ -82,12 +82,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ff1a98c5ef4f4c85a1b396442df7ed6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!198 &198774742389201782
+--- !u!198 &198701436473718478
 ParticleSystem:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1472904664125558}
+  m_GameObject: {fileID: 1545773921620810}
   serializedVersion: 5
   lengthInSec: 5
   simulationSpeed: 1
@@ -142,7 +142,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1160277730
+  randomSeed: 1199197433
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -1045,7 +1045,7 @@ ParticleSystem:
       maxGradient:
         serializedVersion: 2
         key0: {r: 0.8674114, g: 0.8674114, b: 0.8674114, a: 0}
-        key1: {r: 0.7058823, g: 0.7058823, b: 0.7058823, a: 1}
+        key1: {r: 0.8455882, g: 0.8455882, b: 0.8455882, a: 1}
         key2: {r: 0.875, g: 0.875, b: 0.875, a: 1}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -3443,13 +3443,13 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
---- !u!199 &199669580761959042
+--- !u!199 &199313922075785744
 ParticleSystemRenderer:
   serializedVersion: 4
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1472904664125558}
+  m_GameObject: {fileID: 1545773921620810}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -3458,7 +3458,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 10dbade8c91344d38a067b0f30b5f2da, type: 2}
+  - {fileID: 2100000, guid: a52c0753b8c3b4e118d2d475e9e802c4, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -3479,7 +3479,7 @@ ParticleSystemRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_RenderMode: 4
+  m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
   m_MaxParticleSize: 0.5
@@ -3490,8 +3490,8 @@ ParticleSystemRenderer:
   m_NormalDirection: 1
   m_RenderAlignment: 0
   m_Pivot: {x: 0, y: 0, z: 0}
-  m_UseCustomVertexStreams: 0
-  m_VertexStreams: 00010304
+  m_UseCustomVertexStreams: 1
+  m_VertexStreams: 000304
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
