@@ -795,6 +795,10 @@ Prefab:
       propertyPath: m_Name
       value: TyreSmokeEffect (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1484164868793152, guid: 19a971f50654646db8728ed3ef7ad7c4, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 19a971f50654646db8728ed3ef7ad7c4, type: 2}
   m_IsPrefabParent: 0
@@ -1429,6 +1433,10 @@ Prefab:
       propertyPath: m_Name
       value: TyreSmokeEffect (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1484164868793152, guid: 19a971f50654646db8728ed3ef7ad7c4, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 19a971f50654646db8728ed3ef7ad7c4, type: 2}
   m_IsPrefabParent: 0
@@ -2043,7 +2051,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1472904664125558, guid: 8863996fedd674be6b02639efd17f28b, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8863996fedd674be6b02639efd17f28b, type: 2}
@@ -2191,7 +2199,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1472904664125558, guid: 8863996fedd674be6b02639efd17f28b, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8863996fedd674be6b02639efd17f28b, type: 2}
