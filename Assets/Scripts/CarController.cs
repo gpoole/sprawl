@@ -192,21 +192,21 @@ public class CarController : MonoBehaviour {
         Debug("turnSpeed", turnSpeed);
 
         // Transfer velocity as we turn
-        var velocityTransferAmount = Speed * Mathf.Clamp(VelocityAlignmentDifference / 90f, -1, 1) * turnVelocityTransferRate * turnSpeed * surfaceFriction * travelVerticality;
+        var velocityTransferAmount = Speed * Mathf.Clamp(VelocityAlignmentDifference / 90f, -1, 1) * turnVelocityTransferRate * turnSpeed * surfaceFriction;
         var turnForceRight = (isReversing ? Vector3.left : Vector3.right) * velocityTransferAmount;
         Debug("turnForceRight", turnForceRight, Color.blue);
         rb.AddRelativeForce(turnForceRight * Time.deltaTime, ForceMode.VelocityChange);
 
         // Turn the car towards the direction it's travelling
-        rb.AddRelativeTorque(Vector3.Cross(Vector3.forward, surfaceVelocity) * turnToVelocitySpeed * surfaceFriction * travelVerticality * Time.deltaTime, ForceMode.VelocityChange);
+        rb.AddRelativeTorque(Vector3.Cross(Vector3.forward, surfaceVelocity) * turnToVelocitySpeed * surfaceFriction * Time.deltaTime, ForceMode.VelocityChange);
 
         // Turn the car up to a maximum angle against the direction of movement
         var allowedTurnAngle = IsDrifting ? driftMaxTurnAngle : maxTurnAngle;
-        rb.AddRelativeTorque(Vector3.up * input.Turning * Mathf.Clamp((allowedTurnAngle - absVelocityAlignmentDifference) / allowedTurnAngle, 0.2f, 1f) * turnSpeed * (IsDrifting ? driftTurnMultiplier : turnMultiplier) * travelVerticality * Time.deltaTime, ForceMode.VelocityChange);
+        rb.AddRelativeTorque(Vector3.up * input.Turning * Mathf.Clamp((allowedTurnAngle - absVelocityAlignmentDifference) / allowedTurnAngle, 0.2f, 1f) * turnSpeed * (IsDrifting ? driftTurnMultiplier : turnMultiplier) * Time.deltaTime, ForceMode.VelocityChange);
 
         var sidewaysVelocity = Vector3.Project(surfaceVelocity, Vector3.right);
         var sideFriction = sidewaysFriction.Evaluate(sidewaysVelocity.magnitude * surfaceFriction) * sidewaysFrictionMultiplier;
-        var sidewaysFrictionForce = -sidewaysVelocity.normalized * sideFriction * travelVerticality * surfaceFriction;
+        var sidewaysFrictionForce = -sidewaysVelocity.normalized * sideFriction * rightVerticality * surfaceFriction;
         Debug("sidewaysVelocity", sidewaysVelocity, Color.magenta);
         Debug("sidewaysFrictionForce", sidewaysFrictionForce, Color.red);
         rb.AddRelativeForce(sidewaysFrictionForce * Time.deltaTime, ForceMode.VelocityChange);
