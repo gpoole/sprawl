@@ -43,6 +43,12 @@ public class CarDebugger : MonoBehaviour {
         initialRotation = GetComponent<Transform>().rotation;
         input = GetComponent<CarPlayerInput>();
         playerId = GetComponent<CarController>().playerId;
+        if (playerId == 0) {
+            var statusUi = GameObject.Find("DebugInfo");
+            if (statusUi) {
+                carStatus = statusUi.GetComponent<Text>();
+            }
+        }
     }
 
     void Update() {
