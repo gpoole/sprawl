@@ -81,7 +81,7 @@ public class CarWheel : MonoBehaviour {
                     visualWheel.Rotate(Vector3.forward, visualRotationSpeed * carController.EngineSpeed * Time.deltaTime);
                 }
 
-                suspensionBottom = suspensionTop + (Vector3.down * (1 - prevCompression) * targetLength);
+                suspensionBottom = suspensionTop - (Vector3.up * Mathf.Clamp((1 - prevCompression) * targetLength, targetLength * 0.75f, targetLength));
                 visualWheel.position = transform.TransformPoint(suspensionBottom) - transform.TransformDirection(Vector3.down * WheelHeight);
             }
         }

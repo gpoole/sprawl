@@ -125,7 +125,6 @@ public class CarController : MonoBehaviour {
         Debug("speed", Speed);
         Debug("surfaceVelocity", surfaceVelocity, Color.yellow);
         isStopped = Math.Abs(Speed) < stoppedSpeed;
-        WheelOrientation = input.Turning * maxWheelTurn;
 
         RaycastHit roadSurface;
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out roadSurface, 1f)) {
@@ -141,9 +140,6 @@ public class CarController : MonoBehaviour {
             isReversing = true;
         }
         Debug("isReversing", isReversing);
-
-        var wheelRotation = Quaternion.AngleAxis(WheelOrientation, Vector3.up);
-        wheelForwardDirection = (wheelRotation * Vector3.forward).normalized;
 
         var worldWheelForward = transform.TransformDirection(wheelForwardDirection) * (isReversing ? -1 : 1);
         var worldWheelRight = Vector3.Cross(transform.up, worldWheelForward);
@@ -230,6 +226,10 @@ public class CarController : MonoBehaviour {
     }
 
     void FixedUpdate() {
+        WheelOrientation = input.Turning * maxWheelTurn;
+        var wheelRotation = Quaternion.AngleAxis(WheelOrientation, Vector3.up);
+        wheelForwardDirection = (wheelRotation * Vector3.forward).normalized;
+
         if (IsGrounded) {
             ApplyDrivingForces();
         } else {
