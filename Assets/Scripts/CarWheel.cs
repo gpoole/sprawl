@@ -78,8 +78,9 @@ public class CarWheel : MonoBehaviour {
     void FixedUpdate() {
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, targetLength)) {
-            var compressionRatio = 1f - (hit.distance / targetLength);
-            var springForce = compressionRatio * springFactor;
+            var surfaceAlignment = 1 - Mathf.Clamp01(Mathf.Abs(90 - Vector3.Angle(hit.normal, transform.right)) / 90);
+            var compressionRatio = 1 - (hit.distance / targetLength);
+            var springForce = compressionRatio * surfaceAlignment * springFactor;
             var dampingForce = (prevCompression - compressionRatio) * dampingFactor;
             var totalForce = springForce - dampingForce;
             prevCompression = compressionRatio;
