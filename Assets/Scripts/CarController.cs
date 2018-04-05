@@ -142,7 +142,8 @@ public class CarController : MonoBehaviour {
         var worldWheelForward = transform.TransformDirection(wheelForwardDirection) * (isReversing ? -1 : 1);
         var worldWheelRight = Vector3.Cross(transform.up, worldWheelForward);
         float rightVerticality = (1 - Mathf.Clamp01(Math.Abs(90f - Vector3.Angle(worldWheelRight, Vector3.up)) / 90f));
-        float travelVerticality = (Vector3.Angle(worldWheelForward, Vector3.up) / 90f) * rightVerticality;
+        float forwardVerticality = (Vector3.Angle(worldWheelForward, Vector3.up) / 90f);
+        float travelVerticality = forwardVerticality * rightVerticality;
         Debug("travelVerticality", travelVerticality);
 
         // Drive the car forward in the direction of the wheels
