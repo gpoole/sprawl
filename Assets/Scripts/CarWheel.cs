@@ -11,6 +11,8 @@ public class CarWheel : MonoBehaviour {
 
     public float springFactor;
 
+    public float maxAngleToSurface = 45f;
+
     public float visualTurnMultiplier = 1.5f;
 
     public float visualRotationSpeed = 1f;
@@ -78,14 +80,14 @@ public class CarWheel : MonoBehaviour {
     void FixedUpdate() {
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, targetLength)) {
-            var surfaceAlignment = 1 - Mathf.Clamp01(Mathf.Abs(90 - Vector3.Angle(hit.normal, transform.right)) / 90);
+            var surfaceAlignment = 1 - Mathf.Clamp01(Mathf.Abs(90 - Vector3.Angle(hit.normal, transform.right)) / maxAngleToSurface);
             var compressionRatio = 1 - (hit.distance / targetLength);
             var springForce = compressionRatio * surfaceAlignment * springFactor;
             var dampingForce = (prevCompression - compressionRatio) * dampingFactor;
             var totalForce = springForce - dampingForce;
             prevCompression = compressionRatio;
             carRigidBody.AddForceAtPosition(transform.TransformDirection(Vector3.up) * totalForce * Time.deltaTime, transform.position, ForceMode.VelocityChange);
-            IsGrounded = true;
+            IsGrounded = surfaceAlignment > 0;
         } else {
             prevCompression = 0f;
             IsGrounded = false;

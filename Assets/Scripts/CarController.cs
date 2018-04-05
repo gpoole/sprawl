@@ -48,6 +48,8 @@ public class CarController : MonoBehaviour {
 
     public float maxVerticalAngle = 80f;
 
+    public Transform centreOfMass;
+
     public float VelocityAlignmentDifference {
         get;
         private set;
@@ -103,6 +105,10 @@ public class CarController : MonoBehaviour {
         input = GetComponent<CarPlayerInput>();
         rb = GetComponent<Rigidbody>();
         wheels = GetComponentsInChildren<CarWheel>();
+
+        if (centreOfMass) {
+            rb.centerOfMass = centreOfMass.position;
+        }
     }
 
     public void Reset() {
