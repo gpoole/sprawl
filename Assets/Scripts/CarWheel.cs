@@ -47,21 +47,29 @@ public class CarWheel : MonoBehaviour {
 
     private Transform visualWheel;
 
+    private Vector3 suspensionTop;
+
+    private float prevWheelOrientation;
+
     void Start() {
         if (transform.childCount > 0) {
             visualWheel = transform.GetChild(0);
-            WheelHeight = visualWheel.TransformVector(visualWheel.GetComponent<MeshRenderer>().bounds.extents).y;
+            WheelHeight = visualWheel.TransformVector(visualWheel.GetComponent<MeshRenderer>().bounds.extents).y * 2;
         }
         carController = GetComponentInParent<CarController>();
         car = carController.gameObject;
         carRigidBody = car.GetComponent<Rigidbody>();
         isFrontWheel = transform.localPosition.z > 0;
+        suspensionTop = Vector3.up * (targetLength / 2);
+        prevWheelOrientation = carController.WheelOrientation;
     }
 
     void Update() {
         if (carController) {
             if (isFrontWheel) {
-                transform.localRotation = Quaternion.AngleAxis(carController.WheelOrientation * visualTurnMultiplier, Vector3.up);
+                var wheelOrientation = Mathf.Lerp(prevWheelOrientation, carController.WheelOrientation, Time.deltaTime * 5f);
+                transform.localRotation = Quaternion.AngleAxis(wheelOrientation * visualTurnMultiplier, Vector3.up);
+                prevWheelOrientation = wheelOrientation;
             }
 
             if (visualWheel) {
@@ -71,7 +79,8 @@ public class CarWheel : MonoBehaviour {
                     visualWheel.Rotate(Vector3.forward, visualRotationSpeed * carController.EngineSpeed * Time.deltaTime);
                 }
 
-                visualWheel.localPosition = (Vector3.down * (1 - prevCompression) * targetLength) + new Vector3(0, WheelHeight, 0);
+                var suspensionBottom = suspensionTop + (Vector3.down * (1 - prevCompression) * targetLength);
+                visualWheel.position = transform.TransformPoint(suspensionBottom) - transform.TransformDirection(Vector3.down * WheelHeight);
             }
         }
     }
@@ -79,7 +88,7 @@ public class CarWheel : MonoBehaviour {
     // Update is called once per frame
     void FixedUpdate() {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, targetLength)) {
+        if (Physics.Raycast(transform.TransformPoint(suspensionTop), transform.TransformDirection(Vector3.down), out hit, targetLength)) {
             var surfaceAlignment = 1 - Mathf.Clamp01(Mathf.Abs(90 - Vector3.Angle(hit.normal, transform.right)) / maxAngleToSurface);
             var compressionRatio = 1 - (hit.distance / targetLength);
             var springForce = compressionRatio * surfaceAlignment * springFactor;
