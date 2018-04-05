@@ -49,12 +49,14 @@ public class CarWheel : MonoBehaviour {
 
     private Vector3 suspensionTop;
 
+    private Vector3 suspensionBottom;
+
     private float prevWheelOrientation;
 
     void Start() {
         if (transform.childCount > 0) {
             visualWheel = transform.GetChild(0);
-            WheelHeight = visualWheel.TransformVector(visualWheel.GetComponent<MeshRenderer>().bounds.extents).y * 2;
+            WheelHeight = visualWheel.TransformVector(visualWheel.GetComponent<MeshRenderer>().bounds.extents).y;
         }
         carController = GetComponentInParent<CarController>();
         car = carController.gameObject;
@@ -79,13 +81,12 @@ public class CarWheel : MonoBehaviour {
                     visualWheel.Rotate(Vector3.forward, visualRotationSpeed * carController.EngineSpeed * Time.deltaTime);
                 }
 
-                var suspensionBottom = suspensionTop + (Vector3.down * (1 - prevCompression) * targetLength);
+                suspensionBottom = suspensionTop + (Vector3.down * (1 - prevCompression) * targetLength);
                 visualWheel.position = transform.TransformPoint(suspensionBottom) - transform.TransformDirection(Vector3.down * WheelHeight);
             }
         }
     }
 
-    // Update is called once per frame
     void FixedUpdate() {
         RaycastHit hit;
         if (Physics.Raycast(transform.TransformPoint(suspensionTop), transform.TransformDirection(Vector3.down), out hit, targetLength)) {
@@ -106,6 +107,9 @@ public class CarWheel : MonoBehaviour {
     void OnDrawGizmos() {
         var transform = GetComponent<Transform>();
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, transform.TransformDirection(Vector3.down * (1 - prevCompression) * targetLength));
+        Gizmos.DrawRay(transform.TransformPoint(suspensionTop), transform.TransformDirection(Vector3.down * (1 - prevCompression) * targetLength));
+        Gizmos.DrawSphere(transform.TransformPoint(suspensionBottom), 0.1f);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(transform.TransformPoint(suspensionTop), 0.1f);
     }
 }
