@@ -22,7 +22,7 @@ GameObject:
   m_Layer: 2
   m_Name: CameraPosition
   m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -142,7 +142,7 @@ GameObject:
   m_Layer: 2
   m_Name: CameraLookAtTarget
   m_TagString: Untagged
-  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -973,6 +973,7 @@ MonoBehaviour:
   minDriftSpeed: 20
   straightenUpTime: 0.3
   straightenUpAngle: 25
+  maxVerticalAngle: 80
 --- !u!114 &114449316361521596
 MonoBehaviour:
   m_ObjectHideFlags: 1

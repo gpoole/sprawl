@@ -46,6 +46,8 @@ public class CarController : MonoBehaviour {
 
     public float straightenUpAngle = 15f;
 
+    public float maxVerticalAngle = 80f;
+
     public float VelocityAlignmentDifference {
         get;
         private set;
@@ -119,6 +121,12 @@ public class CarController : MonoBehaviour {
         isStopped = Math.Abs(Speed) < stoppedSpeed;
         WheelOrientation = input.Turning * maxWheelTurn;
 
+        RaycastHit roadSurface;
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out roadSurface, 1f)) {
+            surfaceFriction = roadSurface.collider.material.dynamicFriction;
+        }
+        Debug("surfaceFriction", surfaceFriction);
+
         if (input.Accelerator > 0) {
             isReversing = false;
         }
@@ -130,6 +138,9 @@ public class CarController : MonoBehaviour {
 
         var wheelRotation = Quaternion.AngleAxis(WheelOrientation, Vector3.up);
         wheelForwardDirection = (wheelRotation * Vector3.forward).normalized;
+
+        float travelVerticality = Vector3.Angle(transform.TransformDirection(wheelForwardDirection) * (isReversing ? -1 : 1), Vector3.up) / 90f;
+        Debug("travelVerticality", travelVerticality);
 
         // Drive the car forward in the direction of the wheels
         VelocityAlignmentDifference = -Vector3.SignedAngle(wheelForwardDirection, surfaceVelocity, Vector3.up);
@@ -148,7 +159,7 @@ public class CarController : MonoBehaviour {
         Debug("acceleration", acceleration);
         // Calculate the grip so it increases rapidly as we get towards fully forward-facing
         Debug("relativeSpeed", relativeSpeed);
-        var forwardDrivingForce = wheelForwardDirection * acceleration * accelerationMultiplier * gripPower.Evaluate(((90 - absVelocityAlignmentDifference) / 90) / surfaceFriction);
+        var forwardDrivingForce = wheelForwardDirection * acceleration * accelerationMultiplier * gripPower.Evaluate(((90 - absVelocityAlignmentDifference) / 90) / surfaceFriction) * travelVerticality;
         rb.AddRelativeForce(forwardDrivingForce * Time.deltaTime, ForceMode.VelocityChange);
         Debug("forwardDrivingForce", forwardDrivingForce, IsDrifting ? Color.magenta : Color.green);
 
@@ -177,21 +188,21 @@ public class CarController : MonoBehaviour {
         Debug("turnSpeed", turnSpeed);
 
         // Transfer velocity as we turn
-        var velocityTransferAmount = Speed * Mathf.Clamp(VelocityAlignmentDifference / 90f, -1, 1) * turnVelocityTransferRate * turnSpeed * surfaceFriction;
+        var velocityTransferAmount = Speed * Mathf.Clamp(VelocityAlignmentDifference / 90f, -1, 1) * turnVelocityTransferRate * turnSpeed * surfaceFriction * travelVerticality;
         var turnForceRight = (isReversing ? Vector3.left : Vector3.right) * velocityTransferAmount;
         Debug("turnForceRight", turnForceRight, Color.blue);
         rb.AddRelativeForce(turnForceRight * Time.deltaTime, ForceMode.VelocityChange);
 
         // Turn the car towards the direction it's travelling
-        rb.AddRelativeTorque(Vector3.Cross(Vector3.forward, surfaceVelocity) * turnToVelocitySpeed * surfaceFriction * Time.deltaTime, ForceMode.VelocityChange);
+        rb.AddRelativeTorque(Vector3.Cross(Vector3.forward, surfaceVelocity) * turnToVelocitySpeed * surfaceFriction * travelVerticality * Time.deltaTime, ForceMode.VelocityChange);
 
         // Turn the car up to a maximum angle against the direction of movement
         var allowedTurnAngle = IsDrifting ? driftMaxTurnAngle : maxTurnAngle;
-        rb.AddRelativeTorque(Vector3.up * input.Turning * Mathf.Clamp((allowedTurnAngle - absVelocityAlignmentDifference) / allowedTurnAngle, 0.2f, 1f) * turnSpeed * (IsDrifting ? driftTurnMultiplier : turnMultiplier) * Time.deltaTime, ForceMode.VelocityChange);
+        rb.AddRelativeTorque(Vector3.up * input.Turning * Mathf.Clamp((allowedTurnAngle - absVelocityAlignmentDifference) / allowedTurnAngle, 0.2f, 1f) * turnSpeed * (IsDrifting ? driftTurnMultiplier : turnMultiplier) * travelVerticality * Time.deltaTime, ForceMode.VelocityChange);
 
         var sidewaysVelocity = Vector3.Project(surfaceVelocity, Vector3.right);
         var sideFriction = sidewaysFriction.Evaluate(sidewaysVelocity.magnitude * surfaceFriction) * sidewaysFrictionMultiplier;
-        var sidewaysFrictionForce = -sidewaysVelocity.normalized * sideFriction * surfaceFriction;
+        var sidewaysFrictionForce = -sidewaysVelocity.normalized * sideFriction * travelVerticality * surfaceFriction;
         Debug("sidewaysVelocity", sidewaysVelocity, Color.magenta);
         Debug("sidewaysFrictionForce", sidewaysFrictionForce, Color.red);
         rb.AddRelativeForce(sidewaysFrictionForce * Time.deltaTime, ForceMode.VelocityChange);
@@ -202,7 +213,7 @@ public class CarController : MonoBehaviour {
             if (IsDrifting) {
                 baseBrakeForce = 1.0f;
             }
-            brakeForce = Vector3.back * baseBrakeForce * brakingForceMultiplier * surfaceFriction * Mathf.Clamp01((45f - absVelocityAlignmentDifference) / 45f);
+            brakeForce = Vector3.back * baseBrakeForce * brakingForceMultiplier * surfaceFriction * travelVerticality * Mathf.Clamp01((45f - absVelocityAlignmentDifference) / 45f);
         }
         Debug("brakeForce", brakeForce, Color.red);
         rb.AddRelativeForce(brakeForce * Time.deltaTime, ForceMode.VelocityChange);
@@ -210,12 +221,6 @@ public class CarController : MonoBehaviour {
 
     void FixedUpdate() {
         if (IsGrounded) {
-            RaycastHit roadSurface;
-            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out roadSurface, 1f)) {
-                surfaceFriction = roadSurface.collider.material.dynamicFriction;
-            }
-            Debug("surfaceFriction", surfaceFriction);
-
             ApplyDrivingForces();
         } else {
             Speed = 0;
