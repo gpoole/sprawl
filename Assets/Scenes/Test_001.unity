@@ -2924,6 +2924,8 @@ MonoBehaviour:
   players:
   - id: 0
     car: {fileID: 1081355796924530, guid: 7bd01c019ac78464d8d108ece10fe61a, type: 2}
+  - id: 1
+    car: {fileID: 1081355796924530, guid: 9a15c2fd606744c07861ba9888a9624f, type: 2}
 --- !u!4 &2108038158
 Transform:
   m_ObjectHideFlags: 0

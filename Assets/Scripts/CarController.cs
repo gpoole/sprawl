@@ -177,7 +177,7 @@ public class CarController : MonoBehaviour {
         Debug("turnSpeed", turnSpeed);
 
         // Transfer velocity as we turn
-        var velocityTransferAmount = Speed * Mathf.Clamp(VelocityAlignmentDifference / 45f, -1, 1) * turnVelocityTransferRate * turnSpeed * surfaceFriction;
+        var velocityTransferAmount = Speed * Mathf.Clamp(VelocityAlignmentDifference / 90f, -1, 1) * turnVelocityTransferRate * turnSpeed * surfaceFriction;
         var turnForceRight = (isReversing ? Vector3.left : Vector3.right) * velocityTransferAmount;
         Debug("turnForceRight", turnForceRight, Color.blue);
         rb.AddRelativeForce(turnForceRight * Time.deltaTime, ForceMode.VelocityChange);

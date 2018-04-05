@@ -22,7 +22,7 @@ GameObject:
   m_Layer: 2
   m_Name: CameraPosition
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -40,6 +40,7 @@ GameObject:
   - component: {fileID: 114006675838264836}
   - component: {fileID: 114638486086864216}
   - component: {fileID: 114806923617446882}
+  - component: {fileID: 114987352650497512}
   m_Layer: 2
   m_Name: Jomny002
   m_TagString: Untagged
@@ -141,7 +142,7 @@ GameObject:
   m_Layer: 2
   m_Name: CameraLookAtTarget
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -288,7 +289,7 @@ GameObject:
   - component: {fileID: 4874871651903210}
   - component: {fileID: 33612934497171510}
   - component: {fileID: 23382798697269100}
-  - component: {fileID: 65391102483930548}
+  - component: {fileID: 136037795583258670}
   m_Layer: 0
   m_Name: pixel_jomny_002
   m_TagString: Untagged
@@ -487,7 +488,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1413017751934474}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1.99}
+  m_LocalPosition: {x: 0, y: 0.59, z: 0.99}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4917932679583966}
@@ -513,7 +514,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1027094106692552}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.379, z: -2.758}
+  m_LocalPosition: {x: 0, y: 1.7, z: -3.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4917932679583966}
@@ -539,7 +540,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1081355796924530}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 28.021362, y: 11.291374, z: -5.2330666}
+  m_LocalPosition: {x: 48.13991, y: 58.473175, z: 188.28996}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4862456194374016}
@@ -578,7 +579,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 2d6b841ba1db44b60b8b33fe3bbebfbf, type: 2}
+  - {fileID: 2100000, guid: c783844c50fe548fc9c482d8fff76e47, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -796,18 +797,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.024837567, y: 0.0670046, z: 0.03138976}
   m_Center: {x: -0.006896097, y: -0.015446153, z: 0.000000058585396}
---- !u!65 &65391102483930548
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1823817674369776}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.02483755, y: 0.06700458, z: 0.031389743}
-  m_Center: {x: -0.0068960935, y: -0.015446178, z: 0}
 --- !u!114 &114006675838264836
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -937,19 +926,19 @@ MonoBehaviour:
     - serializedVersion: 2
       time: 0
       value: 0.1
-      inSlope: 0.60900754
-      outSlope: 0.60900754
+      inSlope: 0.9981434
+      outSlope: 0.9981434
       tangentMode: 0
     - serializedVersion: 2
-      time: 2
-      value: 1
+      time: 10
+      value: 3
       inSlope: 0.03252515
       outSlope: 0.03252515
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  sidewaysFrictionMultiplier: 5
+  sidewaysFrictionMultiplier: 10
   turning:
     serializedVersion: 2
     m_Curve:
@@ -966,10 +955,10 @@ MonoBehaviour:
       outSlope: -0.076457426
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.99816895
-      value: 0.8070618
-      inSlope: -0.3620532
-      outSlope: -0.3620532
+      time: 1.0007324
+      value: 0.89556277
+      inSlope: -0.4777574
+      outSlope: -0.4777574
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -977,10 +966,10 @@ MonoBehaviour:
   turnMultiplier: 15
   turnToVelocitySpeed: 0.025
   turnVelocityTransferRate: 0.8
-  maxWheelTurn: 20
-  maxTurnAngle: 50
+  maxWheelTurn: 30
+  maxTurnAngle: 60
   driftTurnMultiplier: 33
-  driftMaxTurnAngle: 70
+  driftMaxTurnAngle: 80
   minDriftSpeed: 20
   straightenUpTime: 0.3
   straightenUpAngle: 25
@@ -1116,6 +1105,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7df60844014f84cde9b58e6661b231a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114987352650497512
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1081355796924530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 901c15f93b9f84fc583aa1fa589f33d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  warpPoints: []
+  carStatus: {fileID: 0}
+  filterDebugMessages: []
+  autoMinMax: 1
 --- !u!114 &114991002615929990
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1132,6 +1136,19 @@ MonoBehaviour:
   springFactor: 20
   visualTurnMultiplier: 1.5
   visualRotationSpeed: 1
+--- !u!136 &136037795583258670
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1823817674369776}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.015694872
+  m_Height: 0.06700458
+  m_Direction: 1
+  m_Center: {x: -0.0068959743, y: -0.015446178, z: 0}
 --- !u!198 &198304294314959968
 ParticleSystem:
   m_ObjectHideFlags: 1
