@@ -36,7 +36,8 @@ public class CarWheel : MonoBehaviour {
     }
 
     public Vector3 WheelBottom {
-        get { return visualWheel.position - new Vector3(0, WheelHeight, 0); }
+        get;
+        private set;
     }
 
     private GameObject car;
@@ -48,8 +49,6 @@ public class CarWheel : MonoBehaviour {
     private Transform visualWheel;
 
     private Vector3 suspensionTop;
-
-    private Vector3 suspensionBottom;
 
     private float prevWheelOrientation;
 
@@ -81,8 +80,9 @@ public class CarWheel : MonoBehaviour {
                     visualWheel.Rotate(Vector3.forward, visualRotationSpeed * carController.EngineSpeed * Time.deltaTime);
                 }
 
-                suspensionBottom = suspensionTop - (Vector3.up * Mathf.Clamp((1 - prevCompression) * targetLength, targetLength * 0.75f, targetLength));
-                visualWheel.position = transform.TransformPoint(suspensionBottom) - transform.TransformDirection(Vector3.down * WheelHeight);
+                var visualSuspensionLength = Mathf.Clamp((1 - prevCompression) * targetLength, targetLength * 0.75f, targetLength);
+                WheelBottom = transform.TransformPoint(suspensionTop + (Vector3.down * visualSuspensionLength));
+                visualWheel.position = WheelBottom - transform.TransformDirection(Vector3.down * WheelHeight);
             }
         }
     }
@@ -94,6 +94,7 @@ public class CarWheel : MonoBehaviour {
             var compressionRatio = 1 - (hit.distance / targetLength);
             var springForce = compressionRatio * surfaceAlignment * springFactor;
             var dampingForce = (prevCompression - compressionRatio) * dampingFactor;
+            // FIXME: this should be relative to the downward force being exerted
             var totalForce = springForce - dampingForce;
             prevCompression = compressionRatio;
             carRigidBody.AddForceAtPosition(transform.TransformDirection(Vector3.up) * totalForce * Time.deltaTime, transform.position, ForceMode.VelocityChange);
@@ -108,7 +109,7 @@ public class CarWheel : MonoBehaviour {
         var transform = GetComponent<Transform>();
         Gizmos.color = Color.red;
         Gizmos.DrawRay(transform.TransformPoint(suspensionTop), transform.TransformDirection(Vector3.down * (1 - prevCompression) * targetLength));
-        Gizmos.DrawSphere(transform.TransformPoint(suspensionBottom), 0.1f);
+        Gizmos.DrawSphere(WheelBottom, 0.1f);
         Gizmos.color = Color.blue;
         Gizmos.DrawSphere(transform.TransformPoint(suspensionTop), 0.1f);
     }

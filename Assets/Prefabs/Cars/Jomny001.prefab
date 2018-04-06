@@ -346,7 +346,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1634010390856774}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.787, y: -0.7299966, z: 1.424}
+  m_LocalPosition: {x: -0.787, y: -0.84999937, z: 1.424}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4570819904498208}
@@ -387,7 +387,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1463803432671322}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.7869973, y: -0.73, z: -0.84}
+  m_LocalPosition: {x: -0.7869973, y: -0.85000277, z: -0.84}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4860806550656942}
@@ -402,7 +402,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1109474852514764}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.737, y: -0.7299974, z: 1.4240406}
+  m_LocalPosition: {x: 0.737, y: -0.85, z: 1.4240406}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4320285056414160}
@@ -525,7 +525,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1027094106692552}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.03, z: -5.98}
+  m_LocalPosition: {x: 0.09, y: 3.03, z: -7.43}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4917932679583966}
@@ -538,7 +538,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1081355796924530}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 397.16147, y: 56.66, z: 558.9844}
+  m_LocalPosition: {x: 499.6915, y: 48.10161, z: 409.8676}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4862456194374016}
@@ -556,7 +556,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1413276349950956}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.737013, y: -0.7299974, z: -0.84001565}
+  m_LocalPosition: {x: 0.737013, y: -0.85000014, z: -0.84001565}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4495815461135980}
@@ -776,7 +776,7 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1081355796924530}
   serializedVersion: 2
-  m_Mass: 5000
+  m_Mass: 1070
   m_Drag: 0.1
   m_AngularDrag: 6
   m_UseGravity: 1
@@ -827,10 +827,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbbf53f535a5846408efff42bbe69717, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetLength: 1
+  targetLength: 0.5
   dampingFactor: 30
   springFactor: 20
-  maxAngleToSurface: 30
+  maxAngleToSurface: 45
   visualTurnMultiplier: 1.5
   visualRotationSpeed: 1
 --- !u!114 &114248455364453986
@@ -990,10 +990,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbbf53f535a5846408efff42bbe69717, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetLength: 1
+  targetLength: 0.5
   dampingFactor: 30
   springFactor: 20
-  maxAngleToSurface: 30
+  maxAngleToSurface: 45
   visualTurnMultiplier: 1.5
   visualRotationSpeed: 1
 --- !u!114 &114583075103785976
@@ -1069,10 +1069,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbbf53f535a5846408efff42bbe69717, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetLength: 1
+  targetLength: 0.5
   dampingFactor: 30
   springFactor: 20
-  maxAngleToSurface: 30
+  maxAngleToSurface: 45
   visualTurnMultiplier: 1.5
   visualRotationSpeed: 1
 --- !u!114 &114934455081730646
@@ -1123,10 +1123,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbbf53f535a5846408efff42bbe69717, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetLength: 1
+  targetLength: 0.5
   dampingFactor: 30
   springFactor: 20
-  maxAngleToSurface: 30
+  maxAngleToSurface: 45
   visualTurnMultiplier: 1.5
   visualRotationSpeed: 1
 --- !u!136 &136594576911764460
