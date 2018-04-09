@@ -17,7 +17,7 @@ public class TrackNavigation : MonoBehaviour {
 		private set;
 	}
 
-	protected const float ForwardProjectDistance = 60f;
+	protected const float ForwardProjectDistance = 120f;
 
 	protected const int MaxIterations = 250;
 
@@ -72,11 +72,8 @@ public class TrackNavigation : MonoBehaviour {
 				next = (TrackNavigationCheckpoint) newCheckpoint.AddComponent(typeof(TrackNavigationCheckpoint));
 			}
 
-			next.previous = current;
-			if (current.next == null || current.next.Count == 0) {
-				current.next = new List<TrackNavigationCheckpoint>();
-			}
-			current.next.Add(next);
+			next.previous = new List<TrackNavigationCheckpoint> { current };
+			current.next = new List<TrackNavigationCheckpoint> { next };
 
 			if (next == nav.start) {
 				break;
