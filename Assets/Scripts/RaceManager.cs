@@ -8,7 +8,9 @@ public class RaceManager : MonoBehaviour {
 
 		public Player player;
 
-		public int lap = 0;
+		public int lap = 1;
+
+		public float[] lapTimes;
 
 		public TrackNavigationCheckpoint lastCheckpoint;
 
@@ -24,6 +26,10 @@ public class RaceManager : MonoBehaviour {
 
 	private GameObject[] starts;
 
+	private float startTime;
+
+	private float lapStartTime;
+
 	private List<PlayerState> playerStates = new List<PlayerState>();
 
 	void Awake() {
@@ -34,6 +40,8 @@ public class RaceManager : MonoBehaviour {
 		starts = GameObject.FindGameObjectsWithTag("Start");
 		screenManager = ScreenManager.Instance;
 		CreateRacers();
+		startTime = Time.time;
+		lapStartTime = startTime;
 	}
 
 	void Update() {
@@ -47,7 +55,7 @@ public class RaceManager : MonoBehaviour {
 			var carController = carInstance.GetComponent<CarController>();
 			carController.playerId = player.id;
 			screenManager.AddScreen(carInstance, player.id);
-			playerStates.Add(new PlayerState { player = player, lastCheckpoint = TrackNavigation.Instance.start, car = carController });
+			playerStates.Add(new PlayerState { player = player, lastCheckpoint = TrackNavigation.Instance.start, car = carController, lapTimes = new float[3] });
 		}
 	}
 
@@ -62,6 +70,10 @@ public class RaceManager : MonoBehaviour {
 				screen.debug.Log(DebugUI.Category.GameLogic, "lastCheckpoint", playerState.lastCheckpoint);
 
 				if (prevCheckpoint != TrackNavigation.Instance.start && playerState.lastCheckpoint == TrackNavigation.Instance.start) {
+					var lapTime = playerState.lapTimes[playerState.lap] = Time.time - lapStartTime;
+					lapStartTime = Time.time;
+					screen.ui.AddLapTime(playerState.lap, lapTime);
+
 					playerState.lap++;
 					screen.ui.SetLap(playerState.lap);
 				}
