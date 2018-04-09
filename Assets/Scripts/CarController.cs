@@ -74,6 +74,11 @@ public class CarController : MonoBehaviour {
         get { return wheels.Any(wheel => wheel.IsGrounded); }
     }
 
+    public bool IsOnTrack {
+        get;
+        private set;
+    }
+
     public bool IsDrifting {
         get;
         private set;
@@ -241,6 +246,10 @@ public class CarController : MonoBehaviour {
         if (input.IsResetting) {
             RaceManager.Instance.ResetPlayer(playerId);
         }
+    }
+
+    void Update() {
+        IsOnTrack = Physics.Raycast(transform.position, Vector3.down, Mathf.Infinity, LayerMask.GetMask("Track"));
     }
 
     void Debug(string label, object value) {

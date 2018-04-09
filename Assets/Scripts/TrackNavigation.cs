@@ -8,9 +8,9 @@ public class TrackNavigation : MonoBehaviour {
 
 	public TrackNavigationCheckpoint start;
 
-	public MeshCollider innerBounds;
+	public MeshFilter innerBounds;
 
-	public MeshCollider outerBounds;
+	public MeshFilter outerBounds;
 
 	public static TrackNavigation Instance {
 		get;
@@ -19,7 +19,9 @@ public class TrackNavigation : MonoBehaviour {
 
 	public const int MaxSkipCheckpoints = 2;
 
-	protected const float ForwardProjectDistance = 120f;
+	protected const float VerticalOffset = 2f;
+
+	protected const float ForwardProjectDistance = 60f;
 
 	protected const int MaxIterations = 250;
 
@@ -59,6 +61,16 @@ public class TrackNavigation : MonoBehaviour {
 			var closestOuterPoint = NearestPointOnBounds(nav.outerBounds, projectedPoint);
 			var midPoint = closestInnerPoint + ((closestOuterPoint - closestInnerPoint) / 2);
 
+			// fudge the offset up to make sure we hit the track with the raycast
+			midPoint.y += VerticalOffset;
+
+			RaycastHit trackHit;
+			if (Physics.Raycast(midPoint, Vector3.down, out trackHit, Mathf.Infinity, LayerMask.GetMask("Track"))) {
+				midPoint.y = trackHit.point.y + VerticalOffset;
+			} else {
+				Debug.LogErrorFormat("Failed to locate track under checkpoint {0}", i + 1);
+			}
+
 			var rotation = Quaternion.LookRotation(midPoint - current.transform.position);
 			current.transform.rotation = rotation;
 
@@ -84,12 +96,11 @@ public class TrackNavigation : MonoBehaviour {
 		}
 	}
 
-	private static Vector3 NearestPointOnBounds(MeshCollider bounds, Vector3 worldPoint) {
+	private static Vector3 NearestPointOnBounds(MeshFilter bounds, Vector3 worldPoint) {
 		var mesh = bounds.sharedMesh;
 		var point = bounds.transform.InverseTransformPoint(worldPoint);
 		float minDistanceSqr = Mathf.Infinity;
 		Vector3 nearestVertex = Vector3.zero;
-		// scan all vertices to find nearest
 		foreach (Vector3 vertex in mesh.vertices) {
 			Vector3 diff = point - vertex;
 			float distSqr = diff.sqrMagnitude;
@@ -98,7 +109,6 @@ public class TrackNavigation : MonoBehaviour {
 				nearestVertex = vertex;
 			}
 		}
-		// convert nearest vertex back to world space
 		return bounds.transform.TransformPoint(nearestVertex);
 	}
 

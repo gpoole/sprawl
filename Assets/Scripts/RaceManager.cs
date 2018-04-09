@@ -54,14 +54,17 @@ public class RaceManager : MonoBehaviour {
 	void UpdateCheckpoints() {
 		foreach (var playerState in playerStates) {
 			var screen = screenManager.screens[playerState.player.id];
-			var prevCheckpoint = playerState.lastCheckpoint;
-			// TODO: check if on or very near the track, but assuming they are then update the checkpoint
-			playerState.lastCheckpoint = TrackNavigation.Instance.UpdateCurrentCheckpoint(playerState.lastCheckpoint, playerState.car.transform.position);
-			screen.debug.Log(DebugUI.Category.GameLogic, "lastCheckpoint", playerState.lastCheckpoint);
+			screen.debug.Log(DebugUI.Category.GameLogic, "IsOnTrack", playerState.car.IsOnTrack);
+			if (playerState.car.IsOnTrack) {
+				var prevCheckpoint = playerState.lastCheckpoint;
+				// TODO: check if on or very near the track, but assuming they are then update the checkpoint
+				playerState.lastCheckpoint = TrackNavigation.Instance.UpdateCurrentCheckpoint(playerState.lastCheckpoint, playerState.car.transform.position);
+				screen.debug.Log(DebugUI.Category.GameLogic, "lastCheckpoint", playerState.lastCheckpoint);
 
-			if (prevCheckpoint != TrackNavigation.Instance.start && playerState.lastCheckpoint == TrackNavigation.Instance.start) {
-				playerState.lap++;
-				screen.ui.SetLap(playerState.lap);
+				if (prevCheckpoint != TrackNavigation.Instance.start && playerState.lastCheckpoint == TrackNavigation.Instance.start) {
+					playerState.lap++;
+					screen.ui.SetLap(playerState.lap);
+				}
 			}
 		}
 	}
@@ -69,5 +72,6 @@ public class RaceManager : MonoBehaviour {
 	public void ResetPlayer(int id) {
 		playerStates[id].car.transform.position = playerStates[id].lastCheckpoint.transform.position;
 		playerStates[id].car.transform.rotation = playerStates[id].lastCheckpoint.transform.rotation;
+		playerStates[id].car.Reset();
 	}
 }
