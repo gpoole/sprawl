@@ -7,65 +7,46 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CarDebugger : MonoBehaviour {
+public class DebugUI : MonoBehaviour {
+
+    public enum Category {
+        GameLogic,
+        CarPhysics,
+    }
 
     protected struct VectorDebug {
         public Color Color;
         public Vector3 Vector;
     }
 
-    Vector3 initialPosition;
-
-    Quaternion initialRotation;
-
-    public Transform[] warpPoints;
-
-    public Text carStatus;
+    public Text debugText;
 
     public string[] filterDebugMessages;
 
+    public Category[] filterCategories;
+
     public bool autoMinMax = true;
 
-    private Dictionary<string, object> debugValues = new Dictionary<string, object>();
+    private Dictionary<Category, Dictionary<string, object>> debugValues = new Dictionary<Category, Dictionary<string, object>>();
 
     private Dictionary<string, VectorDebug> debugVectors = new Dictionary<string, VectorDebug>();
 
-    private CarPlayerInput input;
-
     private bool showMessages {
-        get { return carStatus; }
+        get { return debugText; }
     }
 
-    private int playerId;
-
-    void Start() {
-        initialPosition = GetComponent<Transform>().position;
-        initialRotation = GetComponent<Transform>().rotation;
-        input = GetComponent<CarPlayerInput>();
-        playerId = GetComponent<CarController>().playerId;
-        if (playerId == 0) {
-            var statusUi = GameObject.Find("DebugInfo");
-            if (statusUi) {
-                carStatus = statusUi.GetComponent<Text>();
-            }
-        }
-    }
+    void Start() { }
 
     void Update() {
-        var rb = GetComponent<Rigidbody>();
-        var t = GetComponent<Transform>();
-
-        // FIXME: change to input
-        if (Input.GetKeyUp(KeyCode.B)) {
-            var mesh = GetComponent<BoxCollider>();
-            rb.AddExplosionForce(750f * rb.mass, t.TransformPoint(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)) + (Vector3.down * 2f), 50f);
-        }
-
         if (showMessages) {
-            carStatus.text = "";
-            foreach (KeyValuePair<string, object> entry in debugValues) {
-                if (ShowValue(entry.Key)) {
-                    carStatus.text += entry.Key + "=" + entry.Value + "\n";
+            debugText.text = "";
+            foreach (KeyValuePair<Category, Dictionary<string, object>> category in debugValues) {
+                if (ShowCategory(category.Key)) {
+                    foreach (KeyValuePair<string, object> entry in category.Value) {
+                        if (ShowValue(entry.Key)) {
+                            debugText.text += entry.Key + "=" + entry.Value + "\n";
+                        }
+                    }
                 }
             }
         }
@@ -73,6 +54,10 @@ public class CarDebugger : MonoBehaviour {
 
     bool ShowValue(string label) {
         return (filterDebugMessages.Length == 0 || filterDebugMessages.Any(search => label.StartsWith(search)));
+    }
+
+    bool ShowCategory(Category category) {
+        return (filterCategories.Length == 0 || filterCategories.Contains(category));
     }
 
     void OnDrawGizmos() {
@@ -99,32 +84,41 @@ public class CarDebugger : MonoBehaviour {
         }
     }
 
-    public void Log(string label, object value) {
-        if (!showMessages) {
-            return;
+    Dictionary<string, object> GetCategoryVars(Category category) {
+        if (!debugValues.ContainsKey(category)) {
+            debugValues[category] = new Dictionary<string, object>();
         }
-        debugValues[label] = value;
+        return debugValues[category];
     }
 
-    public void Log(string label, float value, bool showMinMax = true) {
+    public void Log(Category category, string label, object value) {
         if (!showMessages) {
             return;
         }
-        debugValues[label] = value;
+        GetCategoryVars(category) [label] = value;
+    }
+
+    public void Log(Category category, string label, float value, bool showMinMax = true) {
+        if (!showMessages) {
+            return;
+        }
+        var categoryVars = GetCategoryVars(category);
+
+        categoryVars[label] = value;
 
         if (autoMinMax && showMinMax) {
             var maxLabel = label + " (max)";
-            if (debugValues.ContainsKey(maxLabel)) {
-                debugValues[maxLabel] = Mathf.Max(value, (float) debugValues[maxLabel]);
+            if (categoryVars.ContainsKey(maxLabel)) {
+                categoryVars[maxLabel] = Mathf.Max(value, (float) categoryVars[maxLabel]);
             } else {
-                debugValues[maxLabel] = value;
+                categoryVars[maxLabel] = value;
             }
 
             var minLabel = label + " (min)";
-            if (debugValues.ContainsKey(minLabel)) {
-                debugValues[minLabel] = Mathf.Min(value, (float) debugValues[minLabel]);
+            if (categoryVars.ContainsKey(minLabel)) {
+                categoryVars[minLabel] = Mathf.Min(value, (float) categoryVars[minLabel]);
             } else {
-                debugValues[minLabel] = value;
+                categoryVars[minLabel] = value;
             }
         }
     }

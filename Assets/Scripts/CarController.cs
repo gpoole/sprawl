@@ -87,7 +87,7 @@ public class CarController : MonoBehaviour {
 
     private Vector3 wheelForwardDirection;
 
-    private CarDebugger debugger;
+    private DebugUI debugger;
 
     private Rigidbody rb;
 
@@ -101,7 +101,7 @@ public class CarController : MonoBehaviour {
         Speed = 0;
         WheelOrientation = 0;
 
-        debugger = GetComponent<CarDebugger>();
+        debugger = ScreenManager.Instance.screens[playerId].debug;
         input = GetComponent<CarPlayerInput>();
         rb = GetComponent<Rigidbody>();
         wheels = GetComponentsInChildren<CarWheel>();
@@ -245,13 +245,13 @@ public class CarController : MonoBehaviour {
 
     void Debug(string label, object value) {
         if (debugger) {
-            debugger.Log(label, value);
+            debugger.Log(DebugUI.Category.CarPhysics, label, value);
         }
     }
 
     void Debug(string label, float value, bool showMinMax = true) {
         if (debugger) {
-            debugger.Log(label, value, showMinMax);
+            debugger.Log(DebugUI.Category.CarPhysics, label, value, showMinMax);
         }
     }
 

@@ -10,10 +10,22 @@ public class TrackNavigationCheckpoint : MonoBehaviour {
 
 	public const float MaxNextDistance = 100f;
 
-	void Start() { }
+	private Plane passPlane;
+
+	void Start() {
+		passPlane = new Plane(transform.forward, transform.position);
+	}
 
 	void Update() {
 
+	}
+
+	public bool HasPassed(Vector3 position) {
+		return passPlane.GetSide(position);
+	}
+
+	public float Distance(Vector3 position) {
+		return Vector3.Distance(position, transform.position);
 	}
 
 	void OnDrawGizmos() {

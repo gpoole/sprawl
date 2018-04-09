@@ -17,6 +17,8 @@ public class TrackNavigation : MonoBehaviour {
 		private set;
 	}
 
+	public const int MaxSkipCheckpoints = 2;
+
 	protected const float ForwardProjectDistance = 120f;
 
 	protected const int MaxIterations = 250;
@@ -82,7 +84,7 @@ public class TrackNavigation : MonoBehaviour {
 		}
 	}
 
-	static Vector3 NearestPointOnBounds(MeshCollider bounds, Vector3 worldPoint) {
+	private static Vector3 NearestPointOnBounds(MeshCollider bounds, Vector3 worldPoint) {
 		var mesh = bounds.sharedMesh;
 		var point = bounds.transform.InverseTransformPoint(worldPoint);
 		float minDistanceSqr = Mathf.Infinity;
@@ -100,8 +102,23 @@ public class TrackNavigation : MonoBehaviour {
 		return bounds.transform.TransformPoint(nearestVertex);
 	}
 
-	public Vector3 NearestPoint(Vector3 origin) {
-		throw new NotImplementedException("todo");
+	public TrackNavigationCheckpoint UpdateCurrentCheckpoint(TrackNavigationCheckpoint currentCheckpoint, Vector3 currentPosition) {
+		var current = currentCheckpoint;
+		for (var i = 0; i < MaxSkipCheckpoints; i++) {
+			TrackNavigationCheckpoint nextNearest = null;
+			foreach (var next in current.next) {
+				if (next.HasPassed(currentPosition) && (nextNearest == null || next.Distance(currentPosition) < nextNearest.Distance(currentPosition))) {
+					nextNearest = next;
+				}
+			}
+
+			if (nextNearest != null) {
+				current = nextNearest;
+			} else {
+				break;
+			}
+		}
+		return current;
 	}
 
 }
