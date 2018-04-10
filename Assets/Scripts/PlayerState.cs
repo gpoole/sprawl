@@ -6,6 +6,8 @@ public class PlayerState : MonoBehaviour {
 
 	public Player player;
 
+	public PlayerMode mode;
+
 	public int lap = 1;
 
 	public int rank = 0;
@@ -20,7 +22,7 @@ public class PlayerState : MonoBehaviour {
 
 	public CarController car;
 
-	private ScreenManager.PlayerScreen screen;
+	private PlayerScreen screen;
 
 	// Use this for initialization
 	void Start() {

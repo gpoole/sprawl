@@ -10,13 +10,7 @@ public class RaceManager : MonoBehaviour {
 		private set;
 	}
 
-	private ScreenManager screenManager;
-
 	private GameObject[] starts;
-
-	private float startTime;
-
-	private float lapStartTime;
 
 	private List<PlayerState> playerStates = new List<PlayerState>();
 
@@ -26,10 +20,7 @@ public class RaceManager : MonoBehaviour {
 
 	void Start() {
 		starts = GameObject.FindGameObjectsWithTag("Start");
-		screenManager = ScreenManager.Instance;
 		CreatePlayers();
-		startTime = Time.time;
-		lapStartTime = startTime;
 	}
 
 	void Update() {

@@ -17,12 +17,12 @@ public class CarSuspensionSound : MonoBehaviour {
 
 	private float prevCompression;
 
-	void Start () {
-		audioSource = (AudioSource)gameObject.AddComponent(typeof(AudioSource));
+	void Start() {
+		audioSource = (AudioSource) gameObject.AddComponent(typeof(AudioSource));
 		wheel = GetComponent<CarWheel>();
 	}
-	
-	void Update () {
+
+	void Update() {
 		var compressionChange = wheel.Compression - prevCompression;
 		if (!audioSource.isPlaying && Mathf.Abs(compressionChange) > changeTrigger) {
 			if (compressionChange > 0) {
@@ -33,5 +33,6 @@ public class CarSuspensionSound : MonoBehaviour {
 				audioSource.Play();
 			}
 		}
+		prevCompression = wheel.Compression;
 	}
 }
