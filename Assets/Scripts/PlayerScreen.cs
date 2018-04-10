@@ -14,9 +14,6 @@ public class PlayerScreen : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
-		var cameraPosition = playerState.car.transform.Find("CameraPosition");
-		var cameraLookAtTarget = playerState.car.transform.Find("CameraLookAtTarget");
-
 		float viewportWidth = GameManager.Instance.players.Count > 1 ? 0.5f : 1f;
 		float viewportHeight = GameManager.Instance.players.Count > 2 ? 0.5f : 1f;
 		float viewportXOffset = viewportWidth * (playerState.player.id % 2);
@@ -24,8 +21,8 @@ public class PlayerScreen : MonoBehaviour {
 		playerCamera.rect = new Rect(viewportXOffset, viewportYOffset, viewportWidth, viewportHeight);
 
 		var driftCamera = playerCamera.GetComponent<DriftCamera>();
-		driftCamera.lookAtTarget = cameraLookAtTarget;
-		driftCamera.positionTarget = cameraPosition;
+		driftCamera.lookAtTarget = playerState.car.transform.Find("CameraPosition");
+		driftCamera.positionTarget = playerState.car.transform.Find("CameraLookAtTarget");
 
 		var uiRect = ui.transform.GetChild(0).GetComponent<RectTransform>();
 		uiRect.anchorMax = new Vector2(viewportXOffset + viewportWidth, viewportYOffset + viewportHeight);
