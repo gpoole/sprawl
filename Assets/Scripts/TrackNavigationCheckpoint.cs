@@ -10,6 +10,8 @@ public class TrackNavigationCheckpoint : MonoBehaviour {
 
 	public const float MaxNextDistance = 100f;
 
+	public int order;
+
 	private Plane passPlane;
 
 	void Start() {
@@ -24,8 +26,12 @@ public class TrackNavigationCheckpoint : MonoBehaviour {
 		return passPlane.GetSide(position);
 	}
 
-	public float Distance(Vector3 position) {
+	public float PointDistance(Vector3 position) {
 		return Vector3.Distance(position, transform.position);
+	}
+
+	public float PlaneDistance(Vector3 position) {
+		return passPlane.GetDistanceToPoint(position);
 	}
 
 	void OnDrawGizmos() {

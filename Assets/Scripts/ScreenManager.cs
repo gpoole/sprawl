@@ -32,15 +32,15 @@ public class ScreenManager : MonoBehaviour {
 
 	}
 
-	public void AddScreen(GameObject car, int playerId) {
-		var cameraPosition = car.transform.Find("CameraPosition");
-		var cameraLookAtTarget = car.transform.Find("CameraLookAtTarget");
+	public void AddScreen(RaceManager.PlayerState playerState) {
+		var cameraPosition = playerState.car.transform.Find("CameraPosition");
+		var cameraLookAtTarget = playerState.car.transform.Find("CameraLookAtTarget");
 		var cameraObject = Instantiate(cameraPrefab, cameraPosition.position, cameraPosition.rotation, transform);
 
 		float viewportWidth = GameManager.Instance.players.Count > 1 ? 0.5f : 1f;
 		float viewportHeight = GameManager.Instance.players.Count > 2 ? 0.5f : 1f;
-		float viewportXOffset = viewportWidth * (playerId % 2);
-		float viewportYOffset = viewportHeight * Mathf.Floor(playerId / 2f);
+		float viewportXOffset = viewportWidth * (playerState.player.id % 2);
+		float viewportYOffset = viewportHeight * Mathf.Floor(playerState.player.id / 2f);
 		var camera = cameraObject.GetComponent<Camera>();
 		camera.rect = new Rect(viewportXOffset, viewportYOffset, viewportWidth, viewportHeight);
 
@@ -53,7 +53,7 @@ public class ScreenManager : MonoBehaviour {
 		uiRect.anchorMax = new Vector2(viewportXOffset + viewportWidth, viewportYOffset + viewportHeight);
 		uiRect.anchorMin = new Vector2(viewportXOffset, viewportYOffset);
 		var ui = uiObject.GetComponent<PlayerRaceUI>();
-		ui.playerId = playerId;
+		ui.playerState = playerState;
 		screens.Add(new PlayerScreen { ui = ui, camera = camera, debug = uiObject.GetComponent<DebugUI>() });
 	}
 }

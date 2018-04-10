@@ -31,11 +31,12 @@ public class DebugUI : MonoBehaviour {
 
     private Dictionary<string, VectorDebug> debugVectors = new Dictionary<string, VectorDebug>();
 
-    private bool showMessages {
-        get { return debugText; }
-    }
+    private bool showMessages;
 
-    void Start() { }
+    void Start() {
+        showMessages = GameManager.Instance.debugMode;
+        debugText.text = "";
+    }
 
     void Update() {
         if (showMessages) {

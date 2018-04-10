@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 public class TrackNavigation : MonoBehaviour {
@@ -37,6 +39,7 @@ public class TrackNavigation : MonoBehaviour {
 
 	}
 
+#if UNITY_EDITOR
 	[MenuItem("Track/Generate checkpoints")]
 	public static void GenerateCheckpoints() {
 		var nav = GameObject.FindObjectOfType<TrackNavigation>();
@@ -84,6 +87,7 @@ public class TrackNavigation : MonoBehaviour {
 				newCheckpoint.transform.position = midPoint;
 				newCheckpoint.transform.rotation = rotation;
 				next = (TrackNavigationCheckpoint) newCheckpoint.AddComponent(typeof(TrackNavigationCheckpoint));
+				next.order = i + 1;
 			}
 
 			next.previous = new List<TrackNavigationCheckpoint> { current };
@@ -95,6 +99,7 @@ public class TrackNavigation : MonoBehaviour {
 			current = next;
 		}
 	}
+#endif
 
 	private static Vector3 NearestPointOnBounds(MeshFilter bounds, Vector3 worldPoint) {
 		var mesh = bounds.sharedMesh;
@@ -117,7 +122,7 @@ public class TrackNavigation : MonoBehaviour {
 		for (var i = 0; i < MaxSkipCheckpoints; i++) {
 			TrackNavigationCheckpoint nextNearest = null;
 			foreach (var next in current.next) {
-				if (next.HasPassed(currentPosition) && (nextNearest == null || next.Distance(currentPosition) < nextNearest.Distance(currentPosition))) {
+				if (next.HasPassed(currentPosition) && (nextNearest == null || next.PointDistance(currentPosition) < nextNearest.PointDistance(currentPosition))) {
 					nextNearest = next;
 				}
 			}

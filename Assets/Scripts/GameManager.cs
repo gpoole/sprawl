@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour {
 
 	public const int maxPlayers = 4;
 
+	public bool debugMode;
+
 	public static GameManager Instance {
 		get;
 		private set;
