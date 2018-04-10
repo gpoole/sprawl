@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour {
 
-    public int playerId;
+    public PlayerState playerState;
 
     public float stoppedSpeed = 0.5f;
 
@@ -106,7 +106,7 @@ public class CarController : MonoBehaviour {
         Speed = 0;
         WheelOrientation = 0;
 
-        debugger = ScreenManager.Instance.screens[playerId].debug;
+        debugger = ScreenManager.Instance.screens[playerState.player.id].debug;
         input = GetComponent<CarPlayerInput>();
         rb = GetComponent<Rigidbody>();
         wheels = GetComponentsInChildren<CarWheel>();
@@ -244,7 +244,7 @@ public class CarController : MonoBehaviour {
         }
 
         if (input.IsResetting) {
-            RaceManager.Instance.ResetPlayer(playerId);
+            playerState.ResetCar();
         }
     }
 

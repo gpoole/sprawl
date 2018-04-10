@@ -44,7 +44,7 @@ public class CarPlayerInput : MonoBehaviour {
 
     void Start() {
         car = GetComponent<CarController>();
-        input = GameManager.Instance.players[car.playerId].device;
+        input = car.playerState.player.device;
     }
 
 }

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class PlayerRaceUI : MonoBehaviour {
 
-	public RaceManager.PlayerState playerState;
+	public PlayerState playerState;
 
 	public Text lap;
 
