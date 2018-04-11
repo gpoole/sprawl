@@ -42,16 +42,10 @@ public class PlayerState : MonoBehaviour {
 	private float lapStartTime;
 
 	void Awake() {
-		lap = new IntReactiveProperty();
-		lap.Value = 1;
-
-		rank = new IntReactiveProperty();
-		rank.Value = 1;
-
+		lap = new IntReactiveProperty(1);
+		rank = new IntReactiveProperty(1);
 		lapTimes = new ReactiveCollection<float>();
-
 		mode = new ReactiveProperty<PlayerMode>();
-		mode.Value = PlayerMode.Starting;
 	}
 
 	// Use this for initialization
@@ -60,30 +54,26 @@ public class PlayerState : MonoBehaviour {
 	}
 
 	IEnumerator RaceStart() {
+		mode.Value = PlayerMode.Starting;
 		yield return new WaitForSeconds(3f);
 		car.enabled = true;
 		lapStartTime = Time.time;
 		mode.Value = PlayerMode.Racing;
 
 		StartCoroutine(UpdateCheckpoint());
-		StartCoroutine(FakeLaps());
-	}
-
-	IEnumerator FakeLaps() {
-		for (var i = 0; i < 3; i++) {
-			yield return new WaitForSeconds(3f);
-			lapTimes.Add(Time.time);
-		}
 	}
 
 	void RaceEnd() {
 		mode.Value = PlayerMode.Finished;
 		car.enabled = false;
-		screen.PlayOutro();
 	}
 
 	IEnumerator UpdateCheckpoint() {
 		while (true) {
+			if (Input.GetKey(KeyCode.Space)) {
+				RaceEnd();
+				break;
+			}
 			screen.debug.Log(DebugUI.Category.GameLogic, "IsOnTrack", car.IsOnTrack);
 			if (car.IsOnTrack) {
 				var prevCheckpoint = lastCheckpoint;
