@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,20 +19,11 @@ public class PlayerRaceUI : MonoBehaviour {
 	void Start() {
 		playerState.lap.SubscribeToText(lap);
 		playerState.rank.Select(rank => rank + OrdinalSuffix(rank)).SubscribeToText(rank);
-		// playerState.lapTimes.ToObservable().Aggregate((acc, lapTime) => acc + laptime + "\n");
-	}
-
-	void Update() {
-		// lapTimes.text = "";
-		// for (var lap = 1; lap <= playerState.lapTimes.Length; lap++) {
-		// 	var lapTime = playerState.lapTimes[lap - 1];
-		// 	if (lapTime == 0) {
-		// 		break;
-		// 	}
-		// 	lapTimes.text += string.Format("Lap {0}: {1:00}:{2:00.00}\n", lap, Mathf.Floor(lapTime / 60), lapTime % 60);
-		// }
-
-		// rank.text = playerState.rank + OrdinalSuffix(playerState.rank);
+		playerState.lapTimes
+			.ObserveAdd()
+			.Select(ev => String.Format("Lap {0}: {1:00}:{2:00.00}", ev.Index + 1, Mathf.Floor(ev.Value / 60), ev.Value % 60))
+			.Scan(((acc, lapTime) => acc + "\n" + lapTime))
+			.SubscribeToText(lapTimes);
 	}
 
 	string OrdinalSuffix(int rank) {

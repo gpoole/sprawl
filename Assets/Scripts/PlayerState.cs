@@ -66,6 +66,14 @@ public class PlayerState : MonoBehaviour {
 		mode.Value = PlayerMode.Racing;
 
 		StartCoroutine(UpdateCheckpoint());
+		StartCoroutine(FakeLaps());
+	}
+
+	IEnumerator FakeLaps() {
+		for (var i = 0; i < 3; i++) {
+			yield return new WaitForSeconds(3f);
+			lapTimes.Add(Time.time);
+		}
 	}
 
 	void RaceEnd() {
