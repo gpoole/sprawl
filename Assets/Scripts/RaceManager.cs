@@ -56,14 +56,14 @@ public class RaceManager : MonoBehaviour {
 
 	void UpdateRanks() {
 		var sortedPlayers = playerStates
-			.OrderBy(playerState => playerState.lap)
+			.OrderBy(playerState => playerState.lap.Value)
 			.ThenBy(playerState => playerState.lastCheckpoint.order)
 			.ThenBy(playerState => playerState.lastCheckpoint.PlaneDistance(playerState.car.transform.position))
 			.Reverse();
 
 		var rank = 1;
 		foreach (var playerState in sortedPlayers) {
-			playerState.rank = rank++;
+			playerState.rank.Value = rank++;
 		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 
 public class PlayerState : MonoBehaviour {
@@ -12,15 +13,25 @@ public class PlayerState : MonoBehaviour {
 
 	public Player player;
 
-	public PlayerMode mode;
+	public ReactiveProperty<PlayerMode> mode {
+		get;
+		private set;
+	}
 
-	public int lap = 1;
+	public IntReactiveProperty lap {
+		get;
+		private set;
+	}
 
-	public int rank = 0;
+	public IntReactiveProperty rank {
+		get;
+		private set;
+	}
 
-	public float[] lapTimes;
-
-	private float lapStartTime;
+	public ReactiveCollection<float> lapTimes {
+		get;
+		private set;
+	}
 
 	public TrackNavigationCheckpoint lastCheckpoint;
 
@@ -28,12 +39,23 @@ public class PlayerState : MonoBehaviour {
 
 	public PlayerScreen screen;
 
+	private float lapStartTime;
+
+	void Awake() {
+		lap = new IntReactiveProperty();
+		lap.Value = 1;
+
+		rank = new IntReactiveProperty();
+		rank.Value = 1;
+
+		lapTimes = new ReactiveCollection<float>();
+
+		mode = new ReactiveProperty<PlayerMode>();
+		mode.Value = PlayerMode.Starting;
+	}
+
 	// Use this for initialization
 	void Start() {
-		lapTimes = new float[RaceManager.Instance.lapCount];
-
-		mode = PlayerMode.Starting;
-
 		StartCoroutine(RaceStart());
 	}
 
@@ -41,13 +63,13 @@ public class PlayerState : MonoBehaviour {
 		yield return new WaitForSeconds(3f);
 		car.enabled = true;
 		lapStartTime = Time.time;
-		mode = PlayerMode.Racing;
+		mode.Value = PlayerMode.Racing;
 
 		StartCoroutine(UpdateCheckpoint());
 	}
 
 	void RaceEnd() {
-		mode = PlayerMode.Finished;
+		mode.Value = PlayerMode.Finished;
 		car.enabled = false;
 		screen.PlayOutro();
 	}
@@ -61,11 +83,11 @@ public class PlayerState : MonoBehaviour {
 				screen.debug.Log(DebugUI.Category.GameLogic, "lastCheckpoint", lastCheckpoint);
 
 				if (prevCheckpoint != TrackNavigation.Instance.start && lastCheckpoint == TrackNavigation.Instance.start) {
-					lapTimes[lap - 1] = Time.time - lapStartTime;
+					lapTimes.Add(Time.time - lapStartTime);
 					lapStartTime = Time.time;
-					lap++;
+					lap.Value = lap.Value + 1;
 
-					if (lap >= RaceManager.Instance.lapCount) {
+					if (lap.Value >= RaceManager.Instance.lapCount) {
 						RaceEnd();
 						break;
 					}
