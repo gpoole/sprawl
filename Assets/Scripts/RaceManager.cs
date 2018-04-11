@@ -10,6 +10,8 @@ public class RaceManager : MonoBehaviour {
 		private set;
 	}
 
+	public int lapCount = 3;
+
 	private GameObject[] starts;
 
 	private List<PlayerState> playerStates = new List<PlayerState>();
@@ -29,14 +31,25 @@ public class RaceManager : MonoBehaviour {
 
 	void CreatePlayers() {
 		var playerStatesGroup = new GameObject("_PlayerStates");
+		var carsGroup = new GameObject("_Cars");
 
 		for (var i = 0; i < GameManager.Instance.players.Count; i++) {
 			var player = GameManager.Instance.players[i];
+
+			var carInstance = Instantiate(player.car, starts[i].transform.position, starts[i].transform.rotation);
+			carInstance.transform.parent = carsGroup.transform;
+			var car = carInstance.GetComponent<CarController>();
+			car.enabled = false;
+
 			var playerState = (new GameObject("Player" + i, typeof(PlayerState))).GetComponent<PlayerState>();
 			playerState.transform.parent = playerStatesGroup.transform;
 			playerState.player = player;
-			playerState.start = starts[i];
 			playerState.lastCheckpoint = TrackNavigation.Instance.start;
+			playerState.car = car;
+			playerState.screen = ScreenManager.Instance.AddScreen(playerState);
+
+			car.playerState = playerState;
+
 			playerStates.Add(playerState);
 		}
 	}

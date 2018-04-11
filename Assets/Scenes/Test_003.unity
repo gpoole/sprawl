@@ -3276,6 +3276,7 @@ MonoBehaviour:
   cameraPrefab: {fileID: 1207565731935348, guid: 68f1ce5cee0bc40b3bfe9efa5b748304,
     type: 2}
   uiPrefab: {fileID: 1475446651982632, guid: 2b1e25edb960547d8bc3d4c728dead8f, type: 2}
+  screens: []
 --- !u!4 &1518324453
 Transform:
   m_ObjectHideFlags: 0
@@ -4244,7 +4245,7 @@ MonoBehaviour:
   xInputUpdateRate: 0
   xInputOverrideBufferSize: 0
   xInputBufferSize: 0
-  enableNativeInput: 0
+  enableNativeInput: 1
   nativeInputEnableXInput: 1
   nativeInputPreventSleep: 0
   nativeInputOverrideUpdateRate: 0

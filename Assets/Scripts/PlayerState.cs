@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class PlayerState : MonoBehaviour {
 
+	public enum PlayerMode {
+		Starting,
+		Racing,
+		Finished,
+	}
+
 	public Player player;
 
 	public PlayerMode mode;
@@ -12,45 +18,61 @@ public class PlayerState : MonoBehaviour {
 
 	public int rank = 0;
 
-	public float[] lapTimes = new float[3];
+	public float[] lapTimes;
 
 	private float lapStartTime;
-
-	public GameObject start;
 
 	public TrackNavigationCheckpoint lastCheckpoint;
 
 	public CarController car;
 
-	private PlayerScreen screen;
+	public PlayerScreen screen;
 
 	// Use this for initialization
 	void Start() {
-		var screenManager = ScreenManager.Instance;
+		lapTimes = new float[RaceManager.Instance.lapCount];
 
-		var carInstance = Instantiate(player.car, start.transform.position, start.transform.rotation);
-		carInstance.transform.parent = transform;
-		car = carInstance.GetComponent<CarController>();
-		car.playerState = this;
+		mode = PlayerMode.Starting;
 
-		screen = screenManager.AddScreen(this);
-
-		lapStartTime = Time.time; // FIXME: this needs to start when the race starts
+		StartCoroutine(RaceStart());
 	}
 
-	// Update is called once per frame
-	void Update() {
-		screen.debug.Log(DebugUI.Category.GameLogic, "IsOnTrack", car.IsOnTrack);
-		if (car.IsOnTrack) {
-			var prevCheckpoint = lastCheckpoint;
-			lastCheckpoint = TrackNavigation.Instance.UpdateCurrentCheckpoint(lastCheckpoint, car.transform.position);
-			screen.debug.Log(DebugUI.Category.GameLogic, "lastCheckpoint", lastCheckpoint);
+	IEnumerator RaceStart() {
+		yield return new WaitForSeconds(3f);
+		car.enabled = true;
+		lapStartTime = Time.time;
+		mode = PlayerMode.Racing;
 
-			if (prevCheckpoint != TrackNavigation.Instance.start && lastCheckpoint == TrackNavigation.Instance.start) {
-				lapTimes[lap - 1] = Time.time - lapStartTime;
-				lapStartTime = Time.time;
-				lap++;
+		StartCoroutine(UpdateCheckpoint());
+	}
+
+	void RaceEnd() {
+		mode = PlayerMode.Finished;
+		car.enabled = false;
+		screen.PlayOutro();
+	}
+
+	IEnumerator UpdateCheckpoint() {
+		while (true) {
+			screen.debug.Log(DebugUI.Category.GameLogic, "IsOnTrack", car.IsOnTrack);
+			if (car.IsOnTrack) {
+				var prevCheckpoint = lastCheckpoint;
+				lastCheckpoint = TrackNavigation.Instance.UpdateCurrentCheckpoint(lastCheckpoint, car.transform.position);
+				screen.debug.Log(DebugUI.Category.GameLogic, "lastCheckpoint", lastCheckpoint);
+
+				if (prevCheckpoint != TrackNavigation.Instance.start && lastCheckpoint == TrackNavigation.Instance.start) {
+					lapTimes[lap - 1] = Time.time - lapStartTime;
+					lapStartTime = Time.time;
+					lap++;
+
+					if (lap >= RaceManager.Instance.lapCount) {
+						RaceEnd();
+						break;
+					}
+				}
 			}
+
+			yield return null;
 		}
 	}
 

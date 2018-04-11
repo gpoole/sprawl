@@ -71,7 +71,8 @@ public class CarController : MonoBehaviour {
     }
 
     public bool IsGrounded {
-        get { return wheels.Any(wheel => wheel.IsGrounded); }
+        get;
+        private set;
     }
 
     public bool IsOnTrack {
@@ -106,7 +107,6 @@ public class CarController : MonoBehaviour {
         Speed = 0;
         WheelOrientation = 0;
 
-        debugger = ScreenManager.Instance.screens[playerState.player.id].debug;
         input = GetComponent<CarPlayerInput>();
         rb = GetComponent<Rigidbody>();
         wheels = GetComponentsInChildren<CarWheel>();
@@ -234,6 +234,7 @@ public class CarController : MonoBehaviour {
         WheelOrientation = input.Turning * maxWheelTurn;
         var wheelRotation = Quaternion.AngleAxis(WheelOrientation, Vector3.up);
         wheelForwardDirection = (wheelRotation * Vector3.forward).normalized;
+        IsGrounded = wheels.Any(wheel => wheel.IsGrounded);
 
         if (IsGrounded) {
             ApplyDrivingForces();

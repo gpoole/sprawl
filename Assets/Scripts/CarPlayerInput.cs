@@ -40,11 +40,8 @@ public class CarPlayerInput : MonoBehaviour {
 
     private InputDevice input;
 
-    private CarController car;
-
     void Start() {
-        car = GetComponent<CarController>();
-        input = car.playerState.player.device;
+        input = GetComponent<CarController>().playerState.player.device;
     }
 
 }
