@@ -10,11 +10,13 @@ public class PlayerRaceUI : MonoBehaviour {
 
 	public PlayerState playerState;
 
-	public Text lap;
+	public Text lapText;
 
 	public Text lapTimes;
 
-	public Text rank;
+	public Text rankText;
+
+	public Text rankOrdinalText;
 
 	public Text countdownText;
 
@@ -23,8 +25,13 @@ public class PlayerRaceUI : MonoBehaviour {
 	public Text loserText;
 
 	void Start() {
-		playerState.lap.SubscribeToText(lap);
-		playerState.rank.Select(rank => rank + OrdinalSuffix(rank)).SubscribeToText(rank);
+		playerState.lap.SubscribeToText(lapText);
+		playerState.lap.Subscribe(_ => PulseText(lapText, 2f, 0.5f));
+
+		playerState.rank.SubscribeToText(rankText);
+		playerState.rank.Select(rank => OrdinalSuffix(rank)).SubscribeToText(rankOrdinalText);
+		playerState.rank.Subscribe(_ => PulseText(rankText, 2f, 0.5f));
+
 		playerState.lapTimes
 			.ObserveAdd()
 			.Select(ev => String.Format("Lap {0}: {1:00}:{2:00.00}", ev.Index + 1, Mathf.Floor(ev.Value / 60), ev.Value % 60))
@@ -39,6 +46,19 @@ public class PlayerRaceUI : MonoBehaviour {
 			.Where(mode => mode == PlayerState.PlayerMode.Finished)
 			.Subscribe(_ => StartCoroutine(PlayOutro()));
 
+	}
+
+	void PulseText(Text text, float fromScale, float duration) {
+		StartCoroutine(PulseTextAnimation(text, fromScale, duration));
+	}
+
+	IEnumerator PulseTextAnimation(Text text, float fromScale, float duration) {
+		var startScale = Vector3.one * fromScale;
+		var endScale = Vector3.one;
+		for (float time = 0f; time < duration; time += Time.deltaTime) {
+			text.transform.localScale = Vector3.Lerp(startScale, endScale, time / duration);
+			yield return null;
+		}
 	}
 
 	IEnumerator PlayIntro() {
