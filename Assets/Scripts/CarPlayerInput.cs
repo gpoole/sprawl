@@ -6,42 +6,38 @@ public class CarPlayerInput : MonoBehaviour {
 
     public float Accelerator {
         get {
-            return input != null ? input.RightTrigger : 0f;
+            return device != null ? device.RightTrigger : 0f;
         }
     }
 
     public float Brakes {
         get {
-            return input != null ? input.LeftTrigger : 0f;
+            return device != null ? device.LeftTrigger : 0f;
         }
     }
 
     public float Turning {
         get {
-            return input != null ? input.LeftStickX : 0f;
+            return device != null ? device.LeftStickX : 0f;
         }
     }
 
     public bool IsHandbraking {
         get {
-            return input != null ? input.Action2 : false; // b button
+            return device != null ? device.Action2 : false; // b button
         }
     }
 
     public bool IsResetting {
         get {
             bool controllerReset = false;
-            if (input != null) {
-                controllerReset = input.GetControl(InputControlType.Back) || input.GetControl(InputControlType.Action3);
+            if (device != null) {
+                controllerReset = device.GetControl(InputControlType.Back) || device.GetControl(InputControlType.Action3);
             }
             return controllerReset || Input.GetKey(KeyCode.R);
         }
     }
 
-    private InputDevice input;
-
-    void Start() {
-        input = GetComponent<CarController>().playerState.player.device;
-    }
+    public InputDevice device;
 
 }

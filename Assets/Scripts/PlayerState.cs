@@ -37,8 +37,6 @@ public class PlayerState : MonoBehaviour {
 
 	public CarController car;
 
-	public PlayerScreen screen;
-
 	private float lapStartTime;
 
 	void Awake() {
@@ -74,11 +72,9 @@ public class PlayerState : MonoBehaviour {
 				RaceEnd();
 				break;
 			}
-			screen.debug.Log(DebugUI.Category.GameLogic, "IsOnTrack", car.IsOnTrack);
 			if (car.IsOnTrack) {
 				var prevCheckpoint = lastCheckpoint;
 				lastCheckpoint = TrackNavigation.Instance.UpdateCurrentCheckpoint(lastCheckpoint, car.transform.position);
-				screen.debug.Log(DebugUI.Category.GameLogic, "lastCheckpoint", lastCheckpoint);
 
 				if (prevCheckpoint != TrackNavigation.Instance.start && lastCheckpoint == TrackNavigation.Instance.start) {
 					lapTimes.Add(Time.time - lapStartTime);

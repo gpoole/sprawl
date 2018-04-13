@@ -11,13 +11,13 @@ public class CarCollisionSound : MonoBehaviour {
 	private AudioSource source;
 
 	// Use this for initialization
-	void Start () {
-		source = (AudioSource)gameObject.AddComponent(typeof(AudioSource));
+	void Awake() {
+		source = (AudioSource) gameObject.AddComponent(typeof(AudioSource));
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
-		
+	void Update() {
+
 	}
 
 	void OnCollisionEnter(Collision collision) {

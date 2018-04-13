@@ -90,7 +90,6 @@ GameObject:
   - component: {fileID: 223134015090124176}
   - component: {fileID: 114367409102605616}
   - component: {fileID: 114810902809330540}
-  - component: {fileID: 114504068312949468}
   - component: {fileID: 114114252583214244}
   m_Layer: 5
   m_Name: RaceUI
@@ -177,6 +176,7 @@ GameObject:
   - component: {fileID: 224377358867570342}
   - component: {fileID: 222645217602838918}
   - component: {fileID: 114393855893482344}
+  - component: {fileID: 114415560985462620}
   m_Layer: 5
   m_Name: DebugInfo
   m_TagString: Untagged
@@ -407,6 +407,19 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 1
+--- !u!114 &114415560985462620
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1712620044890026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f830beb1f18a41ab9493cf3e1b7054c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  filterDebugMessages: []
+  autoMinMax: 1
 --- !u!114 &114428554013946208
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -440,21 +453,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Losser
---- !u!114 &114504068312949468
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1475446651982632}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f830beb1f18a41ab9493cf3e1b7054c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  debugText: {fileID: 114393855893482344}
-  filterDebugMessages: []
-  filterCategories: 
-  autoMinMax: 1
 --- !u!114 &114528378757445912
 MonoBehaviour:
   m_ObjectHideFlags: 1

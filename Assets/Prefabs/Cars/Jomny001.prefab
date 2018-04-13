@@ -58,6 +58,8 @@ GameObject:
   - component: {fileID: 114006675838264836}
   - component: {fileID: 114638486086864216}
   - component: {fileID: 114806923617446882}
+  - component: {fileID: 114474954443250102}
+  - component: {fileID: 114080347462364156}
   m_Layer: 2
   m_Name: Jomny001
   m_TagString: Untagged
@@ -537,7 +539,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1081355796924530}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 637.8938, y: 25.123388, z: 296.11224}
+  m_LocalPosition: {x: 741.85754, y: 32.446808, z: 296.11224}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4862456194374016}
@@ -799,6 +801,18 @@ MonoBehaviour:
   engineLowPitch: 0.59
   engineHighPitch: 1.05
   engineIdlePitch: 1.06
+--- !u!114 &114080347462364156
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1081355796924530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8abab9a8e4be64f868bcf3919134b5f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vectors: []
 --- !u!114 &114086201435702216
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -859,7 +873,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8afaff0154db482ca0c50ec8bc0ddd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerId: 0
+  player:
+    id: 0
+    car: {fileID: 0}
   stoppedSpeed: 0.5
   maxSpeed: 100
   maxReverseSpeed: -10
@@ -962,6 +978,7 @@ MonoBehaviour:
   straightenUpAngle: 25
   maxVerticalAngle: 80
   centreOfMass: {fileID: 0}
+  valueTracker: {fileID: 0}
 --- !u!114 &114449316361521596
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -995,6 +1012,19 @@ MonoBehaviour:
   maxAngleToSurface: 45
   visualTurnMultiplier: 1.5
   visualRotationSpeed: 1
+--- !u!114 &114474954443250102
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1081355796924530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ae3c9147c9e8439cae707e689fd01c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lookAtTarget: {fileID: 4775673091920420}
+  positionTarget: {fileID: 4862456194374016}
 --- !u!114 &114583075103785976
 MonoBehaviour:
   m_ObjectHideFlags: 1

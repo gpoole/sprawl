@@ -39,18 +39,18 @@ public class RaceManager : MonoBehaviour {
 			var carInstance = Instantiate(player.car, starts[i].transform.position, starts[i].transform.rotation);
 			carInstance.transform.parent = carsGroup.transform;
 			var car = carInstance.GetComponent<CarController>();
-			car.enabled = false;
+			car.enabled = false; // FIXME: should be ignoring input instead
+			carInstance.GetComponent<CarPlayerInput>().device = player.device;
 
 			var playerState = (new GameObject("Player" + i, typeof(PlayerState))).GetComponent<PlayerState>();
 			playerState.transform.parent = playerStatesGroup.transform;
 			playerState.player = player;
 			playerState.lastCheckpoint = TrackNavigation.Instance.start;
 			playerState.car = car;
-			playerState.screen = ScreenManager.Instance.AddScreen(playerState);
-
-			car.playerState = playerState;
-
 			playerStates.Add(playerState);
+
+			var playerScreen = ScreenManager.Instance.AddScreen(playerState, car.GetComponent<DriftCameraRig>());
+			car.valueTracker = playerScreen.ui.transform.GetComponentInChildren<DebugValueTracker>();
 		}
 	}
 

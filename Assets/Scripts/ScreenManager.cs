@@ -28,7 +28,7 @@ public class ScreenManager : MonoBehaviour {
 
 	}
 
-	public PlayerScreen AddScreen(PlayerState playerState) {
+	public PlayerScreen AddScreen(PlayerState playerState, DriftCameraRig rig) {
 		var playerScreen = (new GameObject("Screen" + playerState.player.id, typeof(PlayerScreen))).GetComponent<PlayerScreen>();
 		playerScreen.transform.parent = transform;
 
@@ -36,8 +36,10 @@ public class ScreenManager : MonoBehaviour {
 		var uiObject = Instantiate(uiPrefab, playerScreen.transform);
 
 		playerScreen.playerCamera = cameraObject.GetComponent<Camera>();
+		cameraObject.GetComponent<DriftCamera>().rig = rig;
 		playerScreen.ui = uiObject.GetComponent<PlayerRaceUI>();
 		playerScreen.playerState = playerState;
+
 		screens.Add(playerScreen);
 
 		return playerScreen;

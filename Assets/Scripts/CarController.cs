@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour {
 
-    public PlayerState playerState;
+    public Player player;
 
     public float stoppedSpeed = 0.5f;
 
@@ -50,6 +50,8 @@ public class CarController : MonoBehaviour {
 
     public Transform centreOfMass;
 
+    public DebugValueTracker valueTracker;
+
     public float VelocityAlignmentDifference {
         get;
         private set;
@@ -93,8 +95,6 @@ public class CarController : MonoBehaviour {
 
     private Vector3 wheelForwardDirection;
 
-    private DebugUI debugger;
-
     private Rigidbody rb;
 
     private CarWheel[] wheels;
@@ -103,6 +103,8 @@ public class CarController : MonoBehaviour {
 
     private float surfaceFriction = 1f;
 
+    private DebugVectorTracker vectorTracker;
+
     void Start() {
         Speed = 0;
         WheelOrientation = 0;
@@ -110,6 +112,7 @@ public class CarController : MonoBehaviour {
         input = GetComponent<CarPlayerInput>();
         rb = GetComponent<Rigidbody>();
         wheels = GetComponentsInChildren<CarWheel>();
+        vectorTracker = GetComponent<DebugVectorTracker>();
 
         if (centreOfMass) {
             rb.centerOfMass = centreOfMass.position;
@@ -127,15 +130,15 @@ public class CarController : MonoBehaviour {
         var surfaceVelocity = transform.InverseTransformDirection(rb.velocity);
         surfaceVelocity.y = 0;
         Speed = surfaceVelocity.z;
-        Debug("speed", Speed);
-        Debug("surfaceVelocity", surfaceVelocity, Color.yellow);
+        TrackValue("speed", Speed);
+        TrackVector("surfaceVelocity", surfaceVelocity, Color.yellow);
         isStopped = Math.Abs(Speed) < stoppedSpeed;
 
         RaycastHit roadSurface;
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out roadSurface, 1f)) {
             surfaceFriction = roadSurface.collider.material.dynamicFriction;
         }
-        Debug("surfaceFriction", surfaceFriction);
+        TrackValue("surfaceFriction", surfaceFriction);
 
         if (input.Accelerator > 0) {
             isReversing = false;
@@ -144,14 +147,14 @@ public class CarController : MonoBehaviour {
         if ((isReversing || isStopped) && input.Brakes > 0) {
             isReversing = true;
         }
-        Debug("isReversing", isReversing);
+        TrackValue("isReversing", isReversing);
 
         var worldWheelForward = transform.TransformDirection(wheelForwardDirection) * (isReversing ? -1 : 1);
         var worldWheelRight = Vector3.Cross(transform.up, worldWheelForward);
         float rightVerticality = (1 - Mathf.Clamp01(Math.Abs(90f - Vector3.Angle(worldWheelRight, Vector3.up)) / 90f));
         float forwardVerticality = (Vector3.Angle(worldWheelForward, Vector3.up) / 90f);
         float travelVerticality = forwardVerticality * rightVerticality;
-        Debug("travelVerticality", travelVerticality);
+        TrackValue("travelVerticality", travelVerticality);
 
         // Drive the car forward in the direction of the wheels
         VelocityAlignmentDifference = -Vector3.SignedAngle(wheelForwardDirection, surfaceVelocity, Vector3.up);
@@ -167,15 +170,15 @@ public class CarController : MonoBehaviour {
         } else {
             acceleration = -accelerationSpeed.Evaluate(Speed / maxReverseSpeed) * input.Brakes;
         }
-        Debug("acceleration", acceleration);
+        TrackValue("acceleration", acceleration);
         // Calculate the grip so it increases rapidly as we get towards fully forward-facing
-        Debug("relativeSpeed", relativeSpeed);
+        TrackValue("relativeSpeed", relativeSpeed);
         var forwardDrivingForce = wheelForwardDirection * acceleration * accelerationMultiplier * gripPower.Evaluate(((90 - absVelocityAlignmentDifference) / 90) / surfaceFriction) * travelVerticality;
         rb.AddRelativeForce(forwardDrivingForce * Time.deltaTime, ForceMode.VelocityChange);
-        Debug("forwardDrivingForce", forwardDrivingForce, IsDrifting ? Color.magenta : Color.green);
+        TrackVector("forwardDrivingForce", forwardDrivingForce, IsDrifting ? Color.magenta : Color.green);
 
         EngineSpeed = Mathf.Clamp01((Math.Abs(acceleration) * Mathf.Clamp01(0.2f / relativeSpeed) * 0.8f) + relativeSpeed);
-        Debug("EngineSpeed", EngineSpeed);
+        TrackValue("EngineSpeed", EngineSpeed);
 
         if (!isReversing && input.IsHandbraking && Speed > minDriftSpeed) {
             IsDrifting = true;
@@ -190,18 +193,18 @@ public class CarController : MonoBehaviour {
             }
         }
 
-        Debug("driftTimer", driftTimer, false);
-        Debug("isDrifting", IsDrifting);
+        TrackValue("driftTimer", driftTimer, false);
+        TrackValue("isDrifting", IsDrifting);
 
-        Debug("VelocityAlignmentDifference", VelocityAlignmentDifference);
+        TrackValue("VelocityAlignmentDifference", VelocityAlignmentDifference);
 
         var turnSpeed = turning.Evaluate(relativeSpeed);
-        Debug("turnSpeed", turnSpeed);
+        TrackValue("turnSpeed", turnSpeed);
 
         // Transfer velocity as we turn
         var velocityTransferAmount = Speed * Mathf.Clamp(VelocityAlignmentDifference / 90f, -1, 1) * turnVelocityTransferRate * turnSpeed * surfaceFriction;
         var turnForceRight = (isReversing ? Vector3.left : Vector3.right) * velocityTransferAmount;
-        Debug("turnForceRight", turnForceRight, Color.blue);
+        TrackVector("turnForceRight", turnForceRight, Color.blue);
         rb.AddRelativeForce(turnForceRight * Time.deltaTime, ForceMode.VelocityChange);
 
         // Turn the car towards the direction it's travelling
@@ -214,8 +217,8 @@ public class CarController : MonoBehaviour {
         var sidewaysVelocity = Vector3.Project(surfaceVelocity, Vector3.right);
         var sideFriction = sidewaysFriction.Evaluate(sidewaysVelocity.magnitude * surfaceFriction) * sidewaysFrictionMultiplier;
         var sidewaysFrictionForce = -sidewaysVelocity.normalized * sideFriction * rightVerticality * surfaceFriction;
-        Debug("sidewaysVelocity", sidewaysVelocity, Color.magenta);
-        Debug("sidewaysFrictionForce", sidewaysFrictionForce, Color.red);
+        TrackVector("sidewaysVelocity", sidewaysVelocity, Color.magenta);
+        TrackVector("sidewaysFrictionForce", sidewaysFrictionForce, Color.red);
         rb.AddRelativeForce(sidewaysFrictionForce * Time.deltaTime, ForceMode.VelocityChange);
 
         Vector3 brakeForce = Vector3.zero;
@@ -226,7 +229,7 @@ public class CarController : MonoBehaviour {
             }
             brakeForce = Vector3.back * baseBrakeForce * brakingForceMultiplier * surfaceFriction * travelVerticality * Mathf.Clamp01((45f - absVelocityAlignmentDifference) / 45f);
         }
-        Debug("brakeForce", brakeForce, Color.red);
+        TrackVector("brakeForce", brakeForce, Color.red);
         rb.AddRelativeForce(brakeForce * Time.deltaTime, ForceMode.VelocityChange);
     }
 
@@ -243,31 +246,27 @@ public class CarController : MonoBehaviour {
             driftTimer = 0;
             IsDrifting = false;
         }
-
-        if (input.IsResetting) {
-            playerState.ResetCar();
-        }
     }
 
     void Update() {
         IsOnTrack = Physics.Raycast(transform.position, Vector3.down, Mathf.Infinity, LayerMask.GetMask("Track"));
     }
 
-    void Debug(string label, object value) {
-        if (debugger) {
-            debugger.Log(DebugUI.Category.CarPhysics, label, value);
+    void TrackValue(string label, object value) {
+        if (valueTracker) {
+            valueTracker.Log(label, value);
         }
     }
 
-    void Debug(string label, float value, bool showMinMax = true) {
-        if (debugger) {
-            debugger.Log(DebugUI.Category.CarPhysics, label, value, showMinMax);
+    void TrackValue(string label, float value, bool showMinMax = true) {
+        if (valueTracker) {
+            valueTracker.Log(label, value, showMinMax);
         }
     }
 
-    void Debug(string label, Vector3 vector, Color color) {
-        if (debugger) {
-            debugger.Log(label, vector, color);
+    void TrackVector(string label, Vector3 value, Color color) {
+        if (vectorTracker) {
+            vectorTracker.Log(label, value, color);
         }
     }
 
