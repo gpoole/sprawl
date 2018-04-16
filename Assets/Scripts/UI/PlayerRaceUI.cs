@@ -10,6 +10,8 @@ public class PlayerRaceUI : MonoBehaviour {
 
 	public PlayerState playerState;
 
+	public AnimationSequence introText;
+
 	public Text lapText;
 
 	public Text lapTimes;
@@ -17,8 +19,6 @@ public class PlayerRaceUI : MonoBehaviour {
 	public Text rankText;
 
 	public Text rankOrdinalText;
-
-	public Text countdownText;
 
 	public Text winnerText;
 
@@ -40,12 +40,7 @@ public class PlayerRaceUI : MonoBehaviour {
 
 		playerState.mode
 			.Where(mode => mode == PlayerState.PlayerMode.Starting)
-			.Subscribe(_ => StartCoroutine(PlayIntro()));
-
-		playerState.mode
-			.Where(mode => mode == PlayerState.PlayerMode.Finished)
-			.Subscribe(_ => StartCoroutine(PlayOutro()));
-
+			.Subscribe(_ => PlayIntro());
 	}
 
 	void PulseText(Text text, float fromScale, float duration) {
@@ -61,25 +56,9 @@ public class PlayerRaceUI : MonoBehaviour {
 		}
 	}
 
-	IEnumerator PlayIntro() {
-		countdownText.gameObject.SetActive(true);
-		for (var i = 3; i > 0; i--) {
-			yield return StartCoroutine(FlashCountdown(i));
-		}
-		yield return new WaitForSeconds(2f);
-		countdownText.gameObject.SetActive(false);
-	}
-
-	IEnumerator FlashCountdown(int seconds) {
-		const float animationTime = 1f;
-		var scaleAnimation = AnimationCurve.EaseInOut(0, 4f, 1f, 1f);
-		countdownText.text = seconds.ToString();
-		for (float time = 0f; time < animationTime; time += Time.deltaTime) {
-			countdownText.transform.localScale = Vector3.one * scaleAnimation.Evaluate(time / animationTime);
-			countdownText.color = Color.Lerp(new Color(217, 42, 49, 0), new Color(217, 42, 49, 255), time / animationTime);
-			yield return null;
-		}
-		yield return new WaitForSeconds(0.5f);
+	void PlayIntro() {
+		introText.gameObject.SetActive(true);
+		introText.Play();
 	}
 
 	IEnumerator PlayOutro() {

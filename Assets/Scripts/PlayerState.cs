@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
@@ -11,27 +12,21 @@ public class PlayerState : MonoBehaviour {
 		Finished,
 	}
 
+	[Serializable]
+	public class ReactivePlayerModeProperty : ReactiveProperty<PlayerMode> {
+		public ReactivePlayerModeProperty() : base() { }
+		public ReactivePlayerModeProperty(PlayerMode initialValue) : base(initialValue) { }
+	}
+
 	public Player player;
 
-	public ReactiveProperty<PlayerMode> mode {
-		get;
-		private set;
-	}
+	public ReactivePlayerModeProperty mode;
 
-	public IntReactiveProperty lap {
-		get;
-		private set;
-	}
+	public IntReactiveProperty lap;
 
-	public IntReactiveProperty rank {
-		get;
-		private set;
-	}
+	public IntReactiveProperty rank;
 
-	public ReactiveCollection<float> lapTimes {
-		get;
-		private set;
-	}
+	public ReactiveCollection<float> lapTimes;
 
 	public TrackNavigationCheckpoint lastCheckpoint;
 
@@ -43,10 +38,9 @@ public class PlayerState : MonoBehaviour {
 		lap = new IntReactiveProperty(1);
 		rank = new IntReactiveProperty(1);
 		lapTimes = new ReactiveCollection<float>();
-		mode = new ReactiveProperty<PlayerMode>();
+		mode = new ReactivePlayerModeProperty();
 	}
 
-	// Use this for initialization
 	void Start() {
 		StartCoroutine(RaceStart());
 	}
@@ -54,24 +48,18 @@ public class PlayerState : MonoBehaviour {
 	IEnumerator RaceStart() {
 		mode.Value = PlayerMode.Starting;
 		yield return new WaitForSeconds(3f);
-		car.enabled = true;
 		lapStartTime = Time.time;
 		mode.Value = PlayerMode.Racing;
-
-		StartCoroutine(UpdateCheckpoint());
+		// StartCoroutine(UpdateCheckpoint());
 	}
 
 	void RaceEnd() {
 		mode.Value = PlayerMode.Finished;
-		car.enabled = false;
 	}
 
+	// FIXME: move this to each car
 	IEnumerator UpdateCheckpoint() {
 		while (true) {
-			if (Input.GetKey(KeyCode.Space)) {
-				RaceEnd();
-				break;
-			}
 			if (car.IsOnTrack) {
 				var prevCheckpoint = lastCheckpoint;
 				lastCheckpoint = TrackNavigation.Instance.UpdateCurrentCheckpoint(lastCheckpoint, car.transform.position);
