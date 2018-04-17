@@ -16,6 +16,8 @@ public class RaceManager : MonoBehaviour {
 
 	private List<PlayerState> playerStates = new List<PlayerState>();
 
+	private List<CarController> cars = new List<CarController>();
+
 	void Awake() {
 		Instance = this;
 	}
@@ -36,18 +38,17 @@ public class RaceManager : MonoBehaviour {
 		for (var i = 0; i < GameManager.Instance.players.Count; i++) {
 			var player = GameManager.Instance.players[i];
 
-			var carInstance = Instantiate(player.car, starts[i].transform.position, starts[i].transform.rotation);
-			carInstance.transform.parent = carsGroup.transform;
-			var car = carInstance.GetComponent<CarController>();
-			car.enabled = false; // FIXME: should be ignoring input instead
-			carInstance.GetComponent<CarPlayerInput>().device = player.device;
-
 			var playerState = (new GameObject("Player" + i, typeof(PlayerState))).GetComponent<PlayerState>();
 			playerState.transform.parent = playerStatesGroup.transform;
 			playerState.player = player;
-			playerState.lastCheckpoint = TrackNavigation.Instance.start;
-			playerState.car = car;
 			playerStates.Add(playerState);
+
+			var carInstance = Instantiate(player.car, starts[i].transform.position, starts[i].transform.rotation);
+			carInstance.transform.parent = carsGroup.transform;
+			var car = carInstance.GetComponent<CarController>();
+			carInstance.GetComponent<CarPlayerInput>().device = player.device;
+			carInstance.GetComponent<CarNavigation>().playerState = playerState;
+			cars.Add(car);
 
 			var playerScreen = ScreenManager.Instance.AddScreen(playerState, car.GetComponent<DriftCameraRig>());
 			car.valueTracker = playerScreen.ui.transform.GetComponentInChildren<DebugValueTracker>();
@@ -58,7 +59,7 @@ public class RaceManager : MonoBehaviour {
 		var sortedPlayers = playerStates
 			.OrderBy(playerState => playerState.lap.Value)
 			.ThenBy(playerState => playerState.lastCheckpoint.order)
-			.ThenBy(playerState => playerState.lastCheckpoint.PlaneDistance(playerState.car.transform.position))
+			.ThenBy(playerState => playerState.lastCheckpoint.PlaneDistance(cars[playerState.player.id].transform.position))
 			.Reverse();
 
 		var rank = 1;

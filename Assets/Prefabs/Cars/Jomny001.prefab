@@ -60,6 +60,7 @@ GameObject:
   - component: {fileID: 114806923617446882}
   - component: {fileID: 114474954443250102}
   - component: {fileID: 114080347462364156}
+  - component: {fileID: 114730349438902886}
   m_Layer: 2
   m_Name: Jomny001
   m_TagString: Untagged
@@ -873,9 +874,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8afaff0154db482ca0c50ec8bc0ddd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player:
-    id: 0
-    car: {fileID: 0}
   stoppedSpeed: 0.5
   maxSpeed: 100
   maxReverseSpeed: -10
@@ -1051,6 +1049,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 98f0517ec576a4c34954925ff6057aea, type: 3}
   - {fileID: 8300000, guid: ea13a76b22d2940f3aa431f79c553ce0, type: 3}
   minVelocity: 10
+--- !u!114 &114730349438902886
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1081355796924530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 525d8025fe49b4f0faed46ff1866e1b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerState: {fileID: 0}
 --- !u!114 &114806923617446882
 MonoBehaviour:
   m_ObjectHideFlags: 1

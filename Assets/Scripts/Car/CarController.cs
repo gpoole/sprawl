@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour {
 
-    public Player player;
-
     public float stoppedSpeed = 0.5f;
 
     public float maxSpeed = 60f;
