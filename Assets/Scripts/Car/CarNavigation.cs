@@ -17,6 +17,10 @@ public class CarNavigation : MonoBehaviour {
 		input = GetComponent<CarPlayerInput>();
 	}
 
+	void Start() {
+		playerState.lastCheckpoint = TrackNavigation.Instance.start;
+	}
+
 	void Update() {
 		if (input.IsResetting) {
 			ResetCar();
