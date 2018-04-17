@@ -10,7 +10,7 @@ public class PlayerRaceUI : MonoBehaviour {
 
 	public PlayerState playerState;
 
-	public AnimationSequence introText;
+	public GameObject introText;
 
 	public Text lapText;
 
@@ -40,7 +40,7 @@ public class PlayerRaceUI : MonoBehaviour {
 
 		playerState.mode
 			.Where(mode => mode == PlayerState.PlayerMode.Starting)
-			.Subscribe(_ => PlayIntro());
+			.Subscribe(_ => StartCoroutine(PlayIntro()));
 	}
 
 	void PulseText(Text text, float fromScale, float duration) {
@@ -56,9 +56,10 @@ public class PlayerRaceUI : MonoBehaviour {
 		}
 	}
 
-	void PlayIntro() {
+	IEnumerator PlayIntro() {
 		introText.gameObject.SetActive(true);
-		introText.Play();
+		yield return new WaitForSeconds(5);
+		introText.gameObject.SetActive(false);
 	}
 
 	IEnumerator PlayOutro() {

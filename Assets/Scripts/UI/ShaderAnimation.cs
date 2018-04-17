@@ -3,30 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ShaderAnimation : AnimationBehaviour {
+public class ShaderAnimation : MonoBehaviour {
 
-	public Material material;
+	public float time;
 
-	private Material originalMaterial;
+	private Image image;
 
 	void Awake() {
-		originalMaterial = GetComponent<Image>().material;
-		GetComponent<Image>().material = material;
-		material.SetFloat("_AnimTime", 0);
+		image = GetComponent<Image>();
 	}
 
-	public override void Play() {
-		originalMaterial = GetComponent<Image>().material;
-		GetComponent<Image>().material = material;
-		base.Play();
-	}
-
-	public override void Stop() {
-		base.Stop();
-		GetComponent<Image>().material = originalMaterial;
-	}
-
-	protected override void AnimationStep() {
-		material.SetFloat("_AnimTime", time);
+	void Update() {
+		image.material.SetFloat("_AnimTime", time);
 	}
 }
