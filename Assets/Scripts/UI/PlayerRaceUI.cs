@@ -24,12 +24,15 @@ public class PlayerRaceUI : MonoBehaviour {
 
 	public Text loserText;
 
+	public Animator rankAnimator;
+
 	void Start() {
 		playerState.lap.Select(lap => String.Format("{0}/{1}", lap, 3)).SubscribeToText(lapText);
 
-		playerState.rank.SubscribeToText(rankText);
-		playerState.rank.Select(rank => OrdinalSuffix(rank)).SubscribeToText(rankOrdinalText);
-		playerState.rank.Subscribe(_ => PulseText(rankText, 1.5f, 0.25f));
+		// playerState.rank.SubscribeToText(rankText);
+		// playerState.rank.Select(rank => OrdinalSuffix(rank)).SubscribeToText(rankOrdinalText);
+		// playerState.rank.Subscribe(_ => PulseText(rankText, 1.5f, 0.25f));
+		playerState.rank.Subscribe(rank => rankAnimator.SetInteger("Rank", rank));
 
 		playerState.lapTimes
 			.ObserveReplace()
