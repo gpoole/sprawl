@@ -34,24 +34,12 @@ public class CarNavigation : MonoBehaviour {
 				playerState.lastCheckpoint = TrackNavigation.Instance.UpdateCurrentCheckpoint(playerState.lastCheckpoint, car.transform.position);
 
 				if (prevCheckpoint != TrackNavigation.Instance.start && playerState.lastCheckpoint == TrackNavigation.Instance.start) {
-					NextLap();
+					playerState.NextLap();
 				}
 			}
 
 			yield return null;
 		}
-	}
-
-	void NextLap() {
-		playerState.lapTimes.Add(Time.time - lapStartTime);
-		lapStartTime = Time.time;
-		playerState.lap.Value = playerState.lap.Value + 1;
-
-		if (playerState.lap.Value >= RaceManager.Instance.lapCount) {
-			// FIXME: probably call a method
-			playerState.mode.Value = PlayerState.PlayerMode.Finished;
-		}
-
 	}
 
 	public void ResetCar() {

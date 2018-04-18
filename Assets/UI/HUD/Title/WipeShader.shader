@@ -50,7 +50,7 @@
 				fixed4 col = tex2D(_MainTex, i.uv);
 				fixed4 mask = tex2D(_WipeTex, i.uv);
 
-				float threshold = (1 - _AnimTime) + 1;
+				float threshold = (1 - _AnimTime) * 2;
 				float clampedDistance = clamp(threshold - mask.r, 0, 1);
 				float x = 3 * (clampedDistance - 1);
 				col.a = min(col.a, x * x);
