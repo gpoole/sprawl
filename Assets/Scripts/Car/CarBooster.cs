@@ -24,11 +24,18 @@ public class CarBooster : MonoBehaviour {
 		private set;
 	}
 
+	public AudioClip boostClip;
+
 	new private Rigidbody rigidbody;
+
+	private AudioSource boostSound;
 
 	// Use this for initialization
 	void Start() {
 		rigidbody = GetComponent<Rigidbody>();
+		boostSound = (AudioSource) gameObject.AddComponent(typeof(AudioSource));
+		boostSound.clip = boostClip;
+		boostSound.loop = true;
 
 		playerState.mode.Where(mode => mode == PlayerState.PlayerMode.Starting).Subscribe(_ => {
 			StartCoroutine(WatchForStartBoost());
@@ -65,10 +72,12 @@ public class CarBooster : MonoBehaviour {
 
 	IEnumerator RunBoost(float force, float duration) {
 		canBoost = false;
+		boostSound.Play();
 		for (float timer = duration; timer > 0; timer -= Time.deltaTime) {
 			rigidbody.AddRelativeForce(Vector3.forward * force, ForceMode.Acceleration);
 			yield return null;
 		}
+		boostSound.Stop();
 		yield return new WaitForSeconds(cooldownTime);
 		canBoost = true;
 	}
