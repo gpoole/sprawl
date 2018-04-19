@@ -228,6 +228,7 @@ GameObject:
   - component: {fileID: 632656509}
   - component: {fileID: 632656511}
   - component: {fileID: 632656510}
+  - component: {fileID: 632656512}
   m_Layer: 5
   m_Name: Rank_1st
   m_TagString: Untagged
@@ -286,6 +287,23 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 632656508}
+--- !u!95 &632656512
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 632656508}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e1bd6a2de0b644f878a5259134d5a6d8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!1 &647066497
 GameObject:
   m_ObjectHideFlags: 0
@@ -844,6 +862,7 @@ GameObject:
   - component: {fileID: 1280308636}
   - component: {fileID: 1280308638}
   - component: {fileID: 1280308637}
+  - component: {fileID: 1280308639}
   m_Layer: 5
   m_Name: Rank_2nd
   m_TagString: Untagged
@@ -902,6 +921,23 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1280308635}
+--- !u!95 &1280308639
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1280308635}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e1bd6a2de0b644f878a5259134d5a6d8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!1 &1287370323
 GameObject:
   m_ObjectHideFlags: 0
@@ -1169,7 +1205,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1799117398}
-  - component: {fileID: 1790911922}
   m_Layer: 5
   m_Name: Rank
   m_TagString: Untagged
@@ -1177,23 +1212,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!95 &1790911922
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1790911921}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 1442f502ef26241c38f3bcf594dc05fd, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
 --- !u!224 &1799117398
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1292,7 +1310,6 @@ MonoBehaviour:
   rankOrdinalText: {fileID: 0}
   winnerText: {fileID: 0}
   loserText: {fileID: 0}
-  rankAnimator: {fileID: 1790911922}
 --- !u!114 &1926638746
 MonoBehaviour:
   m_ObjectHideFlags: 0

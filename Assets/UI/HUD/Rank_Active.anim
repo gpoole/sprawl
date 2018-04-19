@@ -5,7 +5,7 @@ AnimationClip:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Rank_2nd
+  m_Name: Rank_Active
   serializedVersion: 6
   m_Legacy: 0
   m_Compressed: 0
@@ -21,21 +21,21 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 0
-        value: -655
-        inSlope: 902.0151
-        outSlope: 902.0151
+        value: -647.2194
+        inSlope: 2137.1023
+        outSlope: 2137.1023
         tangentMode: 0
       - serializedVersion: 2
         time: 0.5
-        value: -440.9
-        inSlope: -169.9804
-        outSlope: -169.9804
-        tangentMode: 0
+        value: -430.4
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.y
-    path: Rank_2nd
+    path: 
     classID: 224
     script: {fileID: 0}
   m_PPtrCurves: []
@@ -47,7 +47,7 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 2262600087
+      path: 0
       attribute: 538195251
       script: {fileID: 0}
       typeID: 224
@@ -80,21 +80,21 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 0
-        value: -655
-        inSlope: 902.0151
-        outSlope: 902.0151
+        value: -647.2194
+        inSlope: 2137.1023
+        outSlope: 2137.1023
         tangentMode: 0
       - serializedVersion: 2
         time: 0.5
-        value: -440.9
-        inSlope: -169.9804
-        outSlope: -169.9804
-        tangentMode: 0
+        value: -430.4
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.y
-    path: Rank_2nd
+    path: 
     classID: 224
     script: {fileID: 0}
   m_EulerEditorCurves: []
