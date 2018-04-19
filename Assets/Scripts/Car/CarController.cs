@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour {
 
+    // FIXME: shouldn't be on this class
+    public PlayerState playerState;
+
+    public bool drivingEnabled = false;
+
     public float stoppedSpeed = 0.5f;
 
     public float maxSpeed = 60f;
@@ -154,12 +159,12 @@ public class CarController : MonoBehaviour {
         float travelVerticality = forwardVerticality * rightVerticality;
         TrackValue("travelVerticality", travelVerticality);
 
-        // Drive the car forward in the direction of the wheels
         VelocityAlignmentDifference = -Vector3.SignedAngle(wheelForwardDirection, surfaceVelocity, Vector3.up);
         if (Math.Abs(VelocityAlignmentDifference) > 90) {
             VelocityAlignmentDifference = (Mathf.Sign(VelocityAlignmentDifference) * 180) - VelocityAlignmentDifference;
         }
         var absVelocityAlignmentDifference = Mathf.Abs(VelocityAlignmentDifference);
+        TrackValue("VelocityAlignmentDifference", VelocityAlignmentDifference);
 
         float acceleration;
         var relativeSpeed = Math.Abs(Speed) / maxSpeed;
@@ -169,14 +174,7 @@ public class CarController : MonoBehaviour {
             acceleration = -accelerationSpeed.Evaluate(Speed / maxReverseSpeed) * input.Brakes;
         }
         TrackValue("acceleration", acceleration);
-        // Calculate the grip so it increases rapidly as we get towards fully forward-facing
         TrackValue("relativeSpeed", relativeSpeed);
-        var forwardDrivingForce = wheelForwardDirection * acceleration * accelerationMultiplier * gripPower.Evaluate(((90 - absVelocityAlignmentDifference) / 90) / surfaceFriction) * travelVerticality;
-        rb.AddRelativeForce(forwardDrivingForce * Time.deltaTime, ForceMode.VelocityChange);
-        TrackVector("forwardDrivingForce", forwardDrivingForce, IsDrifting ? Color.magenta : Color.green);
-
-        EngineSpeed = Mathf.Clamp01((Math.Abs(acceleration) * Mathf.Clamp01(0.2f / relativeSpeed) * 0.8f) + relativeSpeed);
-        TrackValue("EngineSpeed", EngineSpeed);
 
         if (!isReversing && input.IsHandbraking && Speed > minDriftSpeed) {
             IsDrifting = true;
@@ -190,11 +188,28 @@ public class CarController : MonoBehaviour {
                 IsDrifting = false;
             }
         }
-
         TrackValue("driftTimer", driftTimer, false);
         TrackValue("isDrifting", IsDrifting);
 
-        TrackValue("VelocityAlignmentDifference", VelocityAlignmentDifference);
+        if (drivingEnabled) {
+            var forwardDrivingForce = wheelForwardDirection * acceleration * accelerationMultiplier * gripPower.Evaluate(((90 - absVelocityAlignmentDifference) / 90) / surfaceFriction) * travelVerticality;
+            rb.AddRelativeForce(forwardDrivingForce * Time.deltaTime, ForceMode.VelocityChange);
+            TrackVector("forwardDrivingForce", forwardDrivingForce, IsDrifting ? Color.magenta : Color.green);
+
+            Vector3 brakeForce = Vector3.zero;
+            if (!isReversing) {
+                float baseBrakeForce = input.Brakes;
+                if (IsDrifting) {
+                    baseBrakeForce = 1.0f;
+                }
+                brakeForce = Vector3.back * baseBrakeForce * brakingForceMultiplier * surfaceFriction * travelVerticality * Mathf.Clamp01((45f - absVelocityAlignmentDifference) / 45f);
+            }
+            TrackVector("brakeForce", brakeForce, Color.red);
+            rb.AddRelativeForce(brakeForce * Time.deltaTime, ForceMode.VelocityChange);
+        }
+
+        EngineSpeed = Mathf.Clamp01((Math.Abs(acceleration) * Mathf.Clamp01(0.2f / relativeSpeed) * 0.8f) + relativeSpeed);
+        TrackValue("EngineSpeed", EngineSpeed);
 
         var turnSpeed = turning.Evaluate(relativeSpeed);
         TrackValue("turnSpeed", turnSpeed);
@@ -218,17 +233,6 @@ public class CarController : MonoBehaviour {
         TrackVector("sidewaysVelocity", sidewaysVelocity, Color.magenta);
         TrackVector("sidewaysFrictionForce", sidewaysFrictionForce, Color.red);
         rb.AddRelativeForce(sidewaysFrictionForce * Time.deltaTime, ForceMode.VelocityChange);
-
-        Vector3 brakeForce = Vector3.zero;
-        if (!isReversing) {
-            float baseBrakeForce = input.Brakes;
-            if (IsDrifting) {
-                baseBrakeForce = 1.0f;
-            }
-            brakeForce = Vector3.back * baseBrakeForce * brakingForceMultiplier * surfaceFriction * travelVerticality * Mathf.Clamp01((45f - absVelocityAlignmentDifference) / 45f);
-        }
-        TrackVector("brakeForce", brakeForce, Color.red);
-        rb.AddRelativeForce(brakeForce * Time.deltaTime, ForceMode.VelocityChange);
     }
 
     void FixedUpdate() {
@@ -248,6 +252,7 @@ public class CarController : MonoBehaviour {
 
     void Update() {
         IsOnTrack = Physics.Raycast(transform.position, Vector3.down, Mathf.Infinity, LayerMask.GetMask("Track"));
+        drivingEnabled = playerState.mode.Value == PlayerState.PlayerMode.Racing;
     }
 
     void TrackValue(string label, object value) {

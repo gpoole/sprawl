@@ -46,8 +46,10 @@ public class RaceManager : MonoBehaviour {
 			var carInstance = Instantiate(player.car, starts[i].transform.position, starts[i].transform.rotation);
 			carInstance.transform.parent = carsGroup.transform;
 			var car = carInstance.GetComponent<CarController>();
+			car.playerState = playerState;
 			carInstance.GetComponent<CarPlayerInput>().device = player.device;
 			carInstance.GetComponent<CarNavigation>().playerState = playerState;
+			carInstance.GetComponent<CarBooster>().playerState = playerState;
 			cars.Add(car);
 
 			var playerScreen = ScreenManager.Instance.AddScreen(playerState, car.GetComponent<DriftCameraRig>());

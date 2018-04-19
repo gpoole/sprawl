@@ -22,6 +22,8 @@ public class PlayerState : MonoBehaviour {
 
 	public ReactivePlayerModeProperty mode;
 
+	public FloatReactiveProperty startCountdown;
+
 	public IntReactiveProperty lap;
 
 	public IntReactiveProperty rank;
@@ -37,6 +39,7 @@ public class PlayerState : MonoBehaviour {
 		rank = new IntReactiveProperty(1);
 		lapTimes = new ReactiveCollection<float>();
 		mode = new ReactivePlayerModeProperty();
+		startCountdown = new FloatReactiveProperty();
 	}
 
 	void Start() {
@@ -45,7 +48,11 @@ public class PlayerState : MonoBehaviour {
 
 	IEnumerator RaceStart() {
 		mode.Value = PlayerMode.Starting;
-		yield return new WaitForSeconds(3f);
+		for (var second = 4f; second >= 0; second -= Time.deltaTime) {
+			startCountdown.Value = second;
+			yield return null;
+		}
+		startCountdown.Value = 0;
 		mode.Value = PlayerMode.Racing;
 		lapStartTime = Time.time;
 		StartCoroutine(UpdateTimer());
