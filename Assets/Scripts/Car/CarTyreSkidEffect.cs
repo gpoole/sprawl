@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CarTyreSkidEffect : MonoBehaviour {
 
+	public ParticleSystem smokeEffectPrefab;
+
 	private ParticleSystem smokeEffect;
 
 	private CarController car;
@@ -12,7 +14,7 @@ public class CarTyreSkidEffect : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
-		smokeEffect = GetComponentInChildren<ParticleSystem>();
+		smokeEffect = Instantiate(smokeEffectPrefab);
 		car = GetComponentInParent<CarController>();
 		wheel = GetComponentInParent<CarWheel>();
 	}

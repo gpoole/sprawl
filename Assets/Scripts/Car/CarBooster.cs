@@ -26,6 +26,12 @@ public class CarBooster : MonoBehaviour {
 
 	public AudioClip boostClip;
 
+	public ParticleSystemGroup boostFlameEffectPrefab;
+
+	public Transform exhaustPosition;
+
+	private ParticleSystemGroup boostFlameEffect;
+
 	new private Rigidbody rigidbody;
 
 	private AudioSource boostSound;
@@ -33,6 +39,7 @@ public class CarBooster : MonoBehaviour {
 	// Use this for initialization
 	void Start() {
 		rigidbody = GetComponent<Rigidbody>();
+		boostFlameEffect = Instantiate(boostFlameEffectPrefab, exhaustPosition);
 		boostSound = (AudioSource) gameObject.AddComponent(typeof(AudioSource));
 		boostSound.clip = boostClip;
 		boostSound.loop = true;
@@ -65,7 +72,7 @@ public class CarBooster : MonoBehaviour {
 			}
 		}
 
-		if (doBoost) {
+		if (doBoost || true) {
 			ApplyBoost(startBoost.boostForce, startBoost.duration);
 		}
 	}
@@ -73,10 +80,12 @@ public class CarBooster : MonoBehaviour {
 	IEnumerator RunBoost(float force, float duration) {
 		canBoost = false;
 		boostSound.Play();
+		boostFlameEffect.Play();
 		for (float timer = duration; timer > 0; timer -= Time.deltaTime) {
 			rigidbody.AddRelativeForce(Vector3.forward * force, ForceMode.Acceleration);
 			yield return null;
 		}
+		boostFlameEffect.Stop();
 		boostSound.Stop();
 		yield return new WaitForSeconds(cooldownTime);
 		canBoost = true;
