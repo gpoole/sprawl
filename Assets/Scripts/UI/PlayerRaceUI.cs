@@ -14,7 +14,7 @@ public class PlayerRaceUI : MonoBehaviour {
 
 	public Text lapText;
 
-	public Text lapTimes;
+	public Text lapTimeText;
 
 	public Text rankText;
 
@@ -25,18 +25,22 @@ public class PlayerRaceUI : MonoBehaviour {
 	public Text loserText;
 
 	void Start() {
-		playerState.lap.SubscribeToText(lapText);
-		playerState.lap.Subscribe(_ => PulseText(lapText, 2f, 0.5f));
+		playerState.lap.Select(lap => String.Format("{0}/{1}", lap, 3)).SubscribeToText(lapText);
 
-		playerState.rank.SubscribeToText(rankText);
-		playerState.rank.Select(rank => OrdinalSuffix(rank)).SubscribeToText(rankOrdinalText);
-		playerState.rank.Subscribe(_ => PulseText(rankText, 2f, 0.5f));
+		var rankAnimations = transform.Find("Rank").GetComponentsInChildren<Animator>();
+		playerState.rank
+			.Where(rank => rank > 0 && rank <= rankAnimations.Length)
+			.Select(rank => rankAnimations[rank - 1])
+			.Subscribe(animation => animation.SetBool("Active", true));
+		playerState.rank
+			.SelectMany(rank => rankAnimations.Where((_, index) => index != (rank - 1)))
+			.Subscribe(animation => animation.SetBool("Active", false));
 
 		playerState.lapTimes
-			.ObserveAdd()
-			.Select(ev => String.Format("Lap {0}: {1:00}:{2:00.00}", ev.Index + 1, Mathf.Floor(ev.Value / 60), ev.Value % 60))
-			.Scan(((acc, lapTime) => acc + "\n" + lapTime))
-			.SubscribeToText(lapTimes);
+			.ObserveReplace()
+			.Where(ev => ev.Index == playerState.lap.Value - 1)
+			.Select(ev => String.Format("{0:00}:{1:00.00}", Mathf.Floor(ev.NewValue / 60), ev.NewValue % 60))
+			.SubscribeToText(lapTimeText);
 
 		playerState.mode
 			.Where(mode => mode == PlayerState.PlayerMode.Starting)

@@ -7,6 +7,9 @@ TextureImporter:
     21300000: UI_Title_Drive
     21300002: UI_Title_Safe
     21300004: UI_Title_Honey
+    21300006: Title_Drive
+    21300008: Title_Safe
+    21300010: Title_Honey
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -120,6 +123,48 @@ TextureImporter:
         height: 758
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Title_Drive
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 430
+        width: 299
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Title_Safe
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 430
+        width: 240
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Title_Honey
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 10
+        width: 924
+        height: 414
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

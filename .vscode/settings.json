@@ -49,6 +49,10 @@
         "temp/": true,
         "Temp/": true
     },
+    "search.exclude": {
+        "Assets/Third Party Assets/": true,
+        "Assets/Standard Assets/": true
+    },
     "files.associations": {
         "*.asset": "yaml"
     },
