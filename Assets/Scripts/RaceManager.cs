@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class RaceManager : MonoBehaviour {
 
@@ -24,11 +25,24 @@ public class RaceManager : MonoBehaviour {
 
 	void Start() {
 		starts = GameObject.FindGameObjectsWithTag("Start");
-		CreatePlayers();
+
+		StartCoroutine(RunGame());
 	}
 
 	void Update() {
 		UpdateRanks();
+	}
+
+	IEnumerator RunGame() {
+		yield return StartCoroutine(PlayIntro());
+		CreatePlayers();
+	}
+
+	IEnumerator PlayIntro() {
+		var intro = GameObject.Find("CinematicIntro");
+		var director = intro.GetComponent<PlayableDirector>();
+		yield return new WaitWhile(() => director.state == PlayState.Playing);
+		intro.SetActive(false);
 	}
 
 	void CreatePlayers() {
