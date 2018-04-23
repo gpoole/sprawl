@@ -147,6 +147,7 @@ MonoBehaviour:
   particles:
   - {fileID: 198621503338151520}
   - {fileID: 198552145782827536}
+  - {fileID: 198274107614547128}
   playOnAwake: 0
 --- !u!198 &198274107614547128
 ParticleSystem:
