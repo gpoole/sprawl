@@ -19,6 +19,7 @@ public class CarNavigation : MonoBehaviour {
 
 	void Start() {
 		playerState.lastCheckpoint = TrackNavigation.Instance.start;
+		StartCoroutine(UpdateCheckpoint());
 	}
 
 	void Update() {
