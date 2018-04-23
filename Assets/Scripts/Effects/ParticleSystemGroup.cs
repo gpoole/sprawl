@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class ParticleSystemGroup : MonoBehaviour {
 
@@ -10,6 +11,8 @@ public class ParticleSystemGroup : MonoBehaviour {
 	}
 
 	public ParticleSystem[] particles;
+
+	public PlayableDirector[] playables;
 
 	public bool playOnAwake;
 
@@ -24,12 +27,20 @@ public class ParticleSystemGroup : MonoBehaviour {
 		foreach (var particle in particles) {
 			particle.Play();
 		}
+		foreach (var playable in playables) {
+			playable.gameObject.SetActive(true);
+			playable.Play();
+		}
 	}
 
 	public void Stop() {
 		isPlaying = false;
 		foreach (var particle in particles) {
 			particle.Stop();
+		}
+		foreach (var playable in playables) {
+			playable.Stop();
+			playable.gameObject.SetActive(false);
 		}
 	}
 }
