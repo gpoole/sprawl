@@ -39,7 +39,6 @@
         "**/*.mat": true,
         "**/*.meta": true,
         "**/*.prefab": true,
-        "**/*.unity": true,
         "build/": true,
         "Build/": true,
         "Library/": true,
@@ -51,10 +50,12 @@
     },
     "search.exclude": {
         "Assets/Third Party Assets/": true,
-        "Assets/Standard Assets/": true
+        "Assets/Standard Assets/": true,
+        "**/*.unity": true
     },
     "files.associations": {
-        "*.asset": "yaml"
+        "*.asset": "yaml",
+        "**/*.unity": "yaml"
     },
     "csharpfixformat.style.spaces.beforeParenthesis": false,
     "csharp.format.enable": false
