@@ -72,7 +72,7 @@ public class CarBooster : MonoBehaviour {
 			}
 		}
 
-		if (doBoost || true) {
+		if (doBoost) {
 			ApplyBoost(startBoost.boostForce, startBoost.duration);
 		}
 	}
