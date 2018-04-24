@@ -9,6 +9,10 @@ public class Player {
 
 	public int id;
 
+	public int number {
+		get { return id + 1; }
+	}
+
 	public InputDevice device {
 		get {
 			if (id >= InputManager.Devices.Count) {

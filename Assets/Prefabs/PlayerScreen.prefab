@@ -748,6 +748,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 20495195243590252}
+  followTarget: {fileID: 0}
   ui: {fileID: 114135405204822938}
 --- !u!114 &114277981696884936
 MonoBehaviour:
