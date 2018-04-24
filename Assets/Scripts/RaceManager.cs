@@ -16,7 +16,7 @@ public class RaceManager : MonoBehaviour {
 
 	private List<PlayerState> playerStates = new List<PlayerState>();
 
-	private List<CarController> cars = new List<CarController>();
+	private List<Car> cars = new List<Car>();
 
 	void Awake() {
 		Instance = this;
@@ -43,17 +43,11 @@ public class RaceManager : MonoBehaviour {
 			playerState.player = player;
 			playerStates.Add(playerState);
 
-			var carInstance = Instantiate(player.car, starts[i].transform.position, starts[i].transform.rotation);
-			carInstance.transform.parent = carsGroup.transform;
-			var car = carInstance.GetComponent<CarController>();
-			car.playerState = playerState;
-			carInstance.GetComponent<CarPlayerInput>().device = player.device;
-			carInstance.GetComponent<CarNavigation>().playerState = playerState;
-			carInstance.GetComponent<CarBooster>().playerState = playerState;
+			var car = Car.Create(playerState.player.car, starts[i].transform, playerState);
+			car.gameObject.transform.parent = carsGroup.transform;
 			cars.Add(car);
 
-			var playerScreen = ScreenManager.Instance.AddScreen(playerState, car.GetComponent<DriftCameraRig>());
-			car.valueTracker = playerScreen.ui.transform.GetComponentInChildren<DebugValueTracker>();
+			ScreenManager.Instance.AddScreen(playerState, car.GetComponent<DriftCameraRig>());
 		}
 	}
 

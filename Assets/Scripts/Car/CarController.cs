@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour {
 
-    // FIXME: shouldn't be on this class
-    public PlayerState playerState;
-
     public bool drivingEnabled = false;
 
     public float stoppedSpeed = 0.5f;
@@ -108,7 +105,15 @@ public class CarController : MonoBehaviour {
 
     private DebugVectorTracker vectorTracker;
 
+    private PlayerState playerState;
+
     void Start() {
+        playerState = GetComponent<Car>().playerState;
+
+        if (playerState == null) {
+            drivingEnabled = true;
+        }
+
         Speed = 0;
         WheelOrientation = 0;
 
@@ -252,7 +257,10 @@ public class CarController : MonoBehaviour {
 
     void Update() {
         IsOnTrack = Physics.Raycast(transform.position, Vector3.down, Mathf.Infinity, LayerMask.GetMask("Track"));
-        drivingEnabled = playerState.mode.Value == PlayerState.PlayerMode.Racing;
+
+        if (playerState != null) {
+            drivingEnabled = playerState.mode.Value == PlayerState.PlayerMode.Racing;
+        }
     }
 
     void TrackValue(string label, object value) {

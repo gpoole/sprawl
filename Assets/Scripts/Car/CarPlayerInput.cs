@@ -38,6 +38,17 @@ public class CarPlayerInput : MonoBehaviour {
         }
     }
 
-    public InputDevice device;
+    private InputDevice device;
+
+    void Start() {
+        var playerState = GetComponent<Car>().playerState;
+        if (playerState) {
+            device = playerState.player.device;
+        } else {
+            Debug.Log("No playerState detected, using default input device.");
+            device = InputManager.ActiveDevice;
+            InputManager.OnActiveDeviceChanged += (activeDevice) => device = activeDevice;
+        }
+    }
 
 }
