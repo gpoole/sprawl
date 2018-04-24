@@ -32,7 +32,6 @@ public class PlayerScreen : MonoBehaviour {
 			.Where(player => player != playerState.player)
 			.Select(player => String.Format("P{0} Camera", player.number))
 			.ToArray();
-		Debug.Log(excludeLayers);
 		playerCamera.cullingMask = playerCamera.cullingMask & ~LayerMask.GetMask(excludeLayers);
 
 		var virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
