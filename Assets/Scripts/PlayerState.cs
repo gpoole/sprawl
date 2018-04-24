@@ -38,21 +38,38 @@ public class PlayerState : MonoBehaviour {
 		lapTimes = new ReactiveCollection<float>();
 		mode = new ReactivePlayerModeProperty();
 
-		RaceManager.Instance.mode
-			.Subscribe(raceMode => {
-				switch (raceMode) {
-					case RaceManager.RaceMode.Starting:
-					case RaceManager.RaceMode.Intro:
-						mode.Value = PlayerMode.Starting;
-						break;
-					case RaceManager.RaceMode.Racing:
-						mode.Value = PlayerMode.Racing;
-						break;
-					case RaceManager.RaceMode.Finished:
-						mode.Value = PlayerMode.Finished;
-						break;
-				}
-			});
+		if (RaceManager.Instance != null) {
+			RaceManager.Instance.mode
+				.Subscribe(raceMode => {
+					switch (raceMode) {
+						case RaceManager.RaceMode.Starting:
+						case RaceManager.RaceMode.Intro:
+							mode.Value = PlayerMode.Starting;
+							break;
+						case RaceManager.RaceMode.Racing:
+							mode.Value = PlayerMode.Racing;
+							break;
+						case RaceManager.RaceMode.Finished:
+							mode.Value = PlayerMode.Finished;
+							break;
+					}
+				});
+
+			Coroutine timerCoroutine = null;
+
+			RaceManager.Instance.mode
+				.Where(raceMode => raceMode == RaceManager.RaceMode.Racing)
+				.Subscribe(_ => {
+					timerCoroutine = StartCoroutine(UpdateTimer());
+				});
+			RaceManager.Instance.mode
+				.Where(raceMode => raceMode == RaceManager.RaceMode.Finished)
+				.Subscribe(_ => {
+					if (timerCoroutine != null) {
+						StopCoroutine(timerCoroutine);
+					}
+				});
+		}
 	}
 
 	IEnumerator UpdateTimer() {

@@ -32,6 +32,8 @@ public class RaceManager : MonoBehaviour {
 
 	public int lapCount = 3;
 
+	public PlayableDirector titlePrefab;
+
 	private GameObject[] starts;
 
 	private List<PlayerState> playerStates = new List<PlayerState>();
@@ -68,12 +70,20 @@ public class RaceManager : MonoBehaviour {
 
 	IEnumerator RaceStart() {
 		mode.Value = RaceMode.Starting;
+		StartCoroutine(ShowTitle());
 		for (var second = 4f; second >= 0; second -= Time.deltaTime) {
 			startCountdown.Value = second;
 			yield return null;
 		}
 		startCountdown.Value = 0;
 		mode.Value = RaceMode.Racing;
+	}
+
+	IEnumerator ShowTitle() {
+		var title = Instantiate(titlePrefab);
+		title.Play();
+		yield return new WaitWhile(() => title.state == PlayState.Playing);
+		Destroy(title);
 	}
 
 	void CreatePlayers() {
