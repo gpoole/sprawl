@@ -4,22 +4,25 @@ using UnityEngine;
 
 public class CarNavigation : MonoBehaviour {
 
-	public PlayerState playerState;
-
 	private float lapStartTime;
 
 	private CarController car;
 
 	private CarPlayerInput input;
 
-	void Awake() {
-		car = GetComponent<CarController>();
-		input = GetComponent<CarPlayerInput>();
-	}
+	private PlayerState playerState;
 
 	void Start() {
-		playerState.lastCheckpoint = TrackNavigation.Instance.start;
-		StartCoroutine(UpdateCheckpoint());
+		playerState = GetComponent<Car>().playerState;
+		if (playerState) {
+			car = GetComponent<CarController>();
+			input = GetComponent<CarPlayerInput>();
+			playerState.lastCheckpoint = TrackNavigation.Instance.start;
+			StartCoroutine(UpdateCheckpoint());
+		} else {
+			Debug.Log("No playerState detected, navigation will be disabled.");
+			enabled = false;
+		}
 	}
 
 	void Update() {

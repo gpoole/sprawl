@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class CarBooster : MonoBehaviour {
 
-	public PlayerState playerState;
-
 	[Serializable]
 	public struct StartBoost {
 		public float boostForce;
@@ -36,17 +34,22 @@ public class CarBooster : MonoBehaviour {
 
 	private AudioSource boostSound;
 
+	private PlayerState playerState;
+
 	// Use this for initialization
 	void Start() {
+		playerState = GetComponent<Car>().playerState;
 		rigidbody = GetComponent<Rigidbody>();
 		boostFlameEffect = Instantiate(boostFlameEffectPrefab, exhaustPosition);
 		boostSound = (AudioSource) gameObject.AddComponent(typeof(AudioSource));
 		boostSound.clip = boostClip;
 		boostSound.loop = true;
 
-		playerState.mode.Where(mode => mode == PlayerState.PlayerMode.Starting).Subscribe(_ => {
-			StartCoroutine(WatchForStartBoost());
-		});
+		if (playerState != null) {
+			playerState.mode.Where(mode => mode == PlayerState.PlayerMode.Starting).Subscribe(_ => {
+				StartCoroutine(WatchForStartBoost());
+			});
+		}
 	}
 
 	public void ApplyBoost(float force, float duration) {
