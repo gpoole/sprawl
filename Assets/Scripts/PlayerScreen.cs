@@ -27,26 +27,5 @@ public class PlayerScreen : MonoBehaviour {
 		uiRect.anchorMax = new Vector2(viewportXOffset + viewportWidth, viewportYOffset + viewportHeight);
 		uiRect.anchorMin = new Vector2(viewportXOffset, viewportYOffset);
 		ui.playerState = playerState;
-
-		playerState.mode.Where(mode => mode == PlayerState.PlayerMode.Starting).Subscribe(_ => StartCoroutine(PlayIntro()));
-	}
-
-	public void PlayOutro() {
-		// ???
-	}
-
-	IEnumerator PlayIntro() {
-		driftCamera.enabled = false;
-		var positionTarget = driftCamera.rig.positionTarget;
-		playerCamera.transform.position = positionTarget.transform.position - (positionTarget.transform.forward.normalized * 20f) + (Vector3.up * 20f);
-		playerCamera.transform.rotation = positionTarget.transform.rotation;
-
-		while (Vector3.Distance(playerCamera.transform.position, positionTarget.transform.position) > 1f) {
-			playerCamera.transform.position = Vector3.Lerp(playerCamera.transform.position, positionTarget.transform.position, Time.deltaTime);
-			playerCamera.transform.LookAt(driftCamera.rig.lookAtTarget);
-			yield return null;
-		}
-
-		driftCamera.enabled = true;
 	}
 }

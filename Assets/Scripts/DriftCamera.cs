@@ -15,6 +15,11 @@ public class DriftCamera : MonoBehaviour {
 
     bool m_ShowingSideView;
 
+    private void Start() {
+        transform.position = rig.positionTarget.position;
+        transform.LookAt(rig.lookAtTarget);
+    }
+
     private void FixedUpdate() {
         if (advancedOptions.updateCameraInFixedUpdate)
             UpdateCamera();
