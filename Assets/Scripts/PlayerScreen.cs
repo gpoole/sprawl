@@ -1,31 +1,63 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Cinemachine;
 using UniRx;
 using UnityEngine;
 
 public class PlayerScreen : MonoBehaviour {
 
-	public PlayerState playerState;
-
 	public Camera playerCamera;
+
+	public GameObject followTarget;
 
 	public PlayerRaceUI ui;
 
-	private DriftCamera driftCamera;
+	private PlayerState playerState;
 
-	// Use this for initialization
 	void Start() {
-		driftCamera = playerCamera.GetComponent<DriftCamera>();
+		float viewportWidth = 1;
+		float viewportHeight = 1;
+		float viewportXOffset = 0;
+		float viewportYOffset = 0;
 
-		float viewportWidth = GameManager.Instance.players.Count > 1 ? 0.5f : 1f;
-		float viewportHeight = GameManager.Instance.players.Count > 2 ? 0.5f : 1f;
-		float viewportXOffset = viewportWidth * (playerState.player.id % 2);
-		float viewportYOffset = viewportHeight * Mathf.Floor(playerState.player.id / 2f);
+		if (GameManager.Instance != null) {
+			viewportWidth = GameManager.Instance.players.Count > 1 ? 0.5f : 1f;
+			viewportHeight = GameManager.Instance.players.Count > 2 ? 0.5f : 1f;
+			viewportXOffset = viewportWidth * (playerState.player.id % 2);
+			viewportYOffset = viewportHeight * Mathf.Floor(playerState.player.id / 2f);
+
+			var excludeLayers = GameManager.Instance.players
+				.Where(player => player != playerState.player)
+				.Select(player => String.Format("P{0} Camera", player.number))
+				.ToArray();
+			playerCamera.cullingMask = playerCamera.cullingMask & ~LayerMask.GetMask(excludeLayers);
+		}
+
 		playerCamera.rect = new Rect(viewportXOffset, viewportYOffset, viewportWidth, viewportHeight);
 
 		var uiRect = ui.transform.GetChild(0).GetComponent<RectTransform>();
 		uiRect.anchorMax = new Vector2(viewportXOffset + viewportWidth, viewportYOffset + viewportHeight);
 		uiRect.anchorMin = new Vector2(viewportXOffset, viewportYOffset);
 		ui.playerState = playerState;
+
+		var virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
+		virtualCamera.m_Follow = followTarget.transform;
+		virtualCamera.m_LookAt = followTarget.transform;
+
+		if (playerState != null) {
+			virtualCamera.gameObject.layer = LayerMask.NameToLayer(String.Format("P{0} Camera", playerState.player.number));
+		}
+	}
+
+	public static PlayerScreen Create(GameObject screenPrefab, PlayerState playerState, Car car) {
+		var screenGameObject = Instantiate(screenPrefab);
+
+		var playerScreen = screenGameObject.GetComponent<PlayerScreen>();
+		playerScreen.playerState = playerState;
+		playerScreen.followTarget = car.gameObject;
+
+		return playerScreen;
 	}
 }

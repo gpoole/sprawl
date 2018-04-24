@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
-	// [HideInInspector]
 	public List<Player> players;
 
 	public const int maxPlayers = 4;

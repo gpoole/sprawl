@@ -45,8 +45,8 @@ public class CarBooster : MonoBehaviour {
 		boostSound.clip = boostClip;
 		boostSound.loop = true;
 
-		if (playerState != null) {
-			playerState.mode.Where(mode => mode == PlayerState.PlayerMode.Starting).Subscribe(_ => {
+		if (RaceManager.Instance != null) {
+			RaceManager.Instance.mode.Where(mode => mode == RaceManager.RaceMode.Starting).Subscribe(_ => {
 				StartCoroutine(WatchForStartBoost());
 			});
 		}
@@ -59,8 +59,8 @@ public class CarBooster : MonoBehaviour {
 	IEnumerator WatchForStartBoost() {
 		var input = GetComponent<CarPlayerInput>();
 		bool doBoost = false;
-		while (playerState.startCountdown.Value > 0) {
-			var countdown = playerState.startCountdown.Value;
+		while (RaceManager.Instance.startCountdown.Value > 0) {
+			var countdown = RaceManager.Instance.startCountdown.Value;
 			if (countdown > startBoost.timing && input.Accelerator == 0) {
 				yield return null;
 			} else if (countdown < startBoost.timing) {

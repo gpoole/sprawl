@@ -25,6 +25,12 @@ public class PlayerRaceUI : MonoBehaviour {
 	public Text loserText;
 
 	void Start() {
+		if (!playerState) {
+			Debug.Log("playerState not available, disabling UI");
+			enabled = false;
+			return;
+		}
+
 		playerState.lap.Select(lap => String.Format("{0}/{1}", lap, 3)).SubscribeToText(lapText);
 
 		var rankAnimations = transform.Find("Rank").GetComponentsInChildren<Animator>();

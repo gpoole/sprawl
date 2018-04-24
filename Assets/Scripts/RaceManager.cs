@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UniRx;
 using UnityEngine;
 using UnityEngine.Playables;
 
@@ -11,7 +13,26 @@ public class RaceManager : MonoBehaviour {
 		private set;
 	}
 
+	public enum RaceMode {
+		Intro,
+		Starting,
+		Racing,
+		Finished
+	}
+
+	[Serializable]
+	public class ReactiveRaceModeProperty : ReactiveProperty<RaceMode> {
+		public ReactiveRaceModeProperty() : base() { }
+		public ReactiveRaceModeProperty(RaceMode initialValue) : base(initialValue) { }
+	}
+
+	public FloatReactiveProperty startCountdown = new FloatReactiveProperty();
+
+	public ReactiveRaceModeProperty mode = new ReactiveRaceModeProperty();
+
 	public int lapCount = 3;
+
+	public PlayableDirector titlePrefab;
 
 	private GameObject[] starts;
 
@@ -36,13 +57,33 @@ public class RaceManager : MonoBehaviour {
 	IEnumerator RunGame() {
 		yield return StartCoroutine(PlayIntro());
 		CreatePlayers();
+		StartCoroutine(RaceStart());
 	}
 
 	IEnumerator PlayIntro() {
+		mode.Value = RaceMode.Intro;
 		var intro = GameObject.Find("CinematicIntro");
 		var director = intro.GetComponent<PlayableDirector>();
 		yield return new WaitWhile(() => director.state == PlayState.Playing);
 		intro.SetActive(false);
+	}
+
+	IEnumerator RaceStart() {
+		mode.Value = RaceMode.Starting;
+		StartCoroutine(ShowTitle());
+		for (var second = 4f; second >= 0; second -= Time.deltaTime) {
+			startCountdown.Value = second;
+			yield return null;
+		}
+		startCountdown.Value = 0;
+		mode.Value = RaceMode.Racing;
+	}
+
+	IEnumerator ShowTitle() {
+		var title = Instantiate(titlePrefab);
+		title.Play();
+		yield return new WaitWhile(() => title.state == PlayState.Playing);
+		Destroy(title);
 	}
 
 	void CreatePlayers() {
@@ -61,7 +102,7 @@ public class RaceManager : MonoBehaviour {
 			car.gameObject.transform.parent = carsGroup.transform;
 			cars.Add(car);
 
-			ScreenManager.Instance.AddScreen(playerState, car.GetComponent<DriftCameraRig>());
+			ScreenManager.Instance.AddScreen(playerState, car);
 		}
 	}
 
