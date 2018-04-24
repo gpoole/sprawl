@@ -61,7 +61,7 @@ public class RaceManager : MonoBehaviour {
 			car.gameObject.transform.parent = carsGroup.transform;
 			cars.Add(car);
 
-			ScreenManager.Instance.AddScreen(playerState, car.GetComponent<DriftCameraRig>());
+			ScreenManager.Instance.AddScreen(playerState, car);
 		}
 	}
 

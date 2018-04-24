@@ -14,7 +14,7 @@ public class CarTyreSkidEffect : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
-		smokeEffect = Instantiate(smokeEffectPrefab);
+		smokeEffect = Instantiate(smokeEffectPrefab, gameObject.transform);
 		car = GetComponentInParent<CarController>();
 		wheel = GetComponentInParent<CarWheel>();
 	}

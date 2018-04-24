@@ -1,22 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using UniRx;
 using UnityEngine;
 
 public class PlayerScreen : MonoBehaviour {
 
-	public PlayerState playerState;
-
 	public Camera playerCamera;
 
 	public PlayerRaceUI ui;
 
-	private DriftCamera driftCamera;
+	private PlayerState playerState;
 
-	// Use this for initialization
 	void Start() {
-		driftCamera = playerCamera.GetComponent<DriftCamera>();
-
 		float viewportWidth = GameManager.Instance.players.Count > 1 ? 0.5f : 1f;
 		float viewportHeight = GameManager.Instance.players.Count > 2 ? 0.5f : 1f;
 		float viewportXOffset = viewportWidth * (playerState.player.id % 2);
@@ -27,5 +23,16 @@ public class PlayerScreen : MonoBehaviour {
 		uiRect.anchorMax = new Vector2(viewportXOffset + viewportWidth, viewportYOffset + viewportHeight);
 		uiRect.anchorMin = new Vector2(viewportXOffset, viewportYOffset);
 		ui.playerState = playerState;
+	}
+
+	public static PlayerScreen Create(GameObject screenPrefab, PlayerState playerState, Car car) {
+		var screenGameObject = Instantiate(screenPrefab);
+		screenGameObject.GetComponent<PlayerScreen>().playerState = playerState;
+
+		var virtualCamera = screenGameObject.GetComponentInChildren<CinemachineVirtualCamera>();
+		virtualCamera.m_Follow = car.gameObject.transform;
+		virtualCamera.m_LookAt = car.gameObject.transform;
+
+		return screenGameObject.GetComponent<PlayerScreen>();
 	}
 }

@@ -10,38 +10,18 @@ public class ScreenManager : MonoBehaviour {
 		private set;
 	}
 
-	public GameObject cameraPrefab;
+	public GameObject screenPrefab;
 
-	public GameObject uiPrefab;
+	private List<PlayerScreen> screens = new List<PlayerScreen>();
 
-	public List<PlayerScreen> screens = new List<PlayerScreen>();
-
-	// Use this for initialization
 	void Awake() {
 		Instance = this;
 	}
 
-	void Start() { }
-
-	// Update is called once per frame
-	void Update() {
-
-	}
-
-	public PlayerScreen AddScreen(PlayerState playerState, DriftCameraRig rig) {
-		var playerScreen = (new GameObject("Screen" + playerState.player.id, typeof(PlayerScreen))).GetComponent<PlayerScreen>();
-		playerScreen.transform.parent = transform;
-
-		var cameraObject = Instantiate(cameraPrefab, playerScreen.transform);
-		var uiObject = Instantiate(uiPrefab, playerScreen.transform);
-
-		playerScreen.playerCamera = cameraObject.GetComponent<Camera>();
-		cameraObject.GetComponent<DriftCamera>().rig = rig;
-		playerScreen.ui = uiObject.GetComponent<PlayerRaceUI>();
-		playerScreen.playerState = playerState;
-
-		screens.Add(playerScreen);
-
-		return playerScreen;
+	public PlayerScreen AddScreen(PlayerState playerState, Car car) {
+		var screen = PlayerScreen.Create(screenPrefab, playerState, car);
+		screen.transform.parent = transform;
+		screens.Add(screen);
+		return screen;
 	}
 }
