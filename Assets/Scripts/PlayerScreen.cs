@@ -37,7 +37,7 @@ public class PlayerScreen : MonoBehaviour {
 
 		playerCamera.rect = new Rect(viewportXOffset, viewportYOffset, viewportWidth, viewportHeight);
 
-		var uiRect = ui.transform.GetChild(0).GetComponent<RectTransform>();
+		var uiRect = ui.GetComponent<RectTransform>();
 		uiRect.anchorMax = new Vector2(viewportXOffset + viewportWidth, viewportYOffset + viewportHeight);
 		uiRect.anchorMin = new Vector2(viewportXOffset, viewportYOffset);
 		ui.playerState = playerState;
