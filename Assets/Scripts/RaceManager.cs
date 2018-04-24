@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UniRx;
 using UnityEngine;
 using UnityEngine.Playables;
 
@@ -10,6 +12,23 @@ public class RaceManager : MonoBehaviour {
 		get;
 		private set;
 	}
+
+	public enum RaceMode {
+		Intro,
+		Starting,
+		Racing,
+		Finished
+	}
+
+	[Serializable]
+	public class ReactiveRaceModeProperty : ReactiveProperty<RaceMode> {
+		public ReactiveRaceModeProperty() : base() { }
+		public ReactiveRaceModeProperty(RaceMode initialValue) : base(initialValue) { }
+	}
+
+	public FloatReactiveProperty startCountdown = new FloatReactiveProperty();
+
+	public ReactiveRaceModeProperty mode = new ReactiveRaceModeProperty();
 
 	public int lapCount = 3;
 
@@ -36,13 +55,25 @@ public class RaceManager : MonoBehaviour {
 	IEnumerator RunGame() {
 		yield return StartCoroutine(PlayIntro());
 		CreatePlayers();
+		StartCoroutine(RaceStart());
 	}
 
 	IEnumerator PlayIntro() {
+		mode.Value = RaceMode.Intro;
 		var intro = GameObject.Find("CinematicIntro");
 		var director = intro.GetComponent<PlayableDirector>();
 		yield return new WaitWhile(() => director.state == PlayState.Playing);
 		intro.SetActive(false);
+	}
+
+	IEnumerator RaceStart() {
+		mode.Value = RaceMode.Starting;
+		for (var second = 4f; second >= 0; second -= Time.deltaTime) {
+			startCountdown.Value = second;
+			yield return null;
+		}
+		startCountdown.Value = 0;
+		mode.Value = RaceMode.Racing;
 	}
 
 	void CreatePlayers() {
