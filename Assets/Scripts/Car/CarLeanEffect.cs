@@ -8,7 +8,9 @@ public class CarLeanEffect : MonoBehaviour {
 
 	public float maxForwardTilt = 5f;
 
-	public float leanSpeed = 2f;
+	public float tiltResetSpeed = 2f;
+
+	public float tiltForwardSpeed = 2f;
 
 	public float minTiltSpeed = 15f;
 
@@ -24,7 +26,7 @@ public class CarLeanEffect : MonoBehaviour {
 
 	private float forwardTilt;
 
-	private float prevSurfaceSpeed;
+	private float prevForwardSpeed;
 
 	void Start() {
 		carController = GetComponent<CarController>();
@@ -32,20 +34,22 @@ public class CarLeanEffect : MonoBehaviour {
 		input = GetComponent<CarPlayerInput>();
 	}
 
-	void Update() {
+	void FixedUpdate() {
 		var isGrounded = carController.IsGrounded;
-		var surfaceSpeed = transform.InverseTransformDirection(rigidbody.velocity).z;
-
-		float sidewaysTilt = 0;
-		float forwardTilt = 0;
 
 		if (isGrounded) {
-			sidewaysTilt = Mathf.Abs(Mathf.Clamp01(surfaceSpeed / minTiltSpeed)) * (Mathf.Sign(input.Turning) * input.Turning * input.Turning) * maxSidewaysTilt;
-			forwardTilt = (Mathf.Clamp(surfaceSpeed - prevSurfaceSpeed, -3f, 3f) / 3f) * maxForwardTilt;
+			var surfaceVelocity = transform.InverseTransformDirection(rigidbody.velocity);
+			var forwardSpeed = surfaceVelocity.z;
+			var sidewaysSpeed = surfaceVelocity.x;
+			sidewaysTilt = -Mathf.Clamp(sidewaysSpeed / 20f, -1, 1) * maxSidewaysTilt;
+			forwardTilt = Mathf.Lerp(forwardTilt, Mathf.Clamp((forwardSpeed - prevForwardSpeed) / 0.5f, -1f, 1f) * maxForwardTilt, Time.deltaTime * tiltForwardSpeed);
+			prevForwardSpeed = forwardSpeed;
+		} else {
+			sidewaysTilt = Mathf.Lerp(sidewaysTilt, 0, Time.deltaTime);
+			forwardTilt = Mathf.Lerp(forwardTilt, 0, Time.deltaTime);
+			prevForwardSpeed = 0;
 		}
 
-		var rotation = Quaternion.AngleAxis(sidewaysTilt, Vector3.forward) * Quaternion.AngleAxis(forwardTilt, Vector3.left);
-		carBody.transform.localRotation = Quaternion.Lerp(carBody.transform.localRotation, rotation, Time.deltaTime * leanSpeed);
-		prevSurfaceSpeed = surfaceSpeed;
+		carBody.transform.localRotation = Quaternion.AngleAxis(sidewaysTilt, Vector3.forward) * Quaternion.AngleAxis(forwardTilt, Vector3.left);
 	}
 }

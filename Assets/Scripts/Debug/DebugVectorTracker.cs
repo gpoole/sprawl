@@ -16,6 +16,7 @@ public class DebugVectorTracker : MonoBehaviour {
 		public Color color;
 		public Vector3 vector;
 		public bool show = true;
+		public bool solo = false;
 	}
 
 	public List<VectorDebug> vectors = new List<VectorDebug>();
@@ -25,8 +26,9 @@ public class DebugVectorTracker : MonoBehaviour {
 	void Start() { }
 
 	void OnDrawGizmos() {
+		var hasSolo = vectors.Any(debugVector => debugVector.solo);
 		foreach (var debugVector in vectors) {
-			if (debugVector.show) {
+			if ((!hasSolo && debugVector.show) || (hasSolo && debugVector.solo)) {
 				Gizmos.color = debugVector.color;
 				var debugRay = transform.TransformDirection(debugVector.vector).normalized * Mathf.Log((debugVector.vector.magnitude * 5) + 1);
 				Gizmos.DrawRay(transform.position, debugRay);
