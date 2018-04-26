@@ -177,8 +177,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetLength: 1
-  dampingFactor: 30
-  springFactor: 20
+  dampingFactor: 80
+  springFactor: 50
   maxAngleToSurface: 45
   visualTurnMultiplier: 1.5
   visualRotationSpeed: 1
@@ -542,8 +542,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetLength: 1
-  dampingFactor: 30
-  springFactor: 20
+  dampingFactor: 80
+  springFactor: 50
   maxAngleToSurface: 45
   visualTurnMultiplier: 1.5
   visualRotationSpeed: 1
@@ -950,7 +950,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 548788267}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.71, z: 0}
+  m_LocalPosition: {x: 0, y: -1.32, z: 0.162}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1048681168}
@@ -1870,8 +1870,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetLength: 1
-  dampingFactor: 30
-  springFactor: 20
+  dampingFactor: 80
+  springFactor: 50
   maxAngleToSurface: 45
   visualTurnMultiplier: 1.5
   visualRotationSpeed: 1
@@ -1946,7 +1946,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1.7346146, y: 1.3725362, z: 2.3401866}
-  m_Center: {x: 0.00057542324, y: 0.044313192, z: -0.39}
+  m_Center: {x: 0.00057542324, y: 0.06, z: -0.39}
 --- !u!65 &1265659558
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1958,7 +1958,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1.7346146, y: 0.74638295, z: 1.0601475}
-  m_Center: {x: 0.00057542324, y: -0.26876342, z: 1.2953093}
+  m_Center: {x: 0.00057542324, y: -0.24, z: 1.2953093}
 --- !u!136 &1265659559
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1971,7 +1971,7 @@ CapsuleCollider:
   m_Radius: 0.14360678
   m_Height: 1.7682385
   m_Direction: 0
-  m_Center: {x: 0.01, y: -0.52, z: 1.88}
+  m_Center: {x: 0.01, y: -0.46, z: 1.88}
 --- !u!1 &1309323324
 GameObject:
   m_ObjectHideFlags: 0
@@ -3035,8 +3035,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetLength: 1
-  dampingFactor: 30
-  springFactor: 20
+  dampingFactor: 80
+  springFactor: 50
   maxAngleToSurface: 45
   visualTurnMultiplier: 1.5
   visualRotationSpeed: 1

@@ -124,10 +124,6 @@ public class CarController : MonoBehaviour {
         rb = GetComponent<Rigidbody>();
         wheels = GetComponentsInChildren<CarWheel>();
         vectorTracker = GetComponent<DebugVectorTracker>();
-
-        if (centreOfMass) {
-            rb.centerOfMass = centreOfMass.position;
-        }
     }
 
     public void Reset() {
@@ -241,6 +237,10 @@ public class CarController : MonoBehaviour {
         TrackVector("sidewaysVelocity", sidewaysVelocity, Color.magenta);
         TrackVector("sidewaysFrictionForce", sidewaysFrictionForce, Color.red);
         rb.AddRelativeForce(sidewaysFrictionForce * Time.deltaTime, ForceMode.VelocityChange);
+
+        if (centreOfMass) {
+            rb.centerOfMass = centreOfMass.localPosition;
+        }
     }
 
     void FixedUpdate() {
