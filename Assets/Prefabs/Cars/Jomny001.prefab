@@ -895,7 +895,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSidewaysTilt: 10
   maxForwardTilt: 8
-  leanSpeed: 3
+  tiltResetSpeed: 2
+  tiltForwardSpeed: 2
   minTiltSpeed: 15
   carBody: {fileID: 4406422208411134}
 --- !u!114 &114080347462364156
