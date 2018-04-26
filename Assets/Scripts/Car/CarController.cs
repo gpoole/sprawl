@@ -87,6 +87,11 @@ public class CarController : MonoBehaviour {
         private set;
     }
 
+    public CarWheel[] wheels {
+        get;
+        private set;
+    }
+
     private bool isReversing = false;
 
     private bool isStopped = true;
@@ -96,8 +101,6 @@ public class CarController : MonoBehaviour {
     private Vector3 wheelForwardDirection;
 
     private Rigidbody rb;
-
-    private CarWheel[] wheels;
 
     private float driftTimer;
 

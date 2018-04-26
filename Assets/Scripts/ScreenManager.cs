@@ -12,7 +12,7 @@ public class ScreenManager : MonoBehaviour {
 
 	public GameObject screenPrefab;
 
-	private List<PlayerScreen> screens = new List<PlayerScreen>();
+	public List<PlayerScreen> screens = new List<PlayerScreen>();
 
 	void Awake() {
 		Instance = this;
