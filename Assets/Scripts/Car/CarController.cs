@@ -87,6 +87,11 @@ public class CarController : MonoBehaviour {
         private set;
     }
 
+    public CarWheel[] wheels {
+        get;
+        private set;
+    }
+
     private bool isReversing = false;
 
     private bool isStopped = true;
@@ -96,8 +101,6 @@ public class CarController : MonoBehaviour {
     private Vector3 wheelForwardDirection;
 
     private Rigidbody rb;
-
-    private CarWheel[] wheels;
 
     private float driftTimer;
 
@@ -121,10 +124,6 @@ public class CarController : MonoBehaviour {
         rb = GetComponent<Rigidbody>();
         wheels = GetComponentsInChildren<CarWheel>();
         vectorTracker = GetComponent<DebugVectorTracker>();
-
-        if (centreOfMass) {
-            rb.centerOfMass = centreOfMass.position;
-        }
     }
 
     public void Reset() {
@@ -238,6 +237,10 @@ public class CarController : MonoBehaviour {
         TrackVector("sidewaysVelocity", sidewaysVelocity, Color.magenta);
         TrackVector("sidewaysFrictionForce", sidewaysFrictionForce, Color.red);
         rb.AddRelativeForce(sidewaysFrictionForce * Time.deltaTime, ForceMode.VelocityChange);
+
+        if (centreOfMass) {
+            rb.centerOfMass = centreOfMass.localPosition;
+        }
     }
 
     void FixedUpdate() {
