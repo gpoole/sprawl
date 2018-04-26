@@ -8,6 +8,10 @@ public class CarLeanEffect : MonoBehaviour {
 
 	public float maxForwardTilt = 5f;
 
+	public float leanSpeed = 2f;
+
+	public float minTiltSpeed = 15f;
+
 	public Transform carBody;
 
 	private CarController carController;
@@ -36,12 +40,12 @@ public class CarLeanEffect : MonoBehaviour {
 		float forwardTilt = 0;
 
 		if (isGrounded) {
-			sidewaysTilt = -input.Turning * maxSidewaysTilt;
+			sidewaysTilt = Mathf.Abs(Mathf.Clamp01(surfaceSpeed / minTiltSpeed)) * input.Turning * maxSidewaysTilt;
 			forwardTilt = (Mathf.Clamp(surfaceSpeed - prevSurfaceSpeed, -3f, 3f) / 3f) * maxForwardTilt;
 		}
 
 		var rotation = Quaternion.AngleAxis(sidewaysTilt, Vector3.forward) * Quaternion.AngleAxis(forwardTilt, Vector3.left);
-		carBody.transform.localRotation = Quaternion.Lerp(carBody.transform.localRotation, rotation, Time.deltaTime * 2f);
+		carBody.transform.localRotation = Quaternion.Lerp(carBody.transform.localRotation, rotation, Time.deltaTime * leanSpeed);
 		prevSurfaceSpeed = surfaceSpeed;
 	}
 }

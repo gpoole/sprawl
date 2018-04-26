@@ -177,8 +177,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetLength: 1
-  dampingFactor: 80
-  springFactor: 50
+  dampingFactor: 40
+  springFactor: 30
   maxAngleToSurface: 45
   visualTurnMultiplier: 1.5
   visualRotationSpeed: 1
@@ -542,8 +542,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetLength: 1
-  dampingFactor: 80
-  springFactor: 50
+  dampingFactor: 40
+  springFactor: 30
   maxAngleToSurface: 45
   visualTurnMultiplier: 1.5
   visualRotationSpeed: 1
@@ -950,7 +950,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 548788267}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.32, z: 0.162}
+  m_LocalPosition: {x: 0, y: -1.133, z: 0.162}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1048681168}
@@ -1553,6 +1553,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSidewaysTilt: 10
   maxForwardTilt: 8
+  leanSpeed: 2
+  minTiltSpeed: 15
   carBody: {fileID: 754715935}
 --- !u!1 &1068067857
 GameObject:
@@ -1870,8 +1872,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetLength: 1
-  dampingFactor: 80
-  springFactor: 50
+  dampingFactor: 40
+  springFactor: 30
   maxAngleToSurface: 45
   visualTurnMultiplier: 1.5
   visualRotationSpeed: 1
@@ -3035,8 +3037,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetLength: 1
-  dampingFactor: 80
-  springFactor: 50
+  dampingFactor: 40
+  springFactor: 30
   maxAngleToSurface: 45
   visualTurnMultiplier: 1.5
   visualRotationSpeed: 1
