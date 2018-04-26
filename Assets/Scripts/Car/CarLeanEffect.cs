@@ -40,7 +40,7 @@ public class CarLeanEffect : MonoBehaviour {
 		float forwardTilt = 0;
 
 		if (isGrounded) {
-			sidewaysTilt = Mathf.Abs(Mathf.Clamp01(surfaceSpeed / minTiltSpeed)) * input.Turning * maxSidewaysTilt;
+			sidewaysTilt = Mathf.Abs(Mathf.Clamp01(surfaceSpeed / minTiltSpeed)) * (Mathf.Sign(input.Turning) * input.Turning * input.Turning) * maxSidewaysTilt;
 			forwardTilt = (Mathf.Clamp(surfaceSpeed - prevSurfaceSpeed, -3f, 3f) / 3f) * maxForwardTilt;
 		}
 

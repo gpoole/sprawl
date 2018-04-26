@@ -895,7 +895,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSidewaysTilt: 10
   maxForwardTilt: 8
-  leanSpeed: 2
+  leanSpeed: 3
   minTiltSpeed: 15
   carBody: {fileID: 4406422208411134}
 --- !u!114 &114080347462364156
@@ -1041,22 +1041,22 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0
+      time: 0.020217896
       value: 0
-      inSlope: 2
-      outSlope: 2
+      inSlope: 11.737614
+      outSlope: 11.737614
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.02606197
+      time: 0.09126277
       value: 1
-      inSlope: -0.076457426
-      outSlope: -0.076457426
-      tangentMode: 0
+      inSlope: 24.03057
+      outSlope: -0.04135628
+      tangentMode: 1
     - serializedVersion: 2
-      time: 1.0007324
-      value: 0.89556277
-      inSlope: -0.4777574
-      outSlope: -0.4777574
+      time: 0.9977204
+      value: 0.9722673
+      inSlope: -0.09334883
+      outSlope: -0.09334883
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
