@@ -12,13 +12,13 @@ public class FenceTools {
 
 	private const float RailMass = 25f;
 
-	private const float RailBreakForce = 250f;
+	private const float RailBreakForce = 1000f;
 
-	private const float RailBreakTorque = 250f;
+	private const float RailBreakTorque = 1000f;
 
-	private const float PostGroundBreakForce = 3000f;
+	private const float PostGroundBreakForce = 30000f;
 
-	private const float PostGroundBreakTorque = 3000f;
+	private const float PostGroundBreakTorque = Mathf.Infinity;
 
 	[MenuItem("Tools/Scrub fence")]
 	public static void ScrubFence() {
