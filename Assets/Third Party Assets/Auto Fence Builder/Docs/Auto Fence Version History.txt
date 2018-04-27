@@ -1,0 +1,103 @@
+2.1
+
+Backup your Project Folder if you intend to overwrite a project currently using Auto Fence Builder. 'Finish' any live fences, and remove the old version of Auto Fence Builder from the Hierarchy.
+Contains major code changes, not suitable for overwriting a 'live' Auto Fence scene in progress. "Finish &Start New" to bake your Fence if you have one in progress.
+
+New Features:
+•Custom objects can easily be drag&dropped into the appropriate slot
+•Combine tool for combining complex GameObjects into a single mesh to use as post or wall
+•New category of parts: ‘Extra’, to supplement posts, rails & subposts
+•Many new prefabs
+•More Random options. Randomly remove parts. Save Random seed with presets
+•Improved fake mitering of wall-ends.
+•Beta support for custom nested objects
+•Subposts can now be aligned with Main posts to works as compound post designs
+•Fences can be wound in reverse order. This has the effect of making all parts turn 180.
+
+
+2.0
+
+Backup your Project Folder if you intend to overwrite a project currently using Auto Fence Builder. 
+'Finish' any live fences, and remove the old version of Auto Fence Builder from the Hierarchy.
+Contains major code changes, not suitable for overwriting a 'live' Auto Fence scene in progress, but 'Finished' fences will be unaffected.
+"Finish &Start New" to bake your Fence if you have one in progress.
+
+New Features:
+•Secondary Rail Types
+•Unity 5 PBR Materials
+•New Castle & Fortress builds
+•Many new rail/post/wall parts
+•More suitable for walls
+•Fence cloning
+•More Randomization options
+•Switchable post rotation lerping
+•Snapping to Unity World Grid
+
+Bug Fixes:
+
+- Fixed issue when saving Rail meshes.
+
+
+1.2
+
+Contains major code changes, not suitable for overwriting a 'live' Auto Fence scene in progress.
+"Finish &Start New" to bake your Fence if you have one in progress.
+Please backup your scene and remove the old version of AFB from your Project folder.
+
+Added:
+Gaps can now be created within fences.
+Global Scale control
+Utility for permanently combining mesh parts, or only combining via script
+New Barbed Wire fence type
+
+Bug Fixes:
+- Prefabs now store own meshes in the case of sheared Panel Rails
+- Fixed issue with a 5 prefab parts not lightmapping correctly
+
+1.1
+Added:
+GildedAssassin Preset
+ConcreteMouldyPanels Preset
+ConcreteMouldy_Panel_Rail prefab
+ConcreteMouldy_Post prefab
+Gilded1_Panel_Rail prefab
+
+Bug Fixes
+- Fixed build errors
+- Fixed problem related to Web Player build settings preventing compilation.
+
+
+1.0
+Initial Release
+
+1.2
+
+Contains major code changes, not suitable for overwriting a 'live' Auto Fence scene in progress.
+"Finish &Start New" to bake your Fence if you have one in progress.
+Please backup your scene and remove the old version of AFB from your Project folder.
+
+Added:
+Gaps can now be created within fences.
+Global Scale control
+Utility for permanently combining mesh parts, or only combining via script
+New Barbed Wire fence type
+
+Bug Fixes:
+- Prefabs now store own meshes in the case of sheared Panel Rails
+- Fixed issue with a 5 prefab parts not lightmapping correctly
+
+1.1
+
+Added:
+GildedAssassin Preset
+ConcreteMouldyPanels Preset
+ConcreteMouldy_Panel_Rail prefab
+ConcreteMouldy_Post prefab
+Gilded1_Panel_Rail prefab
+
+Bug Fixes:
+- Fixed build errors
+- Fixed problem related to Web Player build settings preventing compilation.
+
+1.0
+Initial Release
