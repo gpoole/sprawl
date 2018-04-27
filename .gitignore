@@ -5,7 +5,8 @@
 [Bb]uilds/
 Assets/AssetStoreTools*
 Assets/Ludiq/
-Assets/**/Ludiq/Ludiq.Core/Generated
+Assets/**/Ludiq/Ludiq.Core/Generated/
+Assets/**/Ludiq/Ludiq.Core/Generated.meta
 
 # Visual Studio 2015 cache directory
 /.vs/
