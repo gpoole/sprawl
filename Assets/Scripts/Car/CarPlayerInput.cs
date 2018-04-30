@@ -6,49 +6,62 @@ public class CarPlayerInput : MonoBehaviour {
 
     public float Accelerator {
         get {
-            return device != null ? device.RightTrigger : 0f;
+            return actions != null ? actions.accelerate : 0f;
         }
     }
 
     public float Brakes {
         get {
-            return device != null ? device.LeftTrigger : 0f;
+            return actions != null ? actions.brake : 0f;
         }
     }
 
-    public float Turning {
+    public float Steering {
         get {
-            return device != null ? device.LeftStickX : 0f;
+            return actions != null ? actions.steer : 0f;
         }
     }
 
     public bool IsHandbraking {
         get {
-            return device != null ? device.Action2 : false; // b button
+            return actions != null ? actions.handbrake : false;
         }
     }
 
     public bool IsResetting {
         get {
-            bool controllerReset = false;
-            if (device != null) {
-                controllerReset = device.GetControl(InputControlType.Back) || device.GetControl(InputControlType.Action3);
-            }
-            return controllerReset || Input.GetKey(KeyCode.R);
+            return actions != null ? actions.resetCar : false;
         }
     }
 
-    private InputDevice device;
+    // private InputDevice device;
+    private DrivingPlayerActions actions;
 
     void Start() {
+        actions = new DrivingPlayerActions();
+
         var playerState = GetComponent<Car>().playerState;
         if (playerState) {
-            device = playerState.player.device;
+            actions.Device = playerState.player.device;
         } else {
             Debug.Log("No playerState detected, using default input device.");
-            device = InputManager.ActiveDevice;
-            InputManager.OnActiveDeviceChanged += (activeDevice) => device = activeDevice;
         }
+
+        // Controller
+        actions.accelerate.AddDefaultBinding(InputControlType.RightTrigger);
+        actions.brake.AddDefaultBinding(InputControlType.LeftTrigger);
+        actions.steerLeft.AddDefaultBinding(InputControlType.LeftStickLeft);
+        actions.steerRight.AddDefaultBinding(InputControlType.LeftStickRight);
+        actions.handbrake.AddDefaultBinding(InputControlType.Action2);
+        actions.resetCar.AddDefaultBinding(InputControlType.Action3);
+
+        // Keyboard
+        actions.accelerate.AddDefaultBinding(Key.W);
+        actions.brake.AddDefaultBinding(Key.S);
+        actions.steerLeft.AddDefaultBinding(Key.A);
+        actions.steerRight.AddDefaultBinding(Key.D);
+        actions.handbrake.AddDefaultBinding(Key.Space);
+        actions.resetCar.AddDefaultBinding(Key.R);
     }
 
 }
