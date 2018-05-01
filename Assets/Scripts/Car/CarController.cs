@@ -229,7 +229,7 @@ public class CarController : MonoBehaviour {
 
         // Turn the car up to a maximum angle against the direction of movement
         var allowedTurnAngle = IsDrifting ? driftMaxTurnAngle : maxTurnAngle;
-        rb.AddRelativeTorque(Vector3.up * input.Turning * Mathf.Clamp((allowedTurnAngle - absVelocityAlignmentDifference) / allowedTurnAngle, 0.2f, 1f) * turnSpeed * (IsDrifting ? driftTurnMultiplier : turnMultiplier) * Time.deltaTime, ForceMode.VelocityChange);
+        rb.AddRelativeTorque(Vector3.up * input.Steering * Mathf.Clamp((allowedTurnAngle - absVelocityAlignmentDifference) / allowedTurnAngle, 0.2f, 1f) * turnSpeed * (IsDrifting ? driftTurnMultiplier : turnMultiplier) * Time.deltaTime, ForceMode.VelocityChange);
 
         var sidewaysVelocity = Vector3.Project(surfaceVelocity, Vector3.right);
         var sideFriction = sidewaysFriction.Evaluate(sidewaysVelocity.magnitude * surfaceFriction) * sidewaysFrictionMultiplier;
@@ -244,7 +244,7 @@ public class CarController : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        WheelOrientation = input.Turning * maxWheelTurn;
+        WheelOrientation = input.Steering * maxWheelTurn;
         var wheelRotation = Quaternion.AngleAxis(WheelOrientation, Vector3.up);
         wheelForwardDirection = (wheelRotation * Vector3.forward).normalized;
         IsGrounded = wheels.Any(wheel => wheel.IsGrounded);

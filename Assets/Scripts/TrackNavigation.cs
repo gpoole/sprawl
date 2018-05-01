@@ -40,7 +40,7 @@ public class TrackNavigation : MonoBehaviour {
 	}
 
 #if UNITY_EDITOR
-	[MenuItem("Track/Generate checkpoints")]
+	[MenuItem("Tools/Track/Generate checkpoints")]
 	public static void GenerateCheckpoints() {
 		var nav = GameObject.FindObjectOfType<TrackNavigation>();
 
