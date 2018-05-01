@@ -894,7 +894,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSidewaysTilt: 10
-  maxForwardTilt: 8
+  maxForwardTilt: 4.75
   tiltResetSpeed: 2
   tiltForwardSpeed: 2
   minTiltSpeed: 15
@@ -973,33 +973,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drivingEnabled: 0
   stoppedSpeed: 0.5
-  maxSpeed: 100
+  maxSpeed: 120
   maxReverseSpeed: -14.15
   accelerationSpeed:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0.00070096087
-      value: 0.5096421
-      inSlope: 3.8892286
-      outSlope: 3.8892286
+      time: 0.00024414062
+      value: 0.50447845
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.08414708
-      value: 0.98374146
-      inSlope: 0.105561905
-      outSlope: 0.105561905
-      tangentMode: 0
+      time: 0.0039678365
+      value: 0.79611224
+      inSlope: 0.50865144
+      outSlope: 0.079813495
+      tangentMode: 1
     - serializedVersion: 2
-      time: 1
-      value: 0
-      inSlope: -0.24199465
-      outSlope: -0.24199465
+      time: 0.9774519
+      value: -0.015351951
+      inSlope: 0.0010779212
+      outSlope: 0.0010779212
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  accelerationMultiplier: 50
+  accelerationMultiplier: 100
   brakingForceMultiplier: 10
   gripPower:
     serializedVersion: 2
@@ -1007,14 +1007,14 @@ MonoBehaviour:
     - serializedVersion: 2
       time: 0.0024480922
       value: 1.0001664
-      inSlope: -1.4334557
-      outSlope: -1.4334557
+      inSlope: -0.31985393
+      outSlope: -0.31985393
       tangentMode: 0
     - serializedVersion: 2
       time: 0.9971049
       value: 0.40130574
-      inSlope: -0.36445087
-      outSlope: -0.36445087
+      inSlope: -1.0093654
+      outSlope: -1.0093654
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -1023,10 +1023,16 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0
+      time: -0.008628845
       value: 0.1
-      inSlope: 0.9981434
-      outSlope: 0.9981434
+      inSlope: 1.0381908
+      outSlope: 1.0381908
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 2.5507662
+      value: 2.6477416
+      inSlope: 0.19788742
+      outSlope: 0.19788742
       tangentMode: 0
     - serializedVersion: 2
       time: 10
@@ -1042,22 +1048,22 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0.020217896
-      value: 0
-      inSlope: 11.737614
-      outSlope: 11.737614
+      time: 0.0020538978
+      value: 0.8003082
+      inSlope: 0.18849345
+      outSlope: 0.18849345
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.09126277
-      value: 1
-      inSlope: 24.03057
-      outSlope: -0.04135628
-      tangentMode: 1
+      time: 0.03236404
+      value: 0.99361175
+      inSlope: -0.087376446
+      outSlope: -0.087376446
+      tangentMode: 0
     - serializedVersion: 2
-      time: 0.9977204
-      value: 0.9722673
-      inSlope: -0.09334883
-      outSlope: -0.09334883
+      time: 1.0018702
+      value: 0.84602624
+      inSlope: -0.045974076
+      outSlope: -0.045974076
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -1066,13 +1072,13 @@ MonoBehaviour:
   turnToVelocitySpeed: 0.025
   turnVelocityTransferRate: 0.8
   maxWheelTurn: 30
-  maxTurnAngle: 60
-  driftTurnMultiplier: 33
-  driftMaxTurnAngle: 80
+  maxTurnAngle: 80
+  driftTurnMultiplier: 30
+  driftMaxTurnAngle: 60
   minDriftSpeed: 20
   straightenUpTime: 0.3
   straightenUpAngle: 25
-  maxVerticalAngle: 80
+  maxVerticalAngle: 43.99
   centreOfMass: {fileID: 4074155959236330}
   valueTracker: {fileID: 0}
 --- !u!114 &114449316361521596
