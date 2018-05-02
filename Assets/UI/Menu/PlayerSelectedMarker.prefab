@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 222078344576352762}
   - component: {fileID: 114140975283354760}
   - component: {fileID: 225816394609411666}
+  - component: {fileID: 114277127767656742}
   m_Layer: 5
   m_Name: PlayerSelectedMarker
   m_TagString: Untagged
@@ -73,6 +74,22 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114277127767656742
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1993247656435546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5af36872ba9d4469a86abab2f2e06fe7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player:
+    id: 0
+    car: {fileID: 0}
+  confirmed:
+    value: 0
 --- !u!114 &114440165824950298
 MonoBehaviour:
   m_ObjectHideFlags: 1

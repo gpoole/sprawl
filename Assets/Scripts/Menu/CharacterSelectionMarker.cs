@@ -7,7 +7,7 @@ public class CharacterSelectionMarker : MonoBehaviour {
 
     public Player player;
 
-    public BoolReactiveProperty confirmed = new BoolReactiveProperty(false);
+    public BoolReactiveProperty confirmed;
 
     void Start() {
         var canvasGroup = GetComponent<CanvasGroup>();
@@ -18,7 +18,7 @@ public class CharacterSelectionMarker : MonoBehaviour {
             } else {
                 canvasGroup.alpha = 0.5f;
             }
-        });
+        }).AddTo(this);
     }
 
 }

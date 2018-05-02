@@ -4,57 +4,54 @@ using System.Linq;
 using UniRx;
 using UnityEngine;
 
-public class CharacterSelectionMarkers : MonoBehaviour, ICharacterSelectionEventTarget {
+public class CharacterSelectionMarkers : MonoBehaviour {
 
 	public GameObject markerPrefab;
 
-	private GameCharacter character;
+	public GameCharacter character;
 
 	void Start() {
-		character = GetComponentInParent<CharacterSelectTile>().character;
-	}
+		var state = GetComponentInParent<CharacterSelectScreen>();
 
-	void OnPlayerCharacterChanged(Player player, GameCharacter current) {
-		if (current != character) {
-			var newMarker = Instantiate(markerPrefab, transform);
-			newMarker.GetComponent<CharacterSelectionMarker>().player = player;
-		} else {
-			var marker = GetPlayerMarker(player);
-			if (marker != null) {
-				Destroy(marker);
-			}
-		}
-	}
+		var addedPlayers = state.playerSelections
+			.ObserveAdd()
+			.Select(ev => ev.Value)
+			.StartWith(state.playerSelections);
 
-	void OnPlayerCharacterConfirmed(Player player, GameCharacter current) {
-		if (current == character) {
-			var marker = GetPlayerMarker(player);
-			if (marker) {
-				marker.confirmed.Value = true;
-			}
-		}
-	}
+		var characterChanges = addedPlayers
+			.SelectMany(playerSelection => playerSelection.character.Select(_ => playerSelection));
 
-	void OnPlayerCharacterUnConfirmed(Player player, GameCharacter current) {
-		if (current == character) {
-			var marker = GetPlayerMarker(player);
-			if (marker) {
-				marker.confirmed.Value = false;
-			}
-		}
-	}
+		characterChanges
+			.Where(playerSelection => playerSelection.character.Value == character)
+			.Subscribe(playerSelection => {
+				var marker = Instantiate(markerPrefab, transform);
+				var characterSelectionMarker = marker.GetComponent<CharacterSelectionMarker>();
+				characterSelectionMarker.player = playerSelection.player;
+				characterSelectionMarker.confirmed = playerSelection.confirmed;
+			})
+			.AddTo(this);
 
-	void OnPlayerRemoved(Player player) {
-		var marker = GetPlayerMarker(player);
-		if (marker != null) {
-			Destroy(marker);
-		}
+		characterChanges
+			.Where(playerSelection => playerSelection.character.Value != character)
+			.Subscribe(playerSelection => {
+				RemovePlayerMarker(playerSelection.player);
+			})
+			.AddTo(this);
+
+		state.playerSelections
+			.ObserveRemove()
+			.Select(ev => ev.Value)
+			.Where(playerSelection => playerSelection.character.Value == character)
+			.Subscribe(playerSelection => {
+				RemovePlayerMarker(playerSelection.player);
+			})
+			.AddTo(this);
 	}
 
 	void RemovePlayerMarker(Player player) {
 		var marker = GetPlayerMarker(player);
 		if (marker != null) {
-			Destroy(marker);
+			Destroy(marker.gameObject);
 		}
 	}
 

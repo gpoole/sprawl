@@ -14,30 +14,39 @@ public class CharacterSelectScreen : MonoBehaviour {
 
         public Player player;
 
-        public ReactiveProperty<GameCharacter> character = new ReactiveProperty<GameCharacter>();
+        public ReactiveProperty<GameCharacter> character;
 
         public BoolReactiveProperty confirmed = new BoolReactiveProperty(false);
 
+        public PlayerSelection(Player player, GameCharacter character) {
+            this.player = player;
+            this.character = new ReactiveProperty<GameCharacter>(character);
+        }
+
+    }
+
+    public class CharacterSelection {
+        public GameCharacter character;
+        public ReactiveCollection<Player> players;
     }
 
     public GameCharacter[] characters;
 
-    private ReactiveCollection<PlayerSelection> playerSelections = new ReactiveCollection<PlayerSelection>();
+    public ReactiveCollection<PlayerSelection> playerSelections = new ReactiveCollection<PlayerSelection>();
 
     void Start() {
         foreach (var device in InputManager.Devices) {
             StartCoroutine(ListenForJoin(device));
         }
-    }
 
-    void Update() {
-
+        // Listen for keyboard too
+        StartCoroutine(ListenForJoin(null));
     }
 
     IEnumerator ListenForSelection(PlayerSelection playerSelection, MenuActions controller) {
-        // FIXME: wait for screen going away condition...
+        // FIXME: wait for all confirmed condition...
         while (true) {
-            if (controller.left || controller.right || controller.up || controller.down) {
+            if (!playerSelection.confirmed.Value && (controller.left || controller.right || controller.up || controller.down)) {
                 var index = Array.IndexOf(characters.ToArray(), playerSelection.character.Value);
                 if (controller.left) {
                     playerSelection.character.Value = index - 1 > 0 ? characters[index - 1] : characters.First();
@@ -53,8 +62,12 @@ public class CharacterSelectScreen : MonoBehaviour {
                 }
             }
 
-            if (controller.ok) {
+            if (!playerSelection.confirmed.Value && controller.ok) {
                 playerSelection.confirmed.Value = true;
+            }
+
+            if (playerSelection.confirmed.Value && controller.back) {
+                playerSelection.confirmed.Value = false;
             }
 
             yield return null;
@@ -70,8 +83,9 @@ public class CharacterSelectScreen : MonoBehaviour {
         // Do I need to destroy the controller?
         yield return new WaitUntil(() => controller.join);
         var newPlayer = GameManager.Instance.AddPlayer(device);
-        var playerSelection = new PlayerSelection { player = newPlayer };
+        var playerSelection = new PlayerSelection(newPlayer, characters.First());
         playerSelections.Add(playerSelection);
+        yield return new WaitForSeconds(0.1f); // FIXME aaa
         StartCoroutine(ListenForSelection(playerSelection, controller));
     }
 
