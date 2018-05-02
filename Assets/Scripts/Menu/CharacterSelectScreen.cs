@@ -25,11 +25,6 @@ public class CharacterSelectScreen : MonoBehaviour {
 
     }
 
-    public class CharacterSelection {
-        public GameCharacter character;
-        public ReactiveCollection<Player> players;
-    }
-
     public GameCharacter[] characters;
 
     public ReactiveCollection<PlayerSelection> playerSelections = new ReactiveCollection<PlayerSelection>();
@@ -66,11 +61,18 @@ public class CharacterSelectScreen : MonoBehaviour {
                 playerSelection.confirmed.Value = true;
             }
 
-            if (playerSelection.confirmed.Value && controller.back) {
-                playerSelection.confirmed.Value = false;
+            if (controller.back) {
+                if (playerSelection.confirmed.Value) {
+                    playerSelection.confirmed.Value = false;
+                } else {
+                    playerSelections.Remove(playerSelection);
+                    GameManager.Instance.players.Remove(playerSelection.player);
+                    StartCoroutine(ListenForJoin(playerSelection.player.device));
+                    yield break;
+                }
             }
 
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
         }
     }
 
