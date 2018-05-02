@@ -85,7 +85,7 @@ public class CharacterSelectScreen : MonoBehaviour {
         var newPlayer = GameManager.Instance.AddPlayer(device);
         var playerSelection = new PlayerSelection(newPlayer, characters.First());
         playerSelections.Add(playerSelection);
-        yield return new WaitForSeconds(0.1f); // FIXME aaa
+        yield return new WaitWhile(() => controller.join);
         StartCoroutine(ListenForSelection(playerSelection, controller));
     }
 
