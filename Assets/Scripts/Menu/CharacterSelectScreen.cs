@@ -22,11 +22,7 @@ public class CharacterSelectScreen : MonoBehaviour {
 
     public GameCharacter[] characters;
 
-    public ReactiveCollection<PlayerSelection> playerSelections = new ReactiveCollection<PlayerSelection>();
-
-    public delegate void PlayerCharacterChangedEventHandler(PlayerSelection player);
-
-    public event PlayerCharacterChangedEventHandler OnPlayerCharacterChanged;
+    private ReactiveCollection<PlayerSelection> playerSelections = new ReactiveCollection<PlayerSelection>();
 
     void Start() {
         foreach (var device in InputManager.Devices) {
