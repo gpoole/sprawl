@@ -10,6 +10,22 @@ public enum GridDirection {
     Right
 }
 
+public class GridCollectionUtils {
+    public static GridDirection DirectionFromMenuAction(MenuControls.Action action) {
+        switch (action) {
+            case MenuControls.Action.Up:
+                return GridDirection.Up;
+            case MenuControls.Action.Down:
+                return GridDirection.Down;
+            case MenuControls.Action.Left:
+                return GridDirection.Left;
+            case MenuControls.Action.Right:
+                return GridDirection.Right;
+        }
+        throw new ArgumentException(String.Format("No direction maps to input action {0}", action));
+    }
+}
+
 public class GridCollection<T> : Collection<T> {
 
     private int columns;

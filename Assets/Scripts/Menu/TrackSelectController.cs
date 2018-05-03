@@ -10,22 +10,59 @@ public class TrackSelectController : MonoBehaviour {
 
 	public ReactiveProperty<Track> selectedTrack = new ReactiveProperty<Track>();
 
+	public BoolReactiveProperty selectionConfirmed = new BoolReactiveProperty(false);
+
 	public TrackList trackList;
 
-	private MenuActions input;
+	public GameObject confirmLabel;
 
 	private GridCollection<Track> trackGrid;
 
+	private MainMenuManager mainMenuManager;
+
 	void Start() {
-		input = new MenuActions();
+		mainMenuManager = GetComponentInParent<MainMenuManager>();
 		trackGrid = new GridCollection<Track>(trackList.tracks, Columns);
 
 		selectedTrack.Value = trackGrid.First();
 
-		GridNavigator.FromMenuActions(input)
-			.Subscribe(direction => {
-				selectedTrack.Value = trackGrid.GetFrom(selectedTrack.Value, direction);
-			});
+		var input = new MenuActions();
+		var menuControls = new MenuControls(input);
+		menuControls
+			.DirectionalControls()
+			.Where(_ => selectionConfirmed.Value == false)
+			.Select(GridCollectionUtils.DirectionFromMenuAction)
+			.Subscribe(gridDirection => {
+				selectedTrack.Value = trackGrid.GetFrom(selectedTrack.Value, gridDirection);
+			})
+			.AddTo(this);
+
+		menuControls
+			.NavigationControls()
+			.Where(action => action == MenuControls.Action.Ok)
+			.Subscribe(_ => {
+				if (selectionConfirmed.Value) {
+					Debug.Log("Ready to race");
+					// mainMenuManager.activeScreen.Value = ??
+				} else {
+					selectionConfirmed.Value = true;
+				}
+			})
+			.AddTo(this);
+
+		menuControls
+			.NavigationControls()
+			.Where(action => action == MenuControls.Action.Back)
+			.Subscribe(_ => {
+				if (selectionConfirmed.Value) {
+					selectionConfirmed.Value = false;
+				} else {
+					mainMenuManager.activeScreen.Value = MainMenuManager.Screen.CharacterSelect;
+				}
+			})
+			.AddTo(this);
+
+		selectionConfirmed.Subscribe(confirmLabel.SetActive).AddTo(this);
 	}
 
 }

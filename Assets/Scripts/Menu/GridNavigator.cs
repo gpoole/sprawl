@@ -19,6 +19,5 @@ public class GridNavigator {
             MapToDirection(actions.up, GridDirection.Up),
             MapToDirection(actions.down, GridDirection.Down)
         );
-
     }
 }

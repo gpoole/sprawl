@@ -18,10 +18,13 @@ public class MainMenuManager : MonoBehaviour {
 		public ReactiveScreenProperty(Screen screen) : base(screen) { }
 	}
 
-	public ReactiveScreenProperty activeScreen;
+	public ReactiveScreenProperty activeScreen = new ReactiveScreenProperty(Screen.Main);
 
 	void Start() {
-		activeScreen.Value = Screen.CharacterSelect;
+		var defaultScreen = GetScreen(activeScreen.Value);
+		if (defaultScreen) {
+			defaultScreen.SetActive(true);
+		}
 
 		activeScreen.Pairwise().Subscribe(screens => {
 			var newScreen = GetScreen(screens.Current);

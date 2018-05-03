@@ -774,7 +774,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c038e5e85fb4b399682ad4f94f3dc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectionConfirmed:
+    value: 0
   trackList: {fileID: 11400000, guid: c2f1b1fcf15c340f4b64aaa61c8a2832, type: 2}
+  confirmLabel: {fileID: 1227887878}
 --- !u!1 &702242525
 GameObject:
   m_ObjectHideFlags: 0
@@ -1430,7 +1433,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeScreen:
-    value: 0
+    value: 1
 --- !u!1 &1227887878
 GameObject:
   m_ObjectHideFlags: 0

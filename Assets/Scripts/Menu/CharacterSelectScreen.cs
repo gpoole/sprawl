@@ -41,8 +41,13 @@ public class CharacterSelectScreen : MonoBehaviour {
         mainMenuManager = GetComponentInParent<MainMenuManager>();
         characterGrid = new GridCollection<GameCharacter>(characterSet.characters, Columns);
 
-        foreach (var device in InputManager.Devices) {
+        var unassignedDevices = InputManager.Devices.Where(device => !GameManager.Instance.players.Any(player => player.device == device));
+        foreach (var device in unassignedDevices) {
             StartCoroutine(WatchDeviceForJoin(device));
+        }
+
+        foreach (var existingPlayer in GameManager.Instance.players) {
+            AddPlayerSelection(existingPlayer);
         }
 
         StartCoroutine(WatchForStart());
@@ -56,9 +61,10 @@ public class CharacterSelectScreen : MonoBehaviour {
             if (playerSelections.All(playerSelection => playerSelection.confirmed.Value) && playerSelections.Count > 0) {
                 confirmLabel.SetActive(true);
                 if (anyPlayerInput.ok) {
-                    foreach (var controller in controllerActions) {
-                        controller.Destroy();
-                    }
+                    // FIXME: these NEED to be destroyed sometime before the game starts
+                    // foreach (var controller in controllerActions) {
+                    //     controller.Destroy();
+                    // }
                     mainMenuManager.activeScreen.Value = MainMenuManager.Screen.TrackSelect;
                     break;
                 }
@@ -114,18 +120,22 @@ public class CharacterSelectScreen : MonoBehaviour {
     }
 
     IEnumerator WatchDeviceForJoin(InputDevice device) {
-        var playerActions = new MenuActions { Device = device };
-
-        yield return OnButton(playerActions.ok).Take(1).ToYieldInstruction();
-
+        var waitActions = new MenuActions { Device = device };
+        yield return OnButton(waitActions.ok).Take(1).ToYieldInstruction();
         var newPlayer = GameManager.Instance.AddPlayer(device);
-        var playerSelection = new PlayerSelection(newPlayer, characterSet.characters.First());
+        AddPlayerSelection(newPlayer, waitActions);
+        yield return new WaitUntil(() => !waitActions.ok);
+    }
+
+    void AddPlayerSelection(Player player, MenuActions actions = null) {
+        if (actions == null) {
+            actions = new MenuActions { Device = player.device };
+        }
+
+        var playerSelection = new PlayerSelection(player, player.character ? player.character : characterSet.characters.First());
         playerSelections.Add(playerSelection);
-        controllerActions.Add(playerActions);
-
-        yield return new WaitUntil(() => !playerActions.ok);
-
-        WatchForSelection(playerSelection, playerActions);
+        controllerActions.Add(actions);
+        WatchForSelection(playerSelection, actions);
     }
 
 }
