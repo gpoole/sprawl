@@ -10,6 +10,8 @@ public class CharacterSelectScreen : MonoBehaviour {
 
     private const int Columns = 3;
 
+    private const float InputDelay = 0.1f;
+
     public class PlayerSelection {
 
         public Player player;
@@ -35,15 +37,15 @@ public class CharacterSelectScreen : MonoBehaviour {
 
     void Start() {
         foreach (var device in InputManager.Devices) {
-            WatchDeviceForJoin(device);
+            StartCoroutine(WatchDeviceForJoin(device));
         }
 
-        WaitForStart();
+        WatchForStart();
     }
 
-    void WaitForStart() {
+    void WatchForStart() {
         confirmLabel.SetActive(false);
-        var confirmStream = playerSelections
+        var allConfirmed = playerSelections
             .ObserveAdd()
             .Select(ev => ev.Value)
             .SelectMany(playerSelection => {
@@ -55,16 +57,18 @@ public class CharacterSelectScreen : MonoBehaviour {
             .Merge(playerSelections.ObserveRemove().Select(_ => Unit.Default))
             .Select(_ => playerSelections.All(playerSelection => playerSelection.confirmed.Value) && playerSelections.Count > 0);
 
-        confirmStream.Subscribe(confirmLabel.SetActive).AddTo(this);
+        allConfirmed.Subscribe(confirmLabel.SetActive).AddTo(this);
 
-        confirmStream
-            .Where(allConfirmed => allConfirmed == true)
-            .SelectMany(_ =>
-                Observable
-                .EveryUpdate()
-                .Where(__ => controllerActions.Any(actions => actions.ok))
-                .TakeUntil(confirmStream.Where(allConfirmed => allConfirmed == false))
+        allConfirmed
+            .Where(confirmed => confirmed)
+            .SelectMany(
+                Observable.EveryUpdate()
+                .Where(_ => controllerActions.Any(actions => actions.ok))
+                .TakeUntil(allConfirmed.Where(confirmed => !confirmed))
             ).Subscribe(_ => {
+                foreach (var controller in controllerActions) {
+                    controller.Destroy();
+                }
                 Debug.Log("Ready to start");
             })
             .AddTo(this);
@@ -87,10 +91,12 @@ public class CharacterSelectScreen : MonoBehaviour {
             playerSelection.character.Value = characterSet.characters.First();
         } else if (newIndex >= characterSet.characters.Count()) {
             playerSelection.character.Value = characterSet.characters.Last();
+        } else {
+            playerSelection.character.Value = characterSet.characters[newIndex];
         }
     }
 
-    void ListenForSelection(PlayerSelection playerSelection, MenuActions controller) {
+    void WatchForSelection(PlayerSelection playerSelection, MenuActions controller) {
         var playerRemoved = playerSelections.ObserveRemove().Where(ev => ev.Value == playerSelection);
 
         OnButton(controller.left)
@@ -136,29 +142,29 @@ public class CharacterSelectScreen : MonoBehaviour {
                 if (playerSelection.confirmed.Value) {
                     playerSelection.confirmed.Value = false;
                 } else {
-                    // Remove the player...
                     GameManager.Instance.players.Remove(playerSelection.player);
                     playerSelections.Remove(playerSelection);
                     controllerActions.Remove(controller);
                     controller.Destroy();
-                    WatchDeviceForJoin(controller.Device);
+                    StartCoroutine(WatchDeviceForJoin(controller.Device));
                 }
-            });
-    }
-
-    void WatchDeviceForJoin(InputDevice device) {
-        var playerActions = new MenuActions { Device = device };
-
-        OnButton(playerActions.ok)
-            .Take(1)
-            .Subscribe(_ => {
-                var newPlayer = GameManager.Instance.AddPlayer(device);
-                var playerSelection = new PlayerSelection(newPlayer, characterSet.characters.First());
-                playerSelections.Add(playerSelection);
-                controllerActions.Add(playerActions);
-                ListenForSelection(playerSelection, playerActions);
             })
             .AddTo(this);
+    }
+
+    IEnumerator WatchDeviceForJoin(InputDevice device) {
+        var playerActions = new MenuActions { Device = device };
+
+        yield return OnButton(playerActions.ok).Take(1).ToYieldInstruction();
+
+        var newPlayer = GameManager.Instance.AddPlayer(device);
+        var playerSelection = new PlayerSelection(newPlayer, characterSet.characters.First());
+        playerSelections.Add(playerSelection);
+        controllerActions.Add(playerActions);
+
+        yield return new WaitUntil(() => !playerActions.ok);
+
+        WatchForSelection(playerSelection, playerActions);
     }
 
 }
