@@ -15,6 +15,6 @@ public class Player {
 
 	public InputDevice device;
 
-	public GameObject car;
+	public GameCharacter character;
 
 }

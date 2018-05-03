@@ -98,7 +98,7 @@ public class RaceManager : MonoBehaviour {
 			playerState.player = player;
 			playerStates.Add(playerState);
 
-			var car = Car.Create(playerState.player.car, starts[i].transform, playerState);
+			var car = Car.Create(playerState.player.character.carPrefab, starts[i].transform, playerState);
 			car.gameObject.transform.parent = carsGroup.transform;
 			cars.Add(car);
 
