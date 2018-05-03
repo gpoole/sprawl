@@ -8,21 +8,26 @@ public class MenuScreenManager : MonoBehaviour {
 
     private MenuScreen activeScreen;
 
+    void Start() {
+        StartCoroutine(ShowScreen(screens.First()));
+    }
+
     public void GoTo(string screenName) {
         if (activeScreen) {
             StartCoroutine(HideScreen(activeScreen));
         }
 
-        activeScreen = screens.FirstOrDefault(screen => screen.name == screenName);
-        if (activeScreen) {
-            StartCoroutine(ShowScreen(activeScreen));
+        var nextScreen = screens.FirstOrDefault(screen => screen.name == screenName);
+        if (nextScreen) {
+            StartCoroutine(ShowScreen(nextScreen));
+            activeScreen = nextScreen;
         }
     }
 
     IEnumerator ShowScreen(MenuScreen screen) {
         screen.gameObject.SetActive(true);
         yield return new WaitUntil(() => screen.gameObject.activeInHierarchy);
-        activeScreen.Show();
+        screen.Show();
     }
 
     IEnumerator HideScreen(MenuScreen screen) {
