@@ -31,86 +31,134 @@ public class CharacterSelectScreen : MonoBehaviour {
 
     public ReactiveCollection<PlayerSelection> playerSelections = new ReactiveCollection<PlayerSelection>();
 
+    private List<MenuActions> controllerActions = new List<MenuActions>();
+
     void Start() {
         foreach (var device in InputManager.Devices) {
-            StartCoroutine(ListenForJoin(device));
+            WatchDeviceForJoin(device);
         }
-
-        // Listen for keyboard too
-        StartCoroutine(ListenForJoin(null));
 
         WaitForStart();
     }
 
     void WaitForStart() {
         confirmLabel.SetActive(false);
-
-        var confirmationChanged = playerSelections
+        var confirmStream = playerSelections
             .ObserveAdd()
             .Select(ev => ev.Value)
-            .SelectMany(playerSelection => playerSelection.confirmed)
-            .Select(_ => playerSelections.All(playerSelection => playerSelection.confirmed.Value));
+            .SelectMany(playerSelection => {
+                var playerRemoved = playerSelections.ObserveRemove().Where(ev => ev.Value == playerSelection);
+                return playerSelection.confirmed
+                    .TakeUntil(playerRemoved)
+                    .Select(_ => Unit.Default);
+            })
+            .Merge(playerSelections.ObserveRemove().Select(_ => Unit.Default))
+            .Select(_ => playerSelections.All(playerSelection => playerSelection.confirmed.Value) && playerSelections.Count > 0);
 
-        playerSelections
-            .ObserveRemove()
-            .Select(_ => playerSelections.All(playerSelection => playerSelection.confirmed.Value))
-            .Merge(confirmationChanged)
-            .Subscribe(confirmLabel.SetActive)
+        confirmStream.Subscribe(confirmLabel.SetActive).AddTo(this);
+
+        confirmStream
+            .Where(allConfirmed => allConfirmed == true)
+            .SelectMany(_ =>
+                Observable
+                .EveryUpdate()
+                .Where(__ => controllerActions.Any(actions => actions.ok))
+                .TakeUntil(confirmStream.Where(allConfirmed => allConfirmed == false))
+            ).Subscribe(_ => {
+                Debug.Log("Ready to start");
+            })
             .AddTo(this);
     }
 
-    IEnumerator ListenForSelection(PlayerSelection playerSelection, MenuActions controller) {
-        // FIXME: wait for all confirmed condition...
-        while (true) {
-            if (!playerSelection.confirmed.Value && (controller.left || controller.right || controller.up || controller.down)) {
-                var characters = characterSet.characters;
-                var index = Array.IndexOf(characters.ToArray(), playerSelection.character.Value);
-                if (controller.left) {
-                    playerSelection.character.Value = index - 1 > 0 ? characters[index - 1] : characters.First();
-                }
-                if (controller.right) {
-                    playerSelection.character.Value = index + 1 < characters.Length ? characters[index + 1] : characters.Last();
-                }
-                if (controller.down) {
-                    playerSelection.character.Value = index - Columns > 0 ? characters[index - Columns] : characters.First();
-                }
-                if (controller.up) {
-                    playerSelection.character.Value = index + Columns < characters.Length ? characters[index + Columns] : characters.Last();
-                }
-            }
+    IObservable<bool> OnButton(PlayerAction action) {
+        return Observable.EveryUpdate()
+            .Select(_ => !!action)
+            .DistinctUntilChanged()
+            .Where(pressed => pressed);
+    }
 
-            if (!playerSelection.confirmed.Value && controller.ok) {
-                playerSelection.confirmed.Value = true;
-            }
+    int GetSelectedIndex(PlayerSelection playerSelection) {
+        var characters = characterSet.characters;
+        return Array.IndexOf(characters.ToArray(), playerSelection.character.Value);
+    }
 
-            if (controller.back) {
-                if (playerSelection.confirmed.Value) {
-                    playerSelection.confirmed.Value = false;
-                } else {
-                    playerSelections.Remove(playerSelection);
-                    GameManager.Instance.players.Remove(playerSelection.player);
-                    StartCoroutine(ListenForJoin(playerSelection.player.device));
-                    yield break;
-                }
-            }
-
-            yield return new WaitForSeconds(0.1f);
+    void SetSelectedIndex(PlayerSelection playerSelection, int newIndex) {
+        if (newIndex < 0) {
+            playerSelection.character.Value = characterSet.characters.First();
+        } else if (newIndex >= characterSet.characters.Count()) {
+            playerSelection.character.Value = characterSet.characters.Last();
         }
     }
 
-    IEnumerator ListenForJoin(InputDevice device) {
-        if (GameManager.Instance.players.Any(player => player.device == device)) {
-            yield break;
-        }
-        var controller = new MenuActions { Device = device };
-        // FIXME: bail on screen change, or will this get destroyed automatically?
-        // Do I need to destroy the controller?
-        yield return new WaitUntil(() => controller.join);
-        var newPlayer = GameManager.Instance.AddPlayer(device);
-        var playerSelection = new PlayerSelection(newPlayer, characterSet.characters.First());
-        playerSelections.Add(playerSelection);
-        yield return new WaitWhile(() => controller.join);
-        StartCoroutine(ListenForSelection(playerSelection, controller));
+    void ListenForSelection(PlayerSelection playerSelection, MenuActions controller) {
+        var playerRemoved = playerSelections.ObserveRemove().Where(ev => ev.Value == playerSelection);
+
+        OnButton(controller.left)
+            .Where(_ => !playerSelection.confirmed.Value)
+            .TakeUntil(playerRemoved)
+            .Subscribe(_ => {
+                SetSelectedIndex(playerSelection, GetSelectedIndex(playerSelection) - 1);
+            })
+            .AddTo(this);
+
+        OnButton(controller.right)
+            .Where(_ => !playerSelection.confirmed.Value)
+            .TakeUntil(playerRemoved)
+            .Subscribe(_ => {
+                SetSelectedIndex(playerSelection, GetSelectedIndex(playerSelection) + 1);
+            }).AddTo(this);
+
+        OnButton(controller.up)
+            .Where(_ => !playerSelection.confirmed.Value)
+            .TakeUntil(playerRemoved)
+            .Subscribe(_ => {
+                SetSelectedIndex(playerSelection, GetSelectedIndex(playerSelection) - Columns);
+            }).AddTo(this);
+
+        OnButton(controller.down)
+            .Where(_ => !playerSelection.confirmed.Value)
+            .TakeUntil(playerRemoved)
+            .Subscribe(_ => {
+                SetSelectedIndex(playerSelection, GetSelectedIndex(playerSelection) + Columns);
+            }).AddTo(this);
+
+        OnButton(controller.ok)
+            .Where(_ => !playerSelection.confirmed.Value)
+            .TakeUntil(playerRemoved)
+            .Subscribe(_ => {
+                playerSelection.confirmed.Value = true;
+            })
+            .AddTo(this);
+
+        OnButton(controller.back)
+            .TakeUntil(playerRemoved)
+            .Subscribe(_ => {
+                if (playerSelection.confirmed.Value) {
+                    playerSelection.confirmed.Value = false;
+                } else {
+                    // Remove the player...
+                    GameManager.Instance.players.Remove(playerSelection.player);
+                    playerSelections.Remove(playerSelection);
+                    controllerActions.Remove(controller);
+                    controller.Destroy();
+                    WatchDeviceForJoin(controller.Device);
+                }
+            });
+    }
+
+    void WatchDeviceForJoin(InputDevice device) {
+        var playerActions = new MenuActions { Device = device };
+
+        OnButton(playerActions.ok)
+            .Take(1)
+            .Subscribe(_ => {
+                var newPlayer = GameManager.Instance.AddPlayer(device);
+                var playerSelection = new PlayerSelection(newPlayer, characterSet.characters.First());
+                playerSelections.Add(playerSelection);
+                controllerActions.Add(playerActions);
+                ListenForSelection(playerSelection, playerActions);
+            })
+            .AddTo(this);
     }
 
 }
