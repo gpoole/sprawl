@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using InControl;
 using UniRx;
 using UnityEngine;
 
-public class TrackSelectController : MonoBehaviour {
+public class TrackSelectController : MonoBehaviour, IMenuInputEventHandler {
 
 	private const int Columns = 3;
 
@@ -26,49 +27,35 @@ public class TrackSelectController : MonoBehaviour {
 
 		selectedTrack.Value = trackGrid.First();
 
+		selectionConfirmed.Subscribe(confirmLabel.SetActive);
 	}
 
-	void OnEnable() {
-		var input = new MenuActions();
-		var menuControls = new MenuControls(input);
-		menuControls
-			.DirectionalControls()
-			.Where(_ => selectionConfirmed.Value == false)
-			.Select(GridCollectionUtils.DirectionFromMenuAction)
-			.TakeUntilDisable(this)
-			.Subscribe(gridDirection => {
-				selectedTrack.Value = trackGrid.GetFrom(selectedTrack.Value, gridDirection);
-			})
-			.AddTo(this);
+	public void OnInputAction(InputAction action, InputDevice player) {
+		switch (action) {
+			case InputAction.Up:
+			case InputAction.Down:
+			case InputAction.Left:
+			case InputAction.Right:
+				selectedTrack.Value = trackGrid.GetFrom(selectedTrack.Value, GridCollectionUtils.DirectionFromMenuAction(action));
+				break;
+		}
+	}
 
-		menuControls
-			.NavigationControls()
-			.Where(action => action == MenuControls.Action.Ok)
-			.TakeUntilDisable(this)
-			.Subscribe(_ => {
-				if (selectionConfirmed.Value) {
-					Debug.Log("Ready to race");
-					// mainMenuManager.activeScreen.Value = ??
-				} else {
-					selectionConfirmed.Value = true;
-				}
-			})
-			.AddTo(this);
+	public void OnInputBack(InputDevice device) {
+		if (selectionConfirmed.Value) {
+			selectionConfirmed.Value = false;
+		} else {
+			mainMenuManager.activeScreen.Value = MainMenuManager.Screen.CharacterSelect;
+		}
+	}
 
-		menuControls
-			.NavigationControls()
-			.Where(action => action == MenuControls.Action.Back)
-			.TakeUntilDisable(this)
-			.Subscribe(_ => {
-				if (selectionConfirmed.Value) {
-					selectionConfirmed.Value = false;
-				} else {
-					mainMenuManager.activeScreen.Value = MainMenuManager.Screen.CharacterSelect;
-				}
-			})
-			.AddTo(this);
-
-		selectionConfirmed.Subscribe(confirmLabel.SetActive).AddTo(this);
+	public void OnInputOk(InputDevice device) {
+		if (!selectionConfirmed.Value) {
+			selectionConfirmed.Value = true;
+		} else {
+			// Done!
+			Debug.Log("Ready to race");
+		}
 	}
 
 }
