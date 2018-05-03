@@ -188,7 +188,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 2.581}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 203.2002, y: -114}
+  m_AnchoredPosition: {x: 203.19922, y: -114}
   m_SizeDelta: {x: 565.9, y: 103.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &348104160
@@ -365,7 +365,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Marion
+  m_Text: Lou W
 --- !u!222 &534450525
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -442,7 +442,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   markerPrefab: {fileID: 1993247656435546, guid: 2ae3d7163520a44d788494e0621cea9b,
     type: 2}
-  character: {fileID: 11400000, guid: 80a15a60580f74538ae85caa3f5fee5d, type: 2}
+  character: {fileID: 0}
 --- !u!1 &639909385
 GameObject:
   m_ObjectHideFlags: 0
@@ -628,7 +628,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   markerPrefab: {fileID: 1993247656435546, guid: 2ae3d7163520a44d788494e0621cea9b,
     type: 2}
-  character: {fileID: 11400000, guid: df5e26c05c65c4aeab8076133c58b87e, type: 2}
+  character: {fileID: 0}
 --- !u!114 &953750678
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -755,6 +755,7 @@ GameObject:
   - component: {fileID: 1025113207}
   - component: {fileID: 1025113209}
   - component: {fileID: 1025113208}
+  - component: {fileID: 1025113210}
   m_Layer: 5
   m_Name: Character1
   m_TagString: Untagged
@@ -816,6 +817,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1025113206}
+--- !u!114 &1025113210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1025113206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cc8b6b394c01456bbabf91b987de7bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: {fileID: 11400000, guid: c413cc2bb329341ed8bb83c496c7bfc9, type: 2}
+  image: {fileID: 639909387}
+  characterName: {fileID: 1316493175}
 --- !u!1 &1225550005
 GameObject:
   m_ObjectHideFlags: 0
@@ -1228,7 +1243,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: c7beaf2e5dace4fafadec17fd62bae98, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 23a8ab5d9023346e4855d8972c22ca39, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1289,9 +1304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 553bff0cb270d42979b40d0ab80f10b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characters:
-  - {fileID: 11400000, guid: 80a15a60580f74538ae85caa3f5fee5d, type: 2}
-  - {fileID: 11400000, guid: df5e26c05c65c4aeab8076133c58b87e, type: 2}
+  characterSet: {fileID: 0}
 --- !u!1 &1935316559
 GameObject:
   m_ObjectHideFlags: 0
@@ -1302,6 +1315,7 @@ GameObject:
   - component: {fileID: 1935316560}
   - component: {fileID: 1935316562}
   - component: {fileID: 1935316561}
+  - component: {fileID: 1935316563}
   m_Layer: 5
   m_Name: Character2
   m_TagString: Untagged
@@ -1363,3 +1377,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1935316559}
+--- !u!114 &1935316563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1935316559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cc8b6b394c01456bbabf91b987de7bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: {fileID: 11400000, guid: 074fe6737075c4719bc4efa5e35b6fda, type: 2}
+  image: {fileID: 1704171701}
+  characterName: {fileID: 534450524}

@@ -25,7 +25,7 @@ public class CharacterSelectScreen : MonoBehaviour {
 
     }
 
-    public GameCharacter[] characters;
+    public GameCharacterList characterSet;
 
     public ReactiveCollection<PlayerSelection> playerSelections = new ReactiveCollection<PlayerSelection>();
 
@@ -42,6 +42,7 @@ public class CharacterSelectScreen : MonoBehaviour {
         // FIXME: wait for all confirmed condition...
         while (true) {
             if (!playerSelection.confirmed.Value && (controller.left || controller.right || controller.up || controller.down)) {
+                var characters = characterSet.characters;
                 var index = Array.IndexOf(characters.ToArray(), playerSelection.character.Value);
                 if (controller.left) {
                     playerSelection.character.Value = index - 1 > 0 ? characters[index - 1] : characters.First();
@@ -85,7 +86,7 @@ public class CharacterSelectScreen : MonoBehaviour {
         // Do I need to destroy the controller?
         yield return new WaitUntil(() => controller.join);
         var newPlayer = GameManager.Instance.AddPlayer(device);
-        var playerSelection = new PlayerSelection(newPlayer, characters.First());
+        var playerSelection = new PlayerSelection(newPlayer, characterSet.characters.First());
         playerSelections.Add(playerSelection);
         yield return new WaitWhile(() => controller.join);
         StartCoroutine(ListenForSelection(playerSelection, controller));
