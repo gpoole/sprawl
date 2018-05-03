@@ -8,10 +8,11 @@ public class CharacterSelectionMarkers : MonoBehaviour {
 
 	public GameObject markerPrefab;
 
-	public GameCharacter character;
+	private GameCharacter character;
 
 	void Start() {
 		var state = GetComponentInParent<CharacterSelectScreen>();
+		character = GetComponentInParent<CharacterSelectTile>().character;
 
 		var addedPlayers = state.playerSelections
 			.ObserveAdd()
