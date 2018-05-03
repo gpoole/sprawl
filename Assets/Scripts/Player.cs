@@ -13,15 +13,7 @@ public class Player {
 		get { return id + 1; }
 	}
 
-	public InputDevice device {
-		get {
-			if (id >= InputManager.Devices.Count) {
-				Debug.LogError(String.Format("Trying to get device for player {0} with only {1} devices", id, InputManager.Devices.Count));
-				return null;
-			}
-			return InputManager.Devices[id];
-		}
-	}
+	public InputDevice device;
 
 	public GameObject car;
 

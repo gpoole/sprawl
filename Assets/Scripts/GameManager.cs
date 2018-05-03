@@ -25,14 +25,14 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-	public Player AddPlayer() {
+	public Player AddPlayer(InputDevice device) {
 		if (players.Count + 1 >= maxPlayers) {
 			Debug.LogError(String.Format("Tried to create more than {0} players", maxPlayers));
 			return null;
 		}
 
 		var id = players.Count;
-		var player = new Player { id = id };
+		var player = new Player { id = id, device = device };
 		players.Add(player);
 		return player;
 	}
