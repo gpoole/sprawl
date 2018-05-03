@@ -11351,7 +11351,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   players:
   - id: 0
-    car: {fileID: 1081355796924530, guid: 7bd01c019ac78464d8d108ece10fe61a, type: 2}
+    character: {fileID: 0}
   debugMode: 0
 --- !u!4 &2108038158
 Transform:
