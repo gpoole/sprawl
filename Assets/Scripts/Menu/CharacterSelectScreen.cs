@@ -28,7 +28,7 @@ public class CharacterSelectScreen : MonoBehaviour, IMenuInputEventHandler {
 
     public GameCharacterList characterSet;
 
-    public GameObject confirmLabel;
+    public HideShowAnimation confirmPrompt;
 
     public ReactiveCollection<PlayerSelection> playerSelections = new ReactiveCollection<PlayerSelection>();
 
@@ -36,13 +36,11 @@ public class CharacterSelectScreen : MonoBehaviour, IMenuInputEventHandler {
 
     private GridCollection<GameCharacter> characterGrid;
 
-    private MainMenuManager mainMenuManager;
+    private MenuScreenManager menuScreenManager;
 
     void Start() {
-        mainMenuManager = GetComponentInParent<MainMenuManager>();
+        menuScreenManager = GetComponentInParent<MenuScreenManager>();
         characterGrid = new GridCollection<GameCharacter>(characterSet.characters, Columns);
-
-        confirmLabel.SetActive(false);
 
         playerSelections.ObserveAdd()
             .Select(ev => ev.Value)
@@ -52,7 +50,13 @@ public class CharacterSelectScreen : MonoBehaviour, IMenuInputEventHandler {
             })
             .Merge(playerSelections.ObserveRemove().Select(_ => Unit.Default))
             .Select(_ => AllPlayersReady())
-            .Subscribe(confirmLabel.SetActive)
+            .Subscribe(allReady => {
+                if (allReady) {
+                    confirmPrompt.Show();
+                } else {
+                    confirmPrompt.Hide();
+                }
+            })
             .AddTo(this);
     }
 
@@ -75,7 +79,7 @@ public class CharacterSelectScreen : MonoBehaviour, IMenuInputEventHandler {
 
     public void OnInputOk(InputDevice input) {
         if (AllPlayersReady()) {
-            mainMenuManager.activeScreen.Value = MainMenuManager.Screen.TrackSelect;
+            menuScreenManager.GoTo("TrackSelect");
         } else {
             var assignedPlayer = GetSelectionForDevice(input);
             if (assignedPlayer != null) {

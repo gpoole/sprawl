@@ -15,19 +15,25 @@ public class TrackSelectController : MonoBehaviour, IMenuInputEventHandler {
 
 	public TrackList trackList;
 
-	public GameObject confirmLabel;
+	public HideShowAnimation confirmPrompt;
 
 	private GridCollection<Track> trackGrid;
 
-	private MainMenuManager mainMenuManager;
+	private MenuScreenManager menuScreenManager;
 
 	void Start() {
-		mainMenuManager = GetComponentInParent<MainMenuManager>();
+		menuScreenManager = GetComponentInParent<MenuScreenManager>();
 		trackGrid = new GridCollection<Track>(trackList.tracks, Columns);
 
 		selectedTrack.Value = trackGrid.First();
 
-		selectionConfirmed.Subscribe(confirmLabel.SetActive);
+		selectionConfirmed.Subscribe(confirmed => {
+			if (confirmed) {
+				confirmPrompt.Show();
+			} else {
+				confirmPrompt.Hide();
+			}
+		});
 	}
 
 	public void OnInputAction(InputAction action, InputDevice player) {
@@ -45,7 +51,7 @@ public class TrackSelectController : MonoBehaviour, IMenuInputEventHandler {
 		if (selectionConfirmed.Value) {
 			selectionConfirmed.Value = false;
 		} else {
-			mainMenuManager.activeScreen.Value = MainMenuManager.Screen.CharacterSelect;
+			menuScreenManager.GoTo("CharacterSelect");
 		}
 	}
 
