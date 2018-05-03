@@ -27,6 +27,8 @@ public class CharacterSelectScreen : MonoBehaviour {
 
     public GameCharacterList characterSet;
 
+    public GameObject confirmLabel;
+
     public ReactiveCollection<PlayerSelection> playerSelections = new ReactiveCollection<PlayerSelection>();
 
     void Start() {
@@ -36,6 +38,25 @@ public class CharacterSelectScreen : MonoBehaviour {
 
         // Listen for keyboard too
         StartCoroutine(ListenForJoin(null));
+
+        WaitForStart();
+    }
+
+    void WaitForStart() {
+        confirmLabel.SetActive(false);
+
+        var confirmationChanged = playerSelections
+            .ObserveAdd()
+            .Select(ev => ev.Value)
+            .SelectMany(playerSelection => playerSelection.confirmed)
+            .Select(_ => playerSelections.All(playerSelection => playerSelection.confirmed.Value));
+
+        playerSelections
+            .ObserveRemove()
+            .Select(_ => playerSelections.All(playerSelection => playerSelection.confirmed.Value))
+            .Merge(confirmationChanged)
+            .Subscribe(confirmLabel.SetActive)
+            .AddTo(this);
     }
 
     IEnumerator ListenForSelection(PlayerSelection playerSelection, MenuActions controller) {
