@@ -20,41 +20,31 @@ public class MainMenuManager : MonoBehaviour {
 
 	public ReactiveScreenProperty activeScreen = new ReactiveScreenProperty(Screen.Main);
 
-	private Dictionary<Screen, GameObject> screenMap = new Dictionary<Screen, GameObject>();
-
 	void Start() {
-		CloneScreen(Screen.Main);
-		CloneScreen(Screen.CharacterSelect);
-		CloneScreen(Screen.TrackSelect);
-
-		ChangeScreen(activeScreen.Value);
+		var defaultScreen = GetScreen(activeScreen.Value);
+		if (defaultScreen) {
+			defaultScreen.SetActive(true);
+		}
 
 		activeScreen.Pairwise().Subscribe(screens => {
-			ChangeScreen(screens.Current, screens.Previous);
+			var newScreen = GetScreen(screens.Current);
+			if (newScreen) {
+				newScreen.SetActive(true);
+			}
+
+			var oldScreen = GetScreen(screens.Previous);
+			if (oldScreen) {
+				oldScreen.SetActive(false);
+			}
 		}).AddTo(this);
 	}
 
-	void ChangeScreen(Screen newScreen, Screen oldScreen) {
-		var oldScreenObject = transform.Find(oldScreen.ToString());
-		if (oldScreenObject) {
-			Destroy(oldScreenObject.gameObject);
+	GameObject GetScreen(Screen screen) {
+		var screenObject = transform.Find(screen.ToString());
+		if (screenObject) {
+			return screenObject.gameObject;
 		}
-		ChangeScreen(newScreen);
-	}
-
-	void ChangeScreen(Screen newScreen) {
-		if (screenMap.ContainsKey(newScreen)) {
-			var screenInstance = Instantiate(screenMap[newScreen], transform);
-		}
-	}
-
-	void CloneScreen(Screen screen) {
-		var screenRef = transform.Find(screen.ToString());
-		if (screenRef) {
-			screenMap.Add(screen, screenRef.gameObject);
-			screenRef.gameObject.SetActive(true);
-			Destroy(screenRef.gameObject);
-		}
+		return null;
 	}
 
 }

@@ -16,11 +16,12 @@ public class CharacterSelectScreen : MonoBehaviour {
 
         public ReactiveProperty<GameCharacter> character;
 
-        public BoolReactiveProperty confirmed = new BoolReactiveProperty(false);
+        public BoolReactiveProperty confirmed;
 
-        public PlayerSelection(Player player, GameCharacter character) {
+        public PlayerSelection(Player player, GameCharacter character, bool confirmed) {
             this.player = player;
             this.character = new ReactiveProperty<GameCharacter>(character);
+            this.confirmed = new BoolReactiveProperty(confirmed);
         }
 
     }
@@ -40,8 +41,12 @@ public class CharacterSelectScreen : MonoBehaviour {
     void Start() {
         mainMenuManager = GetComponentInParent<MainMenuManager>();
         characterGrid = new GridCollection<GameCharacter>(characterSet.characters, Columns);
+    }
 
-        var unassignedDevices = InputManager.Devices.Where(device => !GameManager.Instance.players.Any(player => player.device == device));
+    void OnEnable() {
+        playerSelections = new ReactiveCollection<PlayerSelection>();
+
+        var unassignedDevices = InputManager.Devices.Where(device => GameManager.Instance.players.All(player => player.device != device));
         foreach (var device in unassignedDevices) {
             StartCoroutine(WatchDeviceForJoin(device));
         }
@@ -61,10 +66,9 @@ public class CharacterSelectScreen : MonoBehaviour {
             if (playerSelections.All(playerSelection => playerSelection.confirmed.Value) && playerSelections.Count > 0) {
                 confirmLabel.SetActive(true);
                 if (anyPlayerInput.ok) {
-                    // FIXME: these NEED to be destroyed sometime before the game starts
-                    // foreach (var controller in controllerActions) {
-                    //     controller.Destroy();
-                    // }
+                    foreach (var controller in controllerActions) {
+                        controller.Destroy();
+                    }
                     mainMenuManager.activeScreen.Value = MainMenuManager.Screen.TrackSelect;
                     break;
                 }
@@ -90,6 +94,7 @@ public class CharacterSelectScreen : MonoBehaviour {
         gridNavigation
             .Where(_ => !playerSelection.confirmed.Value)
             .TakeUntil(playerRemoved)
+            .TakeUntilDisable(this)
             .Subscribe(direction => {
                 playerSelection.character.Value = characterGrid.GetFrom(playerSelection.character.Value, direction);
             })
@@ -98,6 +103,7 @@ public class CharacterSelectScreen : MonoBehaviour {
         OnButton(controller.ok)
             .Where(_ => !playerSelection.confirmed.Value)
             .TakeUntil(playerRemoved)
+            .TakeUntilDisable(this)
             .Subscribe(_ => {
                 playerSelection.confirmed.Value = true;
             })
@@ -105,6 +111,7 @@ public class CharacterSelectScreen : MonoBehaviour {
 
         OnButton(controller.back)
             .TakeUntil(playerRemoved)
+            .TakeUntilDisable(this)
             .Subscribe(_ => {
                 if (playerSelection.confirmed.Value) {
                     playerSelection.confirmed.Value = false;
@@ -123,16 +130,16 @@ public class CharacterSelectScreen : MonoBehaviour {
         var waitActions = new MenuActions { Device = device };
         yield return OnButton(waitActions.ok).Take(1).ToYieldInstruction();
         var newPlayer = GameManager.Instance.AddPlayer(device);
-        AddPlayerSelection(newPlayer, waitActions);
+        AddPlayerSelection(newPlayer, waitActions, true);
         yield return new WaitUntil(() => !waitActions.ok);
     }
 
-    void AddPlayerSelection(Player player, MenuActions actions = null) {
+    void AddPlayerSelection(Player player, MenuActions actions = null, bool newPlayer = false) {
         if (actions == null) {
             actions = new MenuActions { Device = player.device };
         }
 
-        var playerSelection = new PlayerSelection(player, player.character ? player.character : characterSet.characters.First());
+        var playerSelection = new PlayerSelection(player, player.character ? player.character : characterSet.characters.First(), !newPlayer);
         playerSelections.Add(playerSelection);
         controllerActions.Add(actions);
         WatchForSelection(playerSelection, actions);

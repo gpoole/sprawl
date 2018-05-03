@@ -26,12 +26,16 @@ public class TrackSelectController : MonoBehaviour {
 
 		selectedTrack.Value = trackGrid.First();
 
+	}
+
+	void OnEnable() {
 		var input = new MenuActions();
 		var menuControls = new MenuControls(input);
 		menuControls
 			.DirectionalControls()
 			.Where(_ => selectionConfirmed.Value == false)
 			.Select(GridCollectionUtils.DirectionFromMenuAction)
+			.TakeUntilDisable(this)
 			.Subscribe(gridDirection => {
 				selectedTrack.Value = trackGrid.GetFrom(selectedTrack.Value, gridDirection);
 			})
@@ -40,6 +44,7 @@ public class TrackSelectController : MonoBehaviour {
 		menuControls
 			.NavigationControls()
 			.Where(action => action == MenuControls.Action.Ok)
+			.TakeUntilDisable(this)
 			.Subscribe(_ => {
 				if (selectionConfirmed.Value) {
 					Debug.Log("Ready to race");
@@ -53,6 +58,7 @@ public class TrackSelectController : MonoBehaviour {
 		menuControls
 			.NavigationControls()
 			.Where(action => action == MenuControls.Action.Back)
+			.TakeUntilDisable(this)
 			.Subscribe(_ => {
 				if (selectionConfirmed.Value) {
 					selectionConfirmed.Value = false;
