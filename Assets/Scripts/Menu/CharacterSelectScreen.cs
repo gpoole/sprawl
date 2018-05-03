@@ -10,8 +10,6 @@ public class CharacterSelectScreen : MonoBehaviour {
 
     private const int Columns = 3;
 
-    private const float InputDelay = 0.1f;
-
     public class PlayerSelection {
 
         public Player player;
@@ -35,43 +33,41 @@ public class CharacterSelectScreen : MonoBehaviour {
 
     private List<MenuActions> controllerActions = new List<MenuActions>();
 
+    private GridCollection<GameCharacter> characterGrid;
+
+    private MainMenuManager mainMenuManager;
+
     void Start() {
+        mainMenuManager = GetComponentInParent<MainMenuManager>();
+        characterGrid = new GridCollection<GameCharacter>(characterSet.characters, Columns);
+
         foreach (var device in InputManager.Devices) {
             StartCoroutine(WatchDeviceForJoin(device));
         }
 
-        WatchForStart();
+        StartCoroutine(WatchForStart());
     }
 
-    void WatchForStart() {
+    IEnumerator WatchForStart() {
         confirmLabel.SetActive(false);
-        var allConfirmed = playerSelections
-            .ObserveAdd()
-            .Select(ev => ev.Value)
-            .SelectMany(playerSelection => {
-                var playerRemoved = playerSelections.ObserveRemove().Where(ev => ev.Value == playerSelection);
-                return playerSelection.confirmed
-                    .TakeUntil(playerRemoved)
-                    .Select(_ => Unit.Default);
-            })
-            .Merge(playerSelections.ObserveRemove().Select(_ => Unit.Default))
-            .Select(_ => playerSelections.All(playerSelection => playerSelection.confirmed.Value) && playerSelections.Count > 0);
+        var anyPlayerInput = new MenuActions();
 
-        allConfirmed.Subscribe(confirmLabel.SetActive).AddTo(this);
-
-        allConfirmed
-            .Where(confirmed => confirmed)
-            .SelectMany(
-                Observable.EveryUpdate()
-                .Where(_ => controllerActions.Any(actions => actions.ok))
-                .TakeUntil(allConfirmed.Where(confirmed => !confirmed))
-            ).Subscribe(_ => {
-                foreach (var controller in controllerActions) {
-                    controller.Destroy();
+        while (true) {
+            if (playerSelections.All(playerSelection => playerSelection.confirmed.Value) && playerSelections.Count > 0) {
+                confirmLabel.SetActive(true);
+                if (anyPlayerInput.ok) {
+                    foreach (var controller in controllerActions) {
+                        controller.Destroy();
+                    }
+                    mainMenuManager.activeScreen.Value = MainMenuManager.Screen.TrackSelect;
+                    break;
                 }
-                Debug.Log("Ready to start");
-            })
-            .AddTo(this);
+            } else {
+                confirmLabel.SetActive(false);
+            }
+
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
     IObservable<bool> OnButton(PlayerAction action) {
@@ -81,52 +77,17 @@ public class CharacterSelectScreen : MonoBehaviour {
             .Where(pressed => pressed);
     }
 
-    int GetSelectedIndex(PlayerSelection playerSelection) {
-        var characters = characterSet.characters;
-        return Array.IndexOf(characters.ToArray(), playerSelection.character.Value);
-    }
-
-    void SetSelectedIndex(PlayerSelection playerSelection, int newIndex) {
-        if (newIndex < 0) {
-            playerSelection.character.Value = characterSet.characters.First();
-        } else if (newIndex >= characterSet.characters.Count()) {
-            playerSelection.character.Value = characterSet.characters.Last();
-        } else {
-            playerSelection.character.Value = characterSet.characters[newIndex];
-        }
-    }
-
     void WatchForSelection(PlayerSelection playerSelection, MenuActions controller) {
         var playerRemoved = playerSelections.ObserveRemove().Where(ev => ev.Value == playerSelection);
+        var gridNavigation = GridNavigator.FromMenuActions(controller);
 
-        OnButton(controller.left)
+        gridNavigation
             .Where(_ => !playerSelection.confirmed.Value)
             .TakeUntil(playerRemoved)
-            .Subscribe(_ => {
-                SetSelectedIndex(playerSelection, GetSelectedIndex(playerSelection) - 1);
+            .Subscribe(direction => {
+                playerSelection.character.Value = characterGrid.GetFrom(playerSelection.character.Value, direction);
             })
             .AddTo(this);
-
-        OnButton(controller.right)
-            .Where(_ => !playerSelection.confirmed.Value)
-            .TakeUntil(playerRemoved)
-            .Subscribe(_ => {
-                SetSelectedIndex(playerSelection, GetSelectedIndex(playerSelection) + 1);
-            }).AddTo(this);
-
-        OnButton(controller.up)
-            .Where(_ => !playerSelection.confirmed.Value)
-            .TakeUntil(playerRemoved)
-            .Subscribe(_ => {
-                SetSelectedIndex(playerSelection, GetSelectedIndex(playerSelection) - Columns);
-            }).AddTo(this);
-
-        OnButton(controller.down)
-            .Where(_ => !playerSelection.confirmed.Value)
-            .TakeUntil(playerRemoved)
-            .Subscribe(_ => {
-                SetSelectedIndex(playerSelection, GetSelectedIndex(playerSelection) + Columns);
-            }).AddTo(this);
 
         OnButton(controller.ok)
             .Where(_ => !playerSelection.confirmed.Value)
@@ -142,7 +103,7 @@ public class CharacterSelectScreen : MonoBehaviour {
                 if (playerSelection.confirmed.Value) {
                     playerSelection.confirmed.Value = false;
                 } else {
-                    GameManager.Instance.players.Remove(playerSelection.player);
+                    GameManager.Instance.RemovePlayer(playerSelection.player);
                     playerSelections.Remove(playerSelection);
                     controllerActions.Remove(controller);
                     controller.Destroy();

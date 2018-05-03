@@ -4,8 +4,10 @@ using UnityEngine.SceneManagement;
 [CreateAssetMenu]
 public class Track : ScriptableObject {
 
-    public string name;
+    public string trackName;
 
     public Scene scene;
+
+    public Sprite image;
 
 }

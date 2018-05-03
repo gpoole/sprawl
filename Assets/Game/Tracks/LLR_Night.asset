@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a8bb9dc6fdbf47c2af44243e72ee5c9, type: 3}
-  m_Name: LLR
+  m_Name: LLR_Night
   m_EditorClassIdentifier: 
-  trackName: Luigi's Last Reward
+  trackName: Luigi's Last Reward (Night)
   image: {fileID: 0}
