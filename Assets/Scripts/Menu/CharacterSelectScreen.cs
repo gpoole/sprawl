@@ -78,10 +78,10 @@ public class CharacterSelectScreen : MonoBehaviour, IMenuInputEventHandler {
     }
 
     public void OnInputOk(InputDevice input) {
-        if (AllPlayersReady()) {
+        var assignedPlayer = GetSelectionForDevice(input);
+        if (assignedPlayer != null && AllPlayersReady()) {
             menuScreenManager.GoTo("TrackSelect");
         } else {
-            var assignedPlayer = GetSelectionForDevice(input);
             if (assignedPlayer != null) {
                 // Existing player, confirm selection
                 if (!assignedPlayer.confirmed.Value) {

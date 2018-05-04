@@ -5,22 +5,13 @@ using System.Linq;
 using InControl;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : PersistentSingleton<GameManager> {
 
 	public List<Player> players;
 
 	public const int maxPlayers = 4;
 
 	public bool debugMode;
-
-	public static GameManager Instance {
-		get;
-		private set;
-	}
-
-	void Awake() {
-		Instance = this;
-	}
 
 	public Player AddPlayer(InputDevice device) {
 		if (players.Count + 1 >= maxPlayers) {
