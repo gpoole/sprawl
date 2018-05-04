@@ -8,3 +8,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Menu.unity
     guid: 07e0efc28b5ee4c28976d509945e75dd
+  - enabled: 1
+    path: Assets/Scenes/LLR_001.unity
+    guid: 46cbbce1273864394b0b1034322d2500

@@ -4,6 +4,7 @@ using System.Linq;
 using InControl;
 using UniRx;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TrackSelectController : MonoBehaviour, IMenuInputEventHandler {
 
@@ -59,8 +60,7 @@ public class TrackSelectController : MonoBehaviour, IMenuInputEventHandler {
 		if (!selectionConfirmed.Value) {
 			selectionConfirmed.Value = true;
 		} else {
-			// Done!
-			Debug.Log("Ready to race");
+			SceneManager.LoadScene(selectedTrack.Value.sceneName);
 		}
 	}
 

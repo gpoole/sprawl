@@ -6,7 +6,7 @@ public class Track : ScriptableObject {
 
     public string trackName;
 
-    public Scene scene;
+    public string sceneName;
 
     public Sprite image;
 

@@ -86,6 +86,7 @@ public class CharacterSelectScreen : MonoBehaviour, IMenuInputEventHandler {
                 // Existing player, confirm selection
                 if (!assignedPlayer.confirmed.Value) {
                     assignedPlayer.confirmed.Value = true;
+                    assignedPlayer.player.character = assignedPlayer.character.Value;
                 }
             } else {
                 // New player, add them!
@@ -106,6 +107,7 @@ public class CharacterSelectScreen : MonoBehaviour, IMenuInputEventHandler {
 
         if (assignedPlayer.confirmed.Value) {
             assignedPlayer.confirmed.Value = false;
+            assignedPlayer.player.character = null;
         } else {
             GameManager.Instance.RemovePlayer(assignedPlayer.player);
             playerSelections.Remove(assignedPlayer);

@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Name: LLR_Night
   m_EditorClassIdentifier: 
   trackName: Luigi's Last Reward (Night)
+  sceneName: LLR_001
   image: {fileID: 0}
