@@ -13,36 +13,16 @@
     </ui>
     <assets>
       <asset>
-        <guid>cbfd728bf1246ec47ad3dc7b4c4f1467</guid>
-        <path>Assets/Prefabs/Scenery/Rocks/GRND_rock_02.prefab</path>
+        <guid>a07a6df34035a9f499d9c39ac98ebda8</guid>
+        <path>Assets/Prefabs/Scenery/TREE_NFI_01.prefab</path>
       </asset>
       <asset>
-        <guid>d98ebedb049b98a43826e13559483d59</guid>
-        <path>Assets/Prefabs/Scenery/Rocks/GRND_rock_03.prefab</path>
+        <guid>99a61cb21bea0d1468cafd5ab8f62dc8</guid>
+        <path>Assets/Prefabs/Scenery/TREE_NFI_02.prefab</path>
       </asset>
       <asset>
-        <guid>1cc49aba84d9d4342969b367c5c33da1</guid>
-        <path>Assets/Prefabs/Scenery/Rocks/GRND_rock_04.prefab</path>
-      </asset>
-      <asset>
-        <guid>e71646601c7ac6e4999f210d4f624d7f</guid>
-        <path>Assets/Prefabs/Scenery/Rocks/GRND_rock_05.prefab</path>
-      </asset>
-      <asset>
-        <guid>bca3f34f1524f6940a89221cc3c7747e</guid>
-        <path>Assets/Prefabs/Scenery/Rocks/GRND_rock_06.prefab</path>
-      </asset>
-      <asset>
-        <guid>deaee507e284ac040ae41523b4a4527d</guid>
-        <path>Assets/Prefabs/Scenery/Rocks/GRND_rock_07.prefab</path>
-      </asset>
-      <asset>
-        <guid>d6e3a665de00953409db6a05eb1c52bf</guid>
-        <path>Assets/Prefabs/Scenery/Rocks/GRND_rock_08.prefab</path>
-      </asset>
-      <asset>
-        <guid>dc9ad57a5867b1f4194c1ffe874c572a</guid>
-        <path>Assets/Prefabs/Scenery/Rocks/GRND_rock_01.prefab</path>
+        <guid>ce4e35cc303ff7a42863cf57782a2fa1</guid>
+        <path>Assets/Prefabs/Scenery/GUPO_simpletree.prefab</path>
       </asset>
     </assets>
   </meshes>
@@ -55,7 +35,7 @@
     <decreaseRadius>I</decreaseRadius>
   </keyBindings>
   <brush>
-    <radius>7</radius>
+    <radius>0.3</radius>
     <color>
       <r>1</r>
       <g>1</g>
@@ -86,7 +66,7 @@
   <slopes>
     <slopeInfluence>
       <min>0</min>
-      <max>100</max>
+      <max>5</max>
     </slopeInfluence>
     <slopeFilter>
       <enabled>false</enabled>
@@ -113,8 +93,8 @@
     <scale>
       <scaleUniformly>true</scaleUniformly>
       <uniform>
-        <min>2.38139534</min>
-        <max>3</max>
+        <min>1</min>
+        <max>1</max>
       </uniform>
       <nonUniform>
         <x>
@@ -150,7 +130,7 @@
     </scale>
     <rotation>
       <min>0</min>
-      <max>100</max>
+      <max>5</max>
     </rotation>
     <randomizerBrush>
       <position>false</position>
