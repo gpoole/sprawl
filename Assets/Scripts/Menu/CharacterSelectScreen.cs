@@ -104,7 +104,13 @@ public class CharacterSelectScreen : MonoBehaviour, IMenuInputEventHandler {
             return;
         }
 
-        assignedPlayer.confirmed.Value = false;
+        if (assignedPlayer.confirmed.Value) {
+            assignedPlayer.confirmed.Value = false;
+        } else {
+            GameManager.Instance.RemovePlayer(assignedPlayer.player);
+            playerSelections.Remove(assignedPlayer);
+        }
+
     }
 
     bool AllPlayersReady() {

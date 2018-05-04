@@ -12,10 +12,12 @@ public class HideShowAnimation : MonoBehaviour {
 	}
 
 	public void Show() {
+		animator.ResetTrigger("Hide");
 		animator.SetTrigger("Show");
 	}
 
 	public void Hide() {
+		animator.ResetTrigger("Show");
 		animator.SetTrigger("Hide");
 	}
 }
