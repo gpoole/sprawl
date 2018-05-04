@@ -11,27 +11,31 @@ public class TrackSelectTile : MonoBehaviour {
 
     public Text trackName;
 
+    private ActiveInactiveAnimation activeInactiveAnimation;
+
     void Start() {
+        activeInactiveAnimation = GetComponent<ActiveInactiveAnimation>();
         UpdateUI();
 
         var trackSelectController = GetComponentInParent<TrackSelectController>();
         trackSelectController.selectedTrack
             .Subscribe(selected => {
                 if (selected == track) {
-                    transform.localScale = Vector3.one * 1.1f;
+                    activeInactiveAnimation.Activate();
                 } else {
-                    transform.localScale = Vector3.one;
+                    activeInactiveAnimation.Deactivate();
                 }
             }).AddTo(this);
 
         trackSelectController.selectionConfirmed
             .Where(_ => trackSelectController.selectedTrack.Value == track)
             .Subscribe(confirmed => {
-                if (confirmed) {
-                    transform.localScale = Vector3.one * 1.2f;
-                } else {
-                    transform.localScale = Vector3.one * 1.1f;
-                }
+                // ???
+                // if (confirmed) {
+                //     activeInactiveAnimation.Activate();
+                // } else {
+                //     activeInactiveAnimation.Deactivate();
+                // }
             })
             .AddTo(this);
     }
