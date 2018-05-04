@@ -6,7 +6,7 @@ using InControl;
 using UniRx;
 using UnityEngine;
 
-public class CharacterSelectScreen : MonoBehaviour {
+public class CharacterSelectScreen : MonoBehaviour, IMenuInputEventHandler {
 
     private const int Columns = 3;
 
@@ -16,18 +16,19 @@ public class CharacterSelectScreen : MonoBehaviour {
 
         public ReactiveProperty<GameCharacter> character;
 
-        public BoolReactiveProperty confirmed = new BoolReactiveProperty(false);
+        public BoolReactiveProperty confirmed;
 
-        public PlayerSelection(Player player, GameCharacter character) {
+        public PlayerSelection(Player player, GameCharacter character, bool confirmed) {
             this.player = player;
             this.character = new ReactiveProperty<GameCharacter>(character);
+            this.confirmed = new BoolReactiveProperty(confirmed);
         }
 
     }
 
     public GameCharacterList characterSet;
 
-    public GameObject confirmLabel;
+    public HideShowAnimation confirmPrompt;
 
     public ReactiveCollection<PlayerSelection> playerSelections = new ReactiveCollection<PlayerSelection>();
 
@@ -35,107 +36,83 @@ public class CharacterSelectScreen : MonoBehaviour {
 
     private GridCollection<GameCharacter> characterGrid;
 
-    private MainMenuManager mainMenuManager;
+    private MenuScreenManager menuScreenManager;
 
     void Start() {
-        mainMenuManager = GetComponentInParent<MainMenuManager>();
+        menuScreenManager = GetComponentInParent<MenuScreenManager>();
         characterGrid = new GridCollection<GameCharacter>(characterSet.characters, Columns);
 
-        var unassignedDevices = InputManager.Devices.Where(device => !GameManager.Instance.players.Any(player => player.device == device));
-        foreach (var device in unassignedDevices) {
-            StartCoroutine(WatchDeviceForJoin(device));
-        }
-
-        foreach (var existingPlayer in GameManager.Instance.players) {
-            AddPlayerSelection(existingPlayer);
-        }
-
-        StartCoroutine(WatchForStart());
+        playerSelections.ObserveAdd()
+            .Select(ev => ev.Value)
+            .SelectMany(playerSelection => {
+                var playerRemoved = playerSelections.ObserveRemove().Where(ev => ev.Value == playerSelection);
+                return playerSelection.confirmed.TakeUntil(playerRemoved).Select(_ => Unit.Default);
+            })
+            .Merge(playerSelections.ObserveRemove().Select(_ => Unit.Default))
+            .Select(_ => AllPlayersReady())
+            .Subscribe(allReady => {
+                if (allReady) {
+                    confirmPrompt.Show();
+                } else {
+                    confirmPrompt.Hide();
+                }
+            })
+            .AddTo(this);
     }
 
-    IEnumerator WatchForStart() {
-        confirmLabel.SetActive(false);
-        var anyPlayerInput = new MenuActions();
+    public void OnInputAction(InputAction action, InputDevice input) {
+        var assignedPlayer = GetSelectionForDevice(input);
 
-        while (true) {
-            if (playerSelections.All(playerSelection => playerSelection.confirmed.Value) && playerSelections.Count > 0) {
-                confirmLabel.SetActive(true);
-                if (anyPlayerInput.ok) {
-                    // FIXME: these NEED to be destroyed sometime before the game starts
-                    // foreach (var controller in controllerActions) {
-                    //     controller.Destroy();
-                    // }
-                    mainMenuManager.activeScreen.Value = MainMenuManager.Screen.TrackSelect;
-                    break;
+        if (assignedPlayer == null) {
+            return;
+        }
+
+        switch (action) {
+            case InputAction.Up:
+            case InputAction.Down:
+            case InputAction.Left:
+            case InputAction.Right:
+                assignedPlayer.character.Value = characterGrid.GetFrom(assignedPlayer.character.Value, GridCollectionUtils.DirectionFromMenuAction(action));
+                break;
+        }
+    }
+
+    public void OnInputOk(InputDevice input) {
+        if (AllPlayersReady()) {
+            menuScreenManager.GoTo("TrackSelect");
+        } else {
+            var assignedPlayer = GetSelectionForDevice(input);
+            if (assignedPlayer != null) {
+                // Existing player, confirm selection
+                if (!assignedPlayer.confirmed.Value) {
+                    assignedPlayer.confirmed.Value = true;
                 }
             } else {
-                confirmLabel.SetActive(false);
+                // New player, add them!
+                var newPlayer = GameManager.Instance.AddPlayer(input);
+                var playerSelection = new PlayerSelection(newPlayer, characterSet.characters.First(), false);
+                playerSelections.Add(playerSelection);
             }
-
-            yield return new WaitForSeconds(0.1f);
         }
     }
 
-    IObservable<bool> OnButton(PlayerAction action) {
-        return Observable.EveryUpdate()
-            .Select(_ => !!action)
-            .DistinctUntilChanged()
-            .Where(pressed => pressed);
-    }
-
-    void WatchForSelection(PlayerSelection playerSelection, MenuActions controller) {
-        var playerRemoved = playerSelections.ObserveRemove().Where(ev => ev.Value == playerSelection);
-        var gridNavigation = GridNavigator.FromMenuActions(controller);
-
-        gridNavigation
-            .Where(_ => !playerSelection.confirmed.Value)
-            .TakeUntil(playerRemoved)
-            .Subscribe(direction => {
-                playerSelection.character.Value = characterGrid.GetFrom(playerSelection.character.Value, direction);
-            })
-            .AddTo(this);
-
-        OnButton(controller.ok)
-            .Where(_ => !playerSelection.confirmed.Value)
-            .TakeUntil(playerRemoved)
-            .Subscribe(_ => {
-                playerSelection.confirmed.Value = true;
-            })
-            .AddTo(this);
-
-        OnButton(controller.back)
-            .TakeUntil(playerRemoved)
-            .Subscribe(_ => {
-                if (playerSelection.confirmed.Value) {
-                    playerSelection.confirmed.Value = false;
-                } else {
-                    GameManager.Instance.RemovePlayer(playerSelection.player);
-                    playerSelections.Remove(playerSelection);
-                    controllerActions.Remove(controller);
-                    controller.Destroy();
-                    StartCoroutine(WatchDeviceForJoin(controller.Device));
-                }
-            })
-            .AddTo(this);
-    }
-
-    IEnumerator WatchDeviceForJoin(InputDevice device) {
-        var waitActions = new MenuActions { Device = device };
-        yield return OnButton(waitActions.ok).Take(1).ToYieldInstruction();
-        var newPlayer = GameManager.Instance.AddPlayer(device);
-        AddPlayerSelection(newPlayer, waitActions);
-        yield return new WaitUntil(() => !waitActions.ok);
-    }
-
-    void AddPlayerSelection(Player player, MenuActions actions = null) {
-        if (actions == null) {
-            actions = new MenuActions { Device = player.device };
+    public void OnInputBack(InputDevice input) {
+        var assignedPlayer = GetSelectionForDevice(input);
+        if (assignedPlayer == null) {
+            // Nobody's in here, back fully out
+            Debug.LogError("Go back to main screen");
+            return;
         }
 
-        var playerSelection = new PlayerSelection(player, player.character ? player.character : characterSet.characters.First());
-        playerSelections.Add(playerSelection);
-        controllerActions.Add(actions);
-        WatchForSelection(playerSelection, actions);
+        assignedPlayer.confirmed.Value = false;
+    }
+
+    bool AllPlayersReady() {
+        return playerSelections.All(playerSelection => playerSelection.confirmed.Value) && playerSelections.Count > 0;
+    }
+
+    PlayerSelection GetSelectionForDevice(InputDevice input) {
+        return playerSelections.FirstOrDefault(playerSelection => playerSelection.player.device == input);
     }
 
 }
