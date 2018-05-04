@@ -16,6 +16,8 @@ public class PlayerRaceUI : MonoBehaviour {
 
 	public Text lapTimeText;
 
+	public RectTransform layout;
+
 	void Start() {
 		if (!playerState) {
 			Debug.Log("playerState not available, disabling UI");
@@ -43,6 +45,11 @@ public class PlayerRaceUI : MonoBehaviour {
 
 	void PulseText(Text text, float fromScale, float duration) {
 		StartCoroutine(PulseTextAnimation(text, fromScale, duration));
+	}
+
+	public void SetDimensions(float xOffset, float yOffset, float width, float height) {
+		layout.anchorMax = new Vector2(xOffset + width, yOffset + height);
+		layout.anchorMin = new Vector2(xOffset, yOffset);
 	}
 
 	IEnumerator PulseTextAnimation(Text text, float fromScale, float duration) {

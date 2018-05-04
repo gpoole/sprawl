@@ -36,11 +36,7 @@ public class PlayerScreen : MonoBehaviour {
 		}
 
 		playerCamera.rect = new Rect(viewportXOffset, viewportYOffset, viewportWidth, viewportHeight);
-
-		var uiRect = ui.GetComponent<RectTransform>();
-		uiRect.anchorMax = new Vector2(viewportXOffset + viewportWidth, viewportYOffset + viewportHeight);
-		uiRect.anchorMin = new Vector2(viewportXOffset, viewportYOffset);
-		ui.playerState = playerState;
+		ui.SetDimensions(viewportXOffset, viewportYOffset, viewportWidth, viewportHeight);
 
 		var virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
 		virtualCamera.m_Follow = followTarget.transform;
