@@ -32,7 +32,7 @@ public class CharacterSelectScreen : MonoBehaviour, IMenuInputEventHandler {
 
     public ReactiveCollection<PlayerSelection> playerSelections = new ReactiveCollection<PlayerSelection>();
 
-    private List<MenuActions> controllerActions = new List<MenuActions>();
+    private List<MenuController> controllerActions = new List<MenuController>();
 
     private GridCollection<GameCharacter> characterGrid;
 

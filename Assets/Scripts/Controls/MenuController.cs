@@ -1,6 +1,6 @@
 using InControl;
 
-public class MenuActions : PlayerActionSet {
+public class MenuController : PlayerActionSet {
 
     public PlayerAction up;
 
@@ -16,7 +16,7 @@ public class MenuActions : PlayerActionSet {
 
     public PlayerAction join;
 
-    public MenuActions() {
+    public MenuController() {
         up = CreatePlayerAction("Up");
         down = CreatePlayerAction("Down");
         left = CreatePlayerAction("Left");

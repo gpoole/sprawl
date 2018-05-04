@@ -12,7 +12,7 @@ public class GridNavigator {
             .Select(_ => direction);
     }
 
-    public static IObservable<GridDirection> FromMenuActions(MenuActions actions) {
+    public static IObservable<GridDirection> FromMenuActions(MenuController actions) {
         return Observable.Merge(
             MapToDirection(actions.left, GridDirection.Left),
             MapToDirection(actions.right, GridDirection.Right),

@@ -9,7 +9,8 @@ public class MenuScreenManager : MonoBehaviour {
     private MenuScreen activeScreen;
 
     void Start() {
-        StartCoroutine(ShowScreen(screens.First()));
+        activeScreen = screens.First();
+        StartCoroutine(ShowScreen(activeScreen));
     }
 
     public void GoTo(string screenName) {
