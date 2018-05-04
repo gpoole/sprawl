@@ -1,17 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PersistentSingleton : MonoBehaviour {
+public class PersistentSingleton<T> : MonoBehaviour {
 
-    private static Dictionary<string, GameObject> instanceList = new Dictionary<string, GameObject>();
+    public static T Instance {
+        get;
+        private set;
+    }
 
-    void Awake() {
-        if (instanceList.ContainsKey(gameObject.name)) {
+    public void Awake() {
+        if (Instance != null) {
             Destroy(gameObject);
             return;
         }
         DontDestroyOnLoad(this);
-        instanceList.Add(gameObject.name, gameObject);
+        Instance = GetComponent<T>();
     }
 
 }

@@ -28,7 +28,7 @@ public class MenuPlayerInput : MonoBehaviour {
 
     public float startDelay = 0.5f;
 
-    private MenuController[] controllers;
+    private MenuController controllerActions;
 
     void OnEnable() {
         Setup();
@@ -43,28 +43,24 @@ public class MenuPlayerInput : MonoBehaviour {
     }
 
     void Setup() {
-        controllers = InputManager.Devices.Select(device => new MenuController { Device = device }).ToArray();
-        foreach (var controller in controllers) {
-            WatchForInput(controller);
-        }
+        controllerActions = new MenuController();
+        WatchForInput();
     }
 
     void Teardown() {
-        if (controllers != null) {
-            foreach (var controller in controllers) {
-                controller.Destroy();
-            }
-            controllers = null;
+        if (controllerActions != null) {
+            controllerActions.Destroy();
+            controllerActions = null;
         }
     }
 
-    void WatchForInput(MenuController controller) {
-        MapControllerAction(controller.up, InputAction.Up);
-        MapControllerAction(controller.left, InputAction.Left);
-        MapControllerAction(controller.right, InputAction.Right);
-        MapControllerAction(controller.down, InputAction.Down);
-        MapControllerAction(controller.ok, InputAction.Ok);
-        MapControllerAction(controller.back, InputAction.Back);
+    void WatchForInput() {
+        MapControllerAction(controllerActions.up, InputAction.Up);
+        MapControllerAction(controllerActions.left, InputAction.Left);
+        MapControllerAction(controllerActions.right, InputAction.Right);
+        MapControllerAction(controllerActions.down, InputAction.Down);
+        MapControllerAction(controllerActions.ok, InputAction.Ok);
+        MapControllerAction(controllerActions.back, InputAction.Back);
     }
 
     void MapControllerAction(PlayerAction playerAction, InputAction inputAction) {
