@@ -103,6 +103,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1280889184771068
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4601098260281626}
+  m_Layer: 2
+  m_Name: DownForcePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1289536895660490
 GameObject:
   m_ObjectHideFlags: 1
@@ -453,7 +468,7 @@ Transform:
   m_Children:
   - {fileID: 4406422208411134}
   m_Father: {fileID: 4917932679583966}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4570819904498208
 Transform:
@@ -467,6 +482,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4346355414582900}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4601098260281626
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1280889184771068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.2, z: 1.13}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4917932679583966}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4643428451366382
 Transform:
@@ -496,7 +524,7 @@ Transform:
   - {fileID: 4919710766694418}
   - {fileID: 4402990203559490}
   m_Father: {fileID: 4917932679583966}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4743464586507304
 Transform:
@@ -530,16 +558,17 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1081355796924530}
-  m_LocalRotation: {x: -0, y: 0.70662445, z: -0, w: 0.7075888}
-  m_LocalPosition: {x: -13.2, y: 1.98, z: -204.7}
+  m_LocalRotation: {x: 5.007482e-10, y: -0.00072251906, z: -0.000000007753121, w: 0.99999976}
+  m_LocalPosition: {x: 1166.8016, y: -24, z: 338.4464}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4074155959236330}
+  - {fileID: 4601098260281626}
   - {fileID: 4569781892496200}
   - {fileID: 4704924176342388}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 89.922005, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -0.083000004, z: 0}
 --- !u!4 &4919710766694418
 Transform:
   m_ObjectHideFlags: 1
@@ -973,114 +1002,74 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drivingEnabled: 0
   stoppedSpeed: 0.5
-  maxSpeed: 120
-  maxReverseSpeed: -14.15
+  maxSpeed: 90
+  maxReverseSpeed: -30
   accelerationSpeed:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
       time: 0.00024414062
-      value: 0.50447845
+      value: 0.25
       inSlope: 0
       outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.0039678365
-      value: 0.79611224
-      inSlope: 0.50865144
-      outSlope: 0.079813495
+      time: 0.5493792
+      value: 1
+      inSlope: 0.10303511
+      outSlope: -0.02586074
       tangentMode: 1
     - serializedVersion: 2
-      time: 0.9774519
-      value: -0.015351951
+      time: 1
+      value: 0
       inSlope: 0.0010779212
       outSlope: 0.0010779212
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  accelerationMultiplier: 100
-  brakingForceMultiplier: 10
-  gripPower:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0.0024480922
-      value: 1.0001664
-      inSlope: -0.31985393
-      outSlope: -0.31985393
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.9971049
-      value: 0.40130574
-      inSlope: -1.0093654
-      outSlope: -1.0093654
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  sidewaysFriction:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: -0.008628845
-      value: 0.1
-      inSlope: 1.0381908
-      outSlope: 1.0381908
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 2.5507662
-      value: 2.6477416
-      inSlope: 0.19788742
-      outSlope: 0.19788742
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 10
-      value: 3
-      inSlope: 0.03252515
-      outSlope: 0.03252515
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  sidewaysFrictionMultiplier: 10
+  accelerationMultiplier: 60
+  brakingForceMultiplier: 30
+  sidewaysFrictionMultiplier: 5
   turning:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0.0020538978
-      value: 0.8003082
-      inSlope: 0.18849345
-      outSlope: 0.18849345
+      time: 0.015554111
+      value: 0
+      inSlope: 1.1939169
+      outSlope: 1.1939169
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.03236404
-      value: 0.99361175
+      time: 0.20013918
+      value: 1.0002365
       inSlope: -0.087376446
-      outSlope: -0.087376446
-      tangentMode: 0
+      outSlope: 0.0000059004665
+      tangentMode: 1
     - serializedVersion: 2
-      time: 1.0018702
-      value: 0.84602624
-      inSlope: -0.045974076
+      time: 0.9988609
+      value: 1
+      inSlope: -0.00029611218
       outSlope: -0.045974076
-      tangentMode: 0
+      tangentMode: 5
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  turnMultiplier: 15
+  turnMultiplier: 14
   turnToVelocitySpeed: 0.025
   turnVelocityTransferRate: 0.8
   maxWheelTurn: 30
-  maxTurnAngle: 80
-  driftTurnMultiplier: 30
+  maxTurnAngle: 30
+  driftTurnMultiplier: 24
   driftMaxTurnAngle: 60
   minDriftSpeed: 20
   straightenUpTime: 0.3
-  straightenUpAngle: 25
+  straightenUpAngle: 17.5
   maxVerticalAngle: 43.99
+  downForce: 30000
+  turnFrictionMultiplier: 10
+  downForcePoint: {fileID: 4601098260281626}
   centreOfMass: {fileID: 4074155959236330}
-  valueTracker: {fileID: 0}
 --- !u!114 &114449316361521596
 MonoBehaviour:
   m_ObjectHideFlags: 1

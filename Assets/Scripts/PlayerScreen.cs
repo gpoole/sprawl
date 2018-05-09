@@ -10,6 +10,8 @@ public class PlayerScreen : MonoBehaviour {
 
 	public Camera playerCamera;
 
+	public Camera hudCamera;
+
 	public GameObject followTarget;
 
 	public PlayerRaceUI ui;
@@ -23,10 +25,10 @@ public class PlayerScreen : MonoBehaviour {
 		float viewportYOffset = 0;
 
 		if (GameManager.Instance != null) {
-			viewportWidth = GameManager.Instance.players.Count > 1 ? 0.5f : 1f;
-			viewportHeight = GameManager.Instance.players.Count > 2 ? 0.5f : 1f;
-			viewportXOffset = viewportWidth * (playerState.player.id % 2);
-			viewportYOffset = viewportHeight * Mathf.Floor(playerState.player.id / 2f);
+			viewportWidth = GameManager.Instance.players.Count > 2 ? 0.5f : 1f;
+			viewportHeight = GameManager.Instance.players.Count > 1 ? 0.5f : 1f;
+			viewportXOffset = viewportWidth * Mathf.Floor(playerState.player.id / 2);
+			viewportYOffset = viewportHeight * (playerState.player.id % 2f);
 
 			var excludeLayers = GameManager.Instance.players
 				.Where(player => player != playerState.player)
@@ -35,8 +37,9 @@ public class PlayerScreen : MonoBehaviour {
 			playerCamera.cullingMask = playerCamera.cullingMask & ~LayerMask.GetMask(excludeLayers);
 		}
 
-		playerCamera.rect = new Rect(viewportXOffset, viewportYOffset, viewportWidth, viewportHeight);
-		ui.SetDimensions(viewportXOffset, viewportYOffset, viewportWidth, viewportHeight);
+		var cameraRect = new Rect(viewportXOffset, viewportYOffset, viewportWidth, viewportHeight);
+		playerCamera.rect = cameraRect;
+		hudCamera.rect = cameraRect;
 
 		var virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
 		virtualCamera.m_Follow = followTarget.transform;

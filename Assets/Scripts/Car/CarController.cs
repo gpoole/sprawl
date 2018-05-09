@@ -18,10 +18,6 @@ public class CarController : MonoBehaviour {
 
     public float brakingForceMultiplier = 10f;
 
-    public AnimationCurve gripPower;
-
-    public AnimationCurve sidewaysFriction;
-
     public float sidewaysFrictionMultiplier = 3f;
 
     public AnimationCurve turning;
@@ -48,9 +44,13 @@ public class CarController : MonoBehaviour {
 
     public float maxVerticalAngle = 80f;
 
-    public Transform centreOfMass;
+    public float downForce = 10000f;
 
-    public DebugValueTracker valueTracker;
+    public float turnFrictionMultiplier = 10f;
+
+    public Transform downForcePoint;
+
+    public Transform centreOfMass;
 
     public float VelocityAlignmentDifference {
         get;
@@ -108,10 +108,13 @@ public class CarController : MonoBehaviour {
 
     private DebugVectorTracker vectorTracker;
 
+    private DebugValueTracker valueTracker;
+
     private PlayerState playerState;
 
     void Start() {
         playerState = GetComponent<Car>().playerState;
+        valueTracker = DebugValueTracker.Instance;
 
         if (playerState == null) {
             drivingEnabled = true;
@@ -196,7 +199,7 @@ public class CarController : MonoBehaviour {
         TrackValue("isDrifting", IsDrifting);
 
         if (drivingEnabled) {
-            var forwardDrivingForce = wheelForwardDirection * acceleration * accelerationMultiplier * gripPower.Evaluate(((90 - absVelocityAlignmentDifference) / 90) / surfaceFriction) * travelVerticality;
+            var forwardDrivingForce = wheelForwardDirection * acceleration * accelerationMultiplier * surfaceFriction * travelVerticality;
             rb.AddRelativeForce(forwardDrivingForce * Time.deltaTime, ForceMode.VelocityChange);
             TrackVector("forwardDrivingForce", forwardDrivingForce, IsDrifting ? Color.magenta : Color.green);
 
@@ -218,21 +221,28 @@ public class CarController : MonoBehaviour {
         var turnSpeed = turning.Evaluate(relativeSpeed);
         TrackValue("turnSpeed", turnSpeed);
 
-        // Transfer velocity as we turn
-        var velocityTransferAmount = Speed * Mathf.Clamp(VelocityAlignmentDifference / 90f, -1, 1) * turnVelocityTransferRate * turnSpeed * surfaceFriction;
-        var turnForceRight = (isReversing ? Vector3.left : Vector3.right) * velocityTransferAmount;
-        TrackVector("turnForceRight", turnForceRight, Color.blue);
-        rb.AddRelativeForce(turnForceRight * Time.deltaTime, ForceMode.VelocityChange);
-
         // Turn the car towards the direction it's travelling
         rb.AddRelativeTorque(Vector3.Cross(Vector3.forward, surfaceVelocity) * turnToVelocitySpeed * surfaceFriction * Time.deltaTime, ForceMode.VelocityChange);
 
         // Turn the car up to a maximum angle against the direction of movement
         var allowedTurnAngle = IsDrifting ? driftMaxTurnAngle : maxTurnAngle;
-        rb.AddRelativeTorque(Vector3.up * input.Steering * Mathf.Clamp((allowedTurnAngle - absVelocityAlignmentDifference) / allowedTurnAngle, 0.2f, 1f) * turnSpeed * (IsDrifting ? driftTurnMultiplier : turnMultiplier) * Time.deltaTime, ForceMode.VelocityChange);
+        var turnRate = Mathf.Clamp((allowedTurnAngle - absVelocityAlignmentDifference) / allowedTurnAngle, 0.5f, 1f);
+        var turnAmount = WheelOrientation / maxWheelTurn;
+        rb.AddRelativeTorque(Vector3.up * turnAmount * turnSpeed * turnRate * (IsDrifting ? driftTurnMultiplier : turnMultiplier) * Time.deltaTime, ForceMode.VelocityChange);
 
+        // Add increasing friction against velocity direction the more the wheels are angled against the direction of movement
+        var turnFriction = -surfaceVelocity.normalized * (Speed / maxSpeed) * Mathf.Clamp01(absVelocityAlignmentDifference / 45f) * surfaceFriction * turnFrictionMultiplier * Time.deltaTime;
+        rb.AddForce(turnFriction, ForceMode.VelocityChange);
+        TrackVector("turnFriction", turnFriction, Color.green);
+
+        // Turn the car's velocity
+        var turnForce = Vector3.right * input.Steering * (Speed / maxSpeed) * turnSpeed * turnFrictionMultiplier;
+        rb.AddRelativeForce(turnForce * Time.deltaTime, ForceMode.VelocityChange);
+        TrackVector("turnForce", turnForce, Color.magenta);
+
+        // Stop the car from sliding sideways
         var sidewaysVelocity = Vector3.Project(surfaceVelocity, Vector3.right);
-        var sideFriction = sidewaysFriction.Evaluate(sidewaysVelocity.magnitude * surfaceFriction) * sidewaysFrictionMultiplier;
+        var sideFriction = sidewaysVelocity.magnitude * surfaceFriction * sidewaysFrictionMultiplier;
         var sidewaysFrictionForce = -sidewaysVelocity.normalized * sideFriction * rightVerticality * surfaceFriction;
         TrackVector("sidewaysVelocity", sidewaysVelocity, Color.magenta);
         TrackVector("sidewaysFrictionForce", sidewaysFrictionForce, Color.red);
@@ -243,11 +253,26 @@ public class CarController : MonoBehaviour {
         }
     }
 
+    void ApplyDownForce() {
+        var localVelocity = transform.InverseTransformDirection(rb.velocity);
+        var forwardVelocity = Mathf.Abs(localVelocity.z);
+
+        if (downForcePoint != null) {
+            Vector3 downForceVector = Vector3.down * downForce * (forwardVelocity / maxSpeed);
+            TrackVector("downForce", downForceVector, Color.cyan);
+            rb.AddForceAtPosition(downForceVector, downForcePoint.position);
+        }
+    }
+
     void FixedUpdate() {
+        // WheelOrientation = Mathf.Lerp(WheelOrientation, input.Steering * maxWheelTurn, Time.deltaTime * 50f);
         WheelOrientation = input.Steering * maxWheelTurn;
+        TrackValue("wheelOrientation", WheelOrientation);
         var wheelRotation = Quaternion.AngleAxis(WheelOrientation, Vector3.up);
         wheelForwardDirection = (wheelRotation * Vector3.forward).normalized;
         IsGrounded = wheels.Any(wheel => wheel.IsGrounded);
+
+        ApplyDownForce();
 
         if (IsGrounded) {
             ApplyDrivingForces();

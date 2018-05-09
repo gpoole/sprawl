@@ -17,6 +17,7 @@ public class DebugValueTracker : MonoBehaviour {
         [HideInInspector]
         public object value;
         public bool show = true;
+        public bool solo = false;
 
         public override string ToString() {
             return String.Format("{0}: {1}", label, value);
@@ -43,11 +44,21 @@ public class DebugValueTracker : MonoBehaviour {
 
     }
 
+    public static DebugValueTracker Instance {
+        get;
+        private set;
+    }
+
     public List<DebugValue> values = new List<DebugValue>();
 
     private Text debugText;
 
     void Awake() {
+        if (Instance != null) {
+            gameObject.SetActive(false);
+            return;
+        }
+        Instance = this;
         debugText = GetComponent<Text>();
     }
 
@@ -57,8 +68,9 @@ public class DebugValueTracker : MonoBehaviour {
 
     void Update() {
         debugText.text = "";
+        var soloing = values.Any(entry => entry.solo);
         foreach (var entry in values) {
-            if (entry.show) {
+            if ((entry.show && !soloing) || (soloing && entry.solo)) {
                 debugText.text += entry.ToString() + "\n";
             }
         }
