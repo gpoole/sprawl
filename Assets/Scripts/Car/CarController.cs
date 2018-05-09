@@ -48,9 +48,11 @@ public class CarController : MonoBehaviour {
 
     public float maxVerticalAngle = 80f;
 
-    public Transform centreOfMass;
+    public float downForce = 10000f;
 
-    public DebugValueTracker valueTracker;
+    public Transform downForcePoint;
+
+    public Transform centreOfMass;
 
     public float VelocityAlignmentDifference {
         get;
@@ -108,10 +110,13 @@ public class CarController : MonoBehaviour {
 
     private DebugVectorTracker vectorTracker;
 
+    private DebugValueTracker valueTracker;
+
     private PlayerState playerState;
 
     void Start() {
         playerState = GetComponent<Car>().playerState;
+        valueTracker = DebugValueTracker.Instance;
 
         if (playerState == null) {
             drivingEnabled = true;
@@ -248,6 +253,13 @@ public class CarController : MonoBehaviour {
         var wheelRotation = Quaternion.AngleAxis(WheelOrientation, Vector3.up);
         wheelForwardDirection = (wheelRotation * Vector3.forward).normalized;
         IsGrounded = wheels.Any(wheel => wheel.IsGrounded);
+
+        // Constant downward force sticks the car to the road
+        // rb.AddForce(Vector3.down * downForce);
+
+        if (downForcePoint != null) {
+            rb.AddForceAtPosition(Vector3.down * downForce, downForcePoint.position);
+        }
 
         if (IsGrounded) {
             ApplyDrivingForces();

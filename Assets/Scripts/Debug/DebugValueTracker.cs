@@ -43,11 +43,21 @@ public class DebugValueTracker : MonoBehaviour {
 
     }
 
+    public static DebugValueTracker Instance {
+        get;
+        private set;
+    }
+
     public List<DebugValue> values = new List<DebugValue>();
 
     private Text debugText;
 
     void Awake() {
+        if (Instance != null) {
+            gameObject.SetActive(false);
+            return;
+        }
+        Instance = this;
         debugText = GetComponent<Text>();
     }
 

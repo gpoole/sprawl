@@ -64,7 +64,9 @@ public class RaceManager : MonoBehaviour {
 		mode.Value = RaceMode.Intro;
 		var intro = GameObject.Find("CinematicIntro");
 		var director = intro.GetComponent<PlayableDirector>();
-		yield return new WaitWhile(() => director.state == PlayState.Playing);
+		var menuInput = new MenuController();
+		yield return new WaitWhile(() => director.state == PlayState.Playing && !menuInput.ok);
+		menuInput.Destroy();
 		intro.SetActive(false);
 	}
 
