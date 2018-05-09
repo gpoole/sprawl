@@ -1002,8 +1002,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drivingEnabled: 0
   stoppedSpeed: 0.5
-  maxSpeed: 120
-  maxReverseSpeed: -14.15
+  maxSpeed: 90
+  maxReverseSpeed: -30
   accelerationSpeed:
     serializedVersion: 2
     m_Curve:
@@ -1014,14 +1014,20 @@ MonoBehaviour:
       outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.0039678365
-      value: 0.79611224
+      time: 0.10085828
+      value: 0.99858093
       inSlope: 0.50865144
-      outSlope: 0.079813495
-      tangentMode: 1
+      outSlope: 0.00223182
+      tangentMode: 65
     - serializedVersion: 2
-      time: 0.9774519
-      value: -0.015351951
+      time: 0.7366924
+      value: 1
+      inSlope: 0.00223182
+      outSlope: -1.5893579
+      tangentMode: 5
+    - serializedVersion: 2
+      time: 1
+      value: 0
       inSlope: 0.0010779212
       outSlope: 0.0010779212
       tangentMode: 0
@@ -1108,7 +1114,7 @@ MonoBehaviour:
   straightenUpTime: 0.3
   straightenUpAngle: 25
   maxVerticalAngle: 43.99
-  downForce: 15000
+  downForce: 30000
   downForcePoint: {fileID: 4601098260281626}
   centreOfMass: {fileID: 4074155959236330}
 --- !u!114 &114449316361521596

@@ -179,8 +179,10 @@ public class CarController : MonoBehaviour {
         var relativeSpeed = Math.Abs(Speed) / maxSpeed;
         if (!isReversing) {
             acceleration = accelerationSpeed.Evaluate(Speed / maxSpeed) * input.Accelerator;
+            // acceleration = Mathf.Clamp01(maxSpeed / Speed) * input.Accelerator;
         } else {
             acceleration = -accelerationSpeed.Evaluate(Speed / maxReverseSpeed) * input.Brakes;
+            // acceleration = -Mathf.Clamp01(maxReverseSpeed / Speed) * input.Brakes;
         }
         TrackValue("acceleration", acceleration);
         TrackValue("relativeSpeed", relativeSpeed);
@@ -248,18 +250,24 @@ public class CarController : MonoBehaviour {
         }
     }
 
+    void ApplyDownForce() {
+        var localVelocity = transform.InverseTransformDirection(rb.velocity);
+        var forwardVelocity = localVelocity.z;
+
+        if (downForcePoint != null) {
+            Vector3 downForceVector = Vector3.down * downForce * (forwardVelocity / maxSpeed);
+            TrackVector("downForce", downForceVector, Color.cyan);
+            rb.AddForceAtPosition(downForceVector, downForcePoint.position);
+        }
+    }
+
     void FixedUpdate() {
         WheelOrientation = input.Steering * maxWheelTurn;
         var wheelRotation = Quaternion.AngleAxis(WheelOrientation, Vector3.up);
         wheelForwardDirection = (wheelRotation * Vector3.forward).normalized;
         IsGrounded = wheels.Any(wheel => wheel.IsGrounded);
 
-        // Constant downward force sticks the car to the road
-        // rb.AddForce(Vector3.down * downForce);
-
-        if (downForcePoint != null) {
-            rb.AddForceAtPosition(Vector3.down * downForce, downForcePoint.position);
-        }
+        ApplyDownForce();
 
         if (IsGrounded) {
             ApplyDrivingForces();
