@@ -1,2 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<favouriteMeshBrushTemplates />
+<favouriteMeshBrushTemplates>
+  <template>
+    <path>C:/Users/nickj/Documents/GitHub/sprawl/Assets/Scripts/Scenery/rocks.xml</path>
+  </template>
+</favouriteMeshBrushTemplates>

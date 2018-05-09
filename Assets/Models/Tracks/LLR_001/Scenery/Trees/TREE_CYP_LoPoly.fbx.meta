@@ -1,14 +1,14 @@
 fileFormatVersion: 2
-guid: bedc8cc33df399e419526abb061b104a
-timeCreated: 1525318063
+guid: b7832fa2ecc767c459bcc531f1bae53a
+timeCreated: 1525751832
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: Object_1
-    400000: //RootNode
-    400002: Object_1
+    100000: Object_1
+    100002: //RootNode
+    400000: Object_1
+    400002: //RootNode
     2100000: Material_2
     2300000: Object_1
     3300000: Object_1

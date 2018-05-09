@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: TREE_NFI
+  m_Name: TREE_BASIC_01
   m_Shader: {fileID: 4800000, guid: ef0f6dd4a5148154ca65c1801231f784, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
