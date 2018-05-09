@@ -23,10 +23,10 @@ public class PlayerScreen : MonoBehaviour {
 		float viewportYOffset = 0;
 
 		if (GameManager.Instance != null) {
-			viewportWidth = GameManager.Instance.players.Count > 1 ? 0.5f : 1f;
-			viewportHeight = GameManager.Instance.players.Count > 2 ? 0.5f : 1f;
-			viewportXOffset = viewportWidth * (playerState.player.id % 2);
-			viewportYOffset = viewportHeight * Mathf.Floor(playerState.player.id / 2f);
+			viewportWidth = GameManager.Instance.players.Count > 2 ? 0.5f : 1f;
+			viewportHeight = GameManager.Instance.players.Count > 1 ? 0.5f : 1f;
+			viewportXOffset = viewportWidth * Mathf.Floor(playerState.player.id / 2);
+			viewportYOffset = viewportHeight * (playerState.player.id % 2f);
 
 			var excludeLayers = GameManager.Instance.players
 				.Where(player => player != playerState.player)
