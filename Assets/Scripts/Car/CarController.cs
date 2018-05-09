@@ -18,10 +18,6 @@ public class CarController : MonoBehaviour {
 
     public float brakingForceMultiplier = 10f;
 
-    public AnimationCurve gripPower;
-
-    public AnimationCurve sidewaysFriction;
-
     public float sidewaysFrictionMultiplier = 3f;
 
     public AnimationCurve turning;
@@ -179,10 +175,8 @@ public class CarController : MonoBehaviour {
         var relativeSpeed = Math.Abs(Speed) / maxSpeed;
         if (!isReversing) {
             acceleration = accelerationSpeed.Evaluate(Speed / maxSpeed) * input.Accelerator;
-            // acceleration = Mathf.Clamp01(maxSpeed / Speed) * input.Accelerator;
         } else {
             acceleration = -accelerationSpeed.Evaluate(Speed / maxReverseSpeed) * input.Brakes;
-            // acceleration = -Mathf.Clamp01(maxReverseSpeed / Speed) * input.Brakes;
         }
         TrackValue("acceleration", acceleration);
         TrackValue("relativeSpeed", relativeSpeed);
@@ -203,7 +197,7 @@ public class CarController : MonoBehaviour {
         TrackValue("isDrifting", IsDrifting);
 
         if (drivingEnabled) {
-            var forwardDrivingForce = wheelForwardDirection * acceleration * accelerationMultiplier * gripPower.Evaluate(((90 - absVelocityAlignmentDifference) / 90) / surfaceFriction) * travelVerticality;
+            var forwardDrivingForce = wheelForwardDirection * acceleration * accelerationMultiplier * surfaceFriction * travelVerticality;
             rb.AddRelativeForce(forwardDrivingForce * Time.deltaTime, ForceMode.VelocityChange);
             TrackVector("forwardDrivingForce", forwardDrivingForce, IsDrifting ? Color.magenta : Color.green);
 
@@ -239,7 +233,7 @@ public class CarController : MonoBehaviour {
         rb.AddRelativeTorque(Vector3.up * input.Steering * Mathf.Clamp((allowedTurnAngle - absVelocityAlignmentDifference) / allowedTurnAngle, 0.2f, 1f) * turnSpeed * (IsDrifting ? driftTurnMultiplier : turnMultiplier) * Time.deltaTime, ForceMode.VelocityChange);
 
         var sidewaysVelocity = Vector3.Project(surfaceVelocity, Vector3.right);
-        var sideFriction = sidewaysFriction.Evaluate(sidewaysVelocity.magnitude * surfaceFriction) * sidewaysFrictionMultiplier;
+        var sideFriction = sidewaysVelocity.magnitude * surfaceFriction * sidewaysFrictionMultiplier;
         var sidewaysFrictionForce = -sidewaysVelocity.normalized * sideFriction * rightVerticality * surfaceFriction;
         TrackVector("sidewaysVelocity", sidewaysVelocity, Color.magenta);
         TrackVector("sidewaysFrictionForce", sidewaysFrictionForce, Color.red);
@@ -252,7 +246,7 @@ public class CarController : MonoBehaviour {
 
     void ApplyDownForce() {
         var localVelocity = transform.InverseTransformDirection(rb.velocity);
-        var forwardVelocity = localVelocity.z;
+        var forwardVelocity = Mathf.Abs(localVelocity.z);
 
         if (downForcePoint != null) {
             Vector3 downForceVector = Vector3.down * downForce * (forwardVelocity / maxSpeed);
