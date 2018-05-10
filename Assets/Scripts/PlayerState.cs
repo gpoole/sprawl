@@ -87,7 +87,7 @@ public class PlayerState : MonoBehaviour {
 	public void NextLap() {
 		lap.Value += 1;
 		lapStartTime = Time.time;
-		if (lap.Value >= RaceManager.Instance.lapCount) {
+		if (lap.Value > RaceManager.Instance.lapCount) {
 			mode.Value = PlayerState.PlayerMode.Finished;
 		}
 	}
