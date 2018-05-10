@@ -6,5 +6,7 @@ public class GameCharacter : ScriptableObject {
 
     public GameObject carPrefab;
 
+    public Material carSkin;
+
     public Sprite image;
 }

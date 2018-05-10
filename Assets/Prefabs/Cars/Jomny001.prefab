@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 114730349438902886}
   - component: {fileID: 114594892917935876}
   - component: {fileID: 114070523048249732}
+  - component: {fileID: 114590124374935128}
   m_Layer: 2
   m_Name: Jomny001
   m_TagString: Untagged
@@ -559,7 +560,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1081355796924530}
   m_LocalRotation: {x: 5.007482e-10, y: -0.00072251906, z: -0.000000007753121, w: 0.99999976}
-  m_LocalPosition: {x: 1166.8016, y: -24, z: 338.4464}
+  m_LocalPosition: {x: -77.414955, y: 23.3, z: 302.30707}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4074155959236330}
@@ -1116,6 +1117,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   smokeEffectPrefab: {fileID: 198587805109542112, guid: 19a971f50654646db8728ed3ef7ad7c4,
     type: 2}
+--- !u!114 &114590124374935128
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1081355796924530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dee247278510e4519acdaa663ec6eba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  carMesh: {fileID: 23211600544562896}
 --- !u!114 &114594892917935876
 MonoBehaviour:
   m_ObjectHideFlags: 1

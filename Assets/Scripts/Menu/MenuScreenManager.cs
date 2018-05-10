@@ -10,7 +10,7 @@ public class MenuScreenManager : MonoBehaviour {
 
     void Start() {
         activeScreen = screens.First();
-        StartCoroutine(ShowScreen(activeScreen));
+        StartCoroutine(ShowScreen(activeScreen, true));
     }
 
     public void GoTo(string screenName) {
@@ -20,12 +20,16 @@ public class MenuScreenManager : MonoBehaviour {
 
         var nextScreen = screens.FirstOrDefault(screen => screen.name == screenName);
         if (nextScreen) {
-            StartCoroutine(ShowScreen(nextScreen));
+            StartCoroutine(ShowScreen(nextScreen, activeScreen == null));
             activeScreen = nextScreen;
         }
     }
 
-    IEnumerator ShowScreen(MenuScreen screen) {
+    IEnumerator ShowScreen(MenuScreen screen, bool first) {
+        // Wait for the old screen to go away
+        if (!first) {
+            yield return new WaitForSeconds(1f);
+        }
         screen.gameObject.SetActive(true);
         yield return new WaitUntil(() => screen.gameObject.activeInHierarchy);
         screen.Show();

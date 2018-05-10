@@ -13,4 +13,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Jomny (Green)
   carPrefab: {fileID: 1081355796924530, guid: 7bd01c019ac78464d8d108ece10fe61a, type: 2}
+  carSkin: {fileID: 2100000, guid: 2d6b841ba1db44b60b8b33fe3bbebfbf, type: 2}
   image: {fileID: 21300000, guid: 5432f0eb49c4e436f8dff96c9003a0cb, type: 3}
