@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using UniRx;
 using UnityEngine;
 
 public class CarController : MonoBehaviour {
@@ -127,6 +128,20 @@ public class CarController : MonoBehaviour {
         rb = GetComponent<Rigidbody>();
         wheels = GetComponentsInChildren<CarWheel>();
         vectorTracker = GetComponent<DebugVectorTracker>();
+
+        playerState.mode
+            .Where(mode => mode == PlayerState.PlayerMode.Racing)
+            .Subscribe(_ => {
+                drivingEnabled = true;
+            })
+            .AddTo(this);
+
+        playerState.mode
+            .Where(mode => mode == PlayerState.PlayerMode.Finished)
+            .Subscribe(_ => {
+                drivingEnabled = false;
+            })
+            .AddTo(this);
     }
 
     public void Reset() {
@@ -145,7 +160,7 @@ public class CarController : MonoBehaviour {
         isStopped = Math.Abs(Speed) < stoppedSpeed;
 
         if (!drivingEnabled) {
-            rb.AddForce(-surfaceVelocity, ForceMode.VelocityChange);
+            rb.AddRelativeForce(-surfaceVelocity, ForceMode.Acceleration);
         }
 
         RaycastHit roadSurface;
@@ -289,10 +304,6 @@ public class CarController : MonoBehaviour {
 
     void Update() {
         IsOnTrack = Physics.Raycast(transform.position, Vector3.down, Mathf.Infinity, LayerMask.GetMask("Track"));
-
-        if (playerState != null) {
-            drivingEnabled = playerState.mode.Value == PlayerState.PlayerMode.Racing;
-        }
     }
 
     void TrackValue(string label, object value) {
