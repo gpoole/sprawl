@@ -18,19 +18,29 @@ public class PlayerScreen : MonoBehaviour {
 
 	private PlayerState playerState;
 
+	private static readonly Rect[][] viewportLayouts = {
+		new Rect[] {
+			new Rect(0, 0, 1f, 1f)
+		},
+		new Rect[] {
+			new Rect(0, 0.5f, 1f, 0.5f),
+				new Rect(0, 0, 1f, 0.5f)
+		},
+		new Rect[] {
+			new Rect(0f, 0.5f, 0.5f, 0.5f),
+				new Rect(0.5f, 0f, 0.5f, 0.5f),
+				new Rect(0, 0.5f, 0.5f, 0.5f),
+		},
+		new Rect[] {
+			new Rect(0f, 0.5f, 0.5f, 0.5f),
+				new Rect(0.5f, 0, 0.5f, 0.5f),
+				new Rect(0.5f, 0.5f, 0.5f, 0.5f),
+				new Rect(0.5f, 0, 0.5f, 0.5f),
+		}
+	};
+
 	void Start() {
-		float viewportWidth = 1;
-		float viewportHeight = 1;
-		float viewportXOffset = 0;
-		float viewportYOffset = 0;
-
 		if (GameManager.Instance != null) {
-			viewportWidth = GameManager.Instance.players.Count > 2 ? 0.5f : 1f;
-			viewportHeight = GameManager.Instance.players.Count > 1 ? 0.5f : 1f;
-			viewportXOffset = viewportWidth * Mathf.Floor(playerState.player.id / 2);
-			// This is inverted, x/y starts at bottom left
-			viewportYOffset = viewportHeight - (viewportHeight * ((playerState.player.id) % 2));
-
 			var excludeLayers = GameManager.Instance.players
 				.Where(player => player != playerState.player)
 				.Select(player => String.Format("P{0} Camera", player.number))
@@ -38,7 +48,7 @@ public class PlayerScreen : MonoBehaviour {
 			playerCamera.cullingMask = playerCamera.cullingMask & ~LayerMask.GetMask(excludeLayers);
 		}
 
-		var cameraRect = new Rect(viewportXOffset, viewportYOffset, viewportWidth, viewportHeight);
+		var cameraRect = viewportLayouts[GameManager.Instance.players.Count - 1][playerState.player.id];
 		playerCamera.rect = cameraRect;
 		hudCamera.rect = cameraRect;
 
