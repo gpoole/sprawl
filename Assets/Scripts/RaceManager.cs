@@ -26,6 +26,8 @@ public class RaceManager : MonoBehaviour {
 		public ReactiveRaceModeProperty(RaceMode initialValue) : base(initialValue) { }
 	}
 
+	public GameObject[] starts;
+
 	public FloatReactiveProperty startCountdown = new FloatReactiveProperty();
 
 	public ReactiveRaceModeProperty mode = new ReactiveRaceModeProperty();
@@ -33,8 +35,6 @@ public class RaceManager : MonoBehaviour {
 	public int lapCount = 3;
 
 	public PlayableDirector titlePrefab;
-
-	private GameObject[] starts;
 
 	private List<PlayerState> playerStates = new List<PlayerState>();
 
@@ -45,8 +45,6 @@ public class RaceManager : MonoBehaviour {
 	}
 
 	void Start() {
-		starts = GameObject.FindGameObjectsWithTag("Start");
-
 		StartCoroutine(RunGame());
 	}
 

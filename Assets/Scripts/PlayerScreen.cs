@@ -28,7 +28,8 @@ public class PlayerScreen : MonoBehaviour {
 			viewportWidth = GameManager.Instance.players.Count > 2 ? 0.5f : 1f;
 			viewportHeight = GameManager.Instance.players.Count > 1 ? 0.5f : 1f;
 			viewportXOffset = viewportWidth * Mathf.Floor(playerState.player.id / 2);
-			viewportYOffset = viewportHeight * (playerState.player.id % 2f);
+			// This is inverted, x/y starts at bottom left
+			viewportYOffset = viewportHeight - (viewportHeight * ((playerState.player.id + 1) % 2));
 
 			var excludeLayers = GameManager.Instance.players
 				.Where(player => player != playerState.player)
@@ -41,12 +42,14 @@ public class PlayerScreen : MonoBehaviour {
 		playerCamera.rect = cameraRect;
 		hudCamera.rect = cameraRect;
 
-		var virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
-		virtualCamera.m_Follow = followTarget.transform;
-		virtualCamera.m_LookAt = followTarget.transform;
+		if (followTarget != null) {
+			var virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
+			virtualCamera.m_Follow = followTarget.transform;
+			virtualCamera.m_LookAt = followTarget.transform;
 
-		if (playerState != null) {
-			virtualCamera.gameObject.layer = LayerMask.NameToLayer(String.Format("P{0} Camera", playerState.player.number));
+			if (playerState != null) {
+				virtualCamera.gameObject.layer = LayerMask.NameToLayer(String.Format("P{0} Camera", playerState.player.number));
+			}
 		}
 	}
 

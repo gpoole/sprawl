@@ -16,7 +16,15 @@ public class PlayerRaceUI : MonoBehaviour {
 
 	public Text lapTimeText;
 
+	public Animator victoryMessage;
+
+	public Animator loserMessage;
+
 	public RectTransform layout;
+
+	public Transform lapRows;
+
+	public GameObject lapRowPrefab;
 
 	void Start() {
 		if (!playerState) {
@@ -31,16 +39,43 @@ public class PlayerRaceUI : MonoBehaviour {
 		playerState.rank
 			.Where(rank => rank > 0 && rank <= rankAnimations.Length)
 			.Select(rank => rankAnimations[rank - 1])
-			.Subscribe(animation => animation.SetBool("Active", true));
+			.Subscribe(animation => animation.SetBool("Active", true))
+			.AddTo(this);
 		playerState.rank
 			.SelectMany(rank => rankAnimations.Where((_, index) => index != (rank - 1)))
-			.Subscribe(animation => animation.SetBool("Active", false));
+			.Subscribe(animation => animation.SetBool("Active", false))
+			.AddTo(this);
 
 		playerState.lapTimes
 			.ObserveReplace()
 			.Where(ev => ev.Index == playerState.lap.Value - 1)
-			.Select(ev => String.Format("{0:00}:{1:00.00}", Mathf.Floor(ev.NewValue / 60), ev.NewValue % 60))
-			.SubscribeToText(lapTimeText);
+			.Select(ev => FormatLapTime(ev.NewValue))
+			.SubscribeToText(lapTimeText)
+			.AddTo(this);
+
+		playerState.lapTimes
+			.ObserveAdd()
+			.Where(ev => ev.Index > 0)
+			.Subscribe(ev => {
+				var newRow = Instantiate(lapRowPrefab, lapRows);
+				newRow.GetComponentInChildren<Text>().text = FormatLapTime(playerState.lapTimes[ev.Index - 1]);
+			})
+			.AddTo(this);
+
+		playerState.mode
+			.Where(playerMode => playerMode == PlayerState.PlayerMode.Finished)
+			.Subscribe(_ => {
+				if (playerState.rank.Value == 1) {
+					victoryMessage.SetTrigger("Active");
+				} else {
+					loserMessage.SetTrigger("Active");
+				}
+			})
+			.AddTo(this);
+	}
+
+	private static string FormatLapTime(float time) {
+		return String.Format("{0:00}:{1:00.00}", Mathf.Floor(time / 60), time % 60);
 	}
 
 	void PulseText(Text text, float fromScale, float duration) {

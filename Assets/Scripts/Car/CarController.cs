@@ -144,6 +144,10 @@ public class CarController : MonoBehaviour {
         TrackVector("surfaceVelocity", surfaceVelocity, Color.yellow);
         isStopped = Math.Abs(Speed) < stoppedSpeed;
 
+        if (!drivingEnabled) {
+            rb.AddForce(-surfaceVelocity, ForceMode.VelocityChange);
+        }
+
         RaycastHit roadSurface;
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out roadSurface, 1f)) {
             surfaceFriction = roadSurface.collider.material.dynamicFriction;
