@@ -934,11 +934,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerState: {fileID: 0}
-  introText: {fileID: 0}
   lapText: {fileID: 114035851538514870}
   lapTimeText: {fileID: 114008518045907930}
-  victoryMessage: {fileID: 0}
-  loserMessage: {fileID: 0}
+  rankObject: {fileID: 1036645353000304}
+  victoryMessage: {fileID: 95072748602998946}
+  loserMessage: {fileID: 95593055642967402}
   layout: {fileID: 224606705961343196}
   lapRows: {fileID: 224259185225983088}
   lapRowPrefab: {fileID: 1723230687708710, guid: 313d8d1038c8847fba4de6eafda0c9a9,

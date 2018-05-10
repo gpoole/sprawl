@@ -10,11 +10,11 @@ public class PlayerRaceUI : MonoBehaviour {
 
 	public PlayerState playerState;
 
-	public GameObject introText;
-
 	public Text lapText;
 
 	public Text lapTimeText;
+
+	public GameObject rankObject;
 
 	public Animator victoryMessage;
 
@@ -35,7 +35,7 @@ public class PlayerRaceUI : MonoBehaviour {
 
 		playerState.lap.Select(lap => String.Format("{0}/{1}", lap, 3)).SubscribeToText(lapText);
 
-		var rankAnimations = transform.Find("Rank").GetComponentsInChildren<Animator>();
+		var rankAnimations = rankObject.GetComponentsInChildren<Animator>();
 		playerState.rank
 			.Where(rank => rank > 0 && rank <= rankAnimations.Length)
 			.Select(rank => rankAnimations[rank - 1])

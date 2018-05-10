@@ -51,6 +51,10 @@ public class PlayerScreen : MonoBehaviour {
 				virtualCamera.gameObject.layer = LayerMask.NameToLayer(String.Format("P{0} Camera", playerState.player.number));
 			}
 		}
+
+		if (playerState != null) {
+			ui.playerState = playerState;
+		}
 	}
 
 	public static PlayerScreen Create(GameObject screenPrefab, PlayerState playerState, Car car) {
