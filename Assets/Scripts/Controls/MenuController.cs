@@ -14,8 +14,6 @@ public class MenuController : PlayerActionSet {
 
     public PlayerAction back;
 
-    public PlayerAction join;
-
     public MenuController() {
         up = CreatePlayerAction("Up");
         down = CreatePlayerAction("Down");
@@ -23,7 +21,6 @@ public class MenuController : PlayerActionSet {
         right = CreatePlayerAction("Right");
         ok = CreatePlayerAction("Ok");
         back = CreatePlayerAction("Back");
-        join = CreatePlayerAction("Join");
 
         up.AddDefaultBinding(InputControlType.DPadUp);
         up.AddDefaultBinding(InputControlType.LeftStickUp);
@@ -34,11 +31,9 @@ public class MenuController : PlayerActionSet {
         right.AddDefaultBinding(InputControlType.DPadRight);
         right.AddDefaultBinding(InputControlType.LeftStickRight);
         ok.AddDefaultBinding(InputControlType.Start);
-        ok.AddDefaultBinding(InputControlType.Action2);
+        ok.AddDefaultBinding(InputControlType.Action1);
         back.AddDefaultBinding(InputControlType.Back);
-        back.AddDefaultBinding(InputControlType.Action3);
-        join.AddDefaultBinding(InputControlType.Action2);
-        join.AddDefaultBinding(InputControlType.Start);
+        back.AddDefaultBinding(InputControlType.Action2);
 
         up.AddDefaultBinding(Key.W);
         up.AddDefaultBinding(Key.UpArrow);
@@ -53,8 +48,6 @@ public class MenuController : PlayerActionSet {
         back.AddDefaultBinding(Key.Backspace);
         back.AddDefaultBinding(Key.Delete);
         back.AddDefaultBinding(Key.Escape);
-        join.AddDefaultBinding(Key.Return);
-        join.AddDefaultBinding(Key.Space);
     }
 
 }

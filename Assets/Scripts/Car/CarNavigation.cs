@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class CarNavigation : MonoBehaviour {
 
+	public static float FlashCount = 4f;
+
+	public static float FlashTime = 0.1f;
+
 	private float lapStartTime;
 
 	private CarController carController;
@@ -14,6 +18,8 @@ public class CarNavigation : MonoBehaviour {
 	private PlayerState playerState;
 
 	private GameObject[] warpPoints;
+
+	private Coroutine flashRoutine;
 
 	void Start() {
 		input = GetComponent<CarPlayerInput>();
@@ -52,7 +58,9 @@ public class CarNavigation : MonoBehaviour {
 
 	public void ResetCar() {
 		if (playerState != null) {
-			WarpTo(playerState.lastCheckpoint.transform);
+			if (playerState.mode.Value == PlayerState.PlayerMode.Racing) {
+				WarpTo(playerState.lastCheckpoint.transform);
+			}
 		} else {
 			// In tracks with no navigation just dump the player at a warp point, if any
 			var closestPoint = warpPoints.Aggregate((acc, point) => {
@@ -74,6 +82,27 @@ public class CarNavigation : MonoBehaviour {
 	void WarpTo(Transform warpPoint) {
 		transform.position = warpPoint.position;
 		transform.rotation = warpPoint.rotation;
+
+		if (flashRoutine != null) {
+			StopCoroutine(flashRoutine);
+			flashRoutine = null;
+		}
+		flashRoutine = StartCoroutine(Flash());
+	}
+
+	IEnumerator Flash() {
+		// Assuming we're on the root...
+		var carMeshes = GetComponentsInChildren<MeshRenderer>();
+		for (var flashes = 0; flashes <= FlashCount; flashes++) {
+			foreach (var mesh in carMeshes) {
+				mesh.enabled = false;
+			}
+			yield return new WaitForSeconds(FlashTime);
+			foreach (var mesh in carMeshes) {
+				mesh.enabled = true;
+			}
+			yield return new WaitForSeconds(FlashTime);
+		}
 	}
 
 }

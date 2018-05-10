@@ -85,10 +85,11 @@ public class PlayerState : MonoBehaviour {
 	}
 
 	public void NextLap() {
+		if (lap.Value + 1 > RaceManager.Instance.lapCount) {
+			mode.Value = PlayerState.PlayerMode.Finished;
+			return;
+		}
 		lap.Value += 1;
 		lapStartTime = Time.time;
-		if (lap.Value > RaceManager.Instance.lapCount) {
-			mode.Value = PlayerState.PlayerMode.Finished;
-		}
 	}
 }

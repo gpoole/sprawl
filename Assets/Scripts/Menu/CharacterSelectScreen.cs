@@ -72,7 +72,9 @@ public class CharacterSelectScreen : MonoBehaviour, IMenuInputEventHandler {
             case InputAction.Down:
             case InputAction.Left:
             case InputAction.Right:
-                assignedPlayer.character.Value = characterGrid.GetFrom(assignedPlayer.character.Value, GridCollectionUtils.DirectionFromMenuAction(action));
+                if (!assignedPlayer.confirmed.Value) {
+                    assignedPlayer.character.Value = characterGrid.GetFrom(assignedPlayer.character.Value, GridCollectionUtils.DirectionFromMenuAction(action));
+                }
                 break;
         }
     }

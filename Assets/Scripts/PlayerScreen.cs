@@ -16,7 +16,7 @@ public class PlayerScreen : MonoBehaviour {
 
 	public PlayerRaceUI ui;
 
-	private PlayerState playerState;
+	public PlayerState playerState;
 
 	private static readonly Rect[][] viewportLayouts = {
 		new Rect[] {

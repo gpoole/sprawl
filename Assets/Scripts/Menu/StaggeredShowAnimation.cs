@@ -18,6 +18,7 @@ public class StaggeredShowAnimation : MonoBehaviour {
 
 	IEnumerator DoShowAnimation() {
 		foreach (var animation in animations) {
+			Debug.Log("Show");
 			yield return new WaitForSeconds(delay);
 			animation.Show();
 		}
