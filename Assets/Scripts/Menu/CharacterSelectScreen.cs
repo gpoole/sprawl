@@ -42,6 +42,11 @@ public class CharacterSelectScreen : MonoBehaviour, IMenuInputEventHandler {
         menuScreenManager = GetComponentInParent<MenuScreenManager>();
         characterGrid = new GridCollection<GameCharacter>(characterSet.characters, Columns);
 
+        foreach (var existingPlayer in GameManager.Instance.players) {
+            var playerSelection = new PlayerSelection(existingPlayer, existingPlayer.character, false);
+            playerSelections.Add(playerSelection);
+        }
+
         playerSelections.ObserveAdd()
             .Select(ev => ev.Value)
             .SelectMany(playerSelection => {
