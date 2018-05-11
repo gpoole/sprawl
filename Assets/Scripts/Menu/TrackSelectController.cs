@@ -31,7 +31,9 @@ public class TrackSelectController : MonoBehaviour, IMenuInputEventHandler {
 		selectionConfirmed.Subscribe(confirmed => {
 			if (confirmed) {
 				confirmPrompt.Show();
+				TrackManager.Instance.track = selectedTrack.Value;
 			} else {
+				TrackManager.Instance.track = null;
 				confirmPrompt.Hide();
 			}
 		});
