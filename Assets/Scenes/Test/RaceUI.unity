@@ -433,6 +433,16 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1111686588230162, guid: b950ea7bbf2674688bf4ddbdcd9e342b, type: 2}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224654145139885856, guid: b950ea7bbf2674688bf4ddbdcd9e342b,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224654145139885856, guid: b950ea7bbf2674688bf4ddbdcd9e342b,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

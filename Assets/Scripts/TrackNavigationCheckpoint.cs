@@ -31,7 +31,7 @@ public class TrackNavigationCheckpoint : MonoBehaviour {
 	}
 
 	public float PlaneDistance(Vector3 position) {
-		return passPlane.GetDistanceToPoint(position);
+		return Mathf.Abs(passPlane.GetDistanceToPoint(position));
 	}
 
 	void OnDrawGizmos() {

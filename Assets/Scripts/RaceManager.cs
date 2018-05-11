@@ -107,14 +107,23 @@ public class RaceManager : MonoBehaviour {
 	}
 
 	void UpdateRanks() {
-		var sortedPlayers = playerStates
-			.OrderBy(playerState => playerState.lap.Value)
-			.ThenBy(playerState => playerState.lastCheckpoint.order)
-			.ThenBy(playerState => playerState.lastCheckpoint.PlaneDistance(cars[playerState.player.id].transform.position))
-			.Reverse();
+		var unfinishedPlayers = playerStates
+			.Where(playerState => playerState.mode.Value == PlayerState.PlayerMode.Racing)
+			.OrderByDescending(playerState => playerState.lap.Value)
+			.ThenByDescending(playerState => playerState.lastCheckpoint.order)
+			.ThenBy(playerState => {
+				var closestCheckpointDistance = playerState.lastCheckpoint.next.Min(nextCheckpoint => nextCheckpoint.PlaneDistance(cars[playerState.player.id].transform.position));
+				return closestCheckpointDistance;
+			});
+
+		var finishedPlayers = playerStates
+			.Where(playerState => playerState.mode.Value == PlayerState.PlayerMode.Finished)
+			.OrderBy(playerState => playerState.rank.Value);
+
+		var orderedPlayers = finishedPlayers.Concat(unfinishedPlayers);
 
 		var rank = 1;
-		foreach (var playerState in sortedPlayers) {
+		foreach (var playerState in orderedPlayers) {
 			playerState.rank.Value = rank++;
 		}
 	}
