@@ -240,6 +240,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4035914902885452}
+  - component: {fileID: 64735100533361514}
   m_Layer: 0
   m_Name: GUPO_CABIN_04
   m_TagString: Untagged
@@ -423,8 +424,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1694164299554562}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 219.9777, y: 6.9961414, z: -41.799976}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -271.27, y: -166.59, z: 129.94028}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4159266008339986}
@@ -452,7 +453,7 @@ Transform:
   - {fileID: 4186583909326496}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!4 &4071841060659396
 Transform:
   m_ObjectHideFlags: 1
@@ -1695,3 +1696,17 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1484139569923908}
   m_Mesh: {fileID: 4300000, guid: ed195847c4fefba4d9c85db6c522f56d, type: 3}
+--- !u!64 &64735100533361514
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1694164299554562}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 0
+  m_CookingOptions: 14
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 4300000, guid: 3cfcbfc860e119841b53fe74acce8842, type: 3}
