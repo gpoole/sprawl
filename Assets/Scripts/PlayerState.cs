@@ -28,8 +28,6 @@ public class PlayerState : MonoBehaviour {
 
 	public ReactiveCollection<float> lapTimes;
 
-	public FloatReactiveProperty raceTime;
-
 	public TrackNavigationCheckpoint lastCheckpoint;
 
 	private float lapStartTime;
@@ -77,7 +75,6 @@ public class PlayerState : MonoBehaviour {
 	IEnumerator UpdateTimer() {
 		while (mode.Value == PlayerMode.Racing) {
 			var lapTime = Time.time - lapStartTime;
-			raceTime.Value += Time.deltaTime;
 			if (lapTimes.Count < lap.Value) {
 				lapTimes.Add(lapTime);
 			} else {
