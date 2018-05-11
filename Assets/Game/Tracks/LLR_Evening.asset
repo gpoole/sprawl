@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   trackName: Luigi's Last Reward (Evening)
   sceneName: LLR_001
-  image: {fileID: 21300000, guid: 552f5505918284c0b8a2e71f86c2c0a2, type: 3}
+  image: {fileID: 21300000, guid: abd4de5b9b0664dac98b894e5deda1dc, type: 3}
   settings:
   - name: lightingMode
     value: Evening
