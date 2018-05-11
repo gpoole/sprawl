@@ -5,6 +5,7 @@ using System.Linq;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.SceneManagement;
 
 public class RaceManager : MonoBehaviour {
 
@@ -56,6 +57,25 @@ public class RaceManager : MonoBehaviour {
 		yield return StartCoroutine(PlayIntro());
 		CreatePlayers();
 		StartCoroutine(RaceStart());
+
+		foreach (var playerState in playerStates) {
+			playerState.mode
+				.Where(mode => mode == PlayerState.PlayerMode.Finished)
+				.Subscribe(_ => {
+					var allFinished = playerStates.All(otherPlayerState => otherPlayerState.mode.Value == PlayerState.PlayerMode.Finished);
+					if (allFinished) {
+						StartCoroutine(WaitForRestart());
+					}
+				})
+				.AddTo(this);
+		}
+	}
+
+	IEnumerator WaitForRestart() {
+		yield return new WaitForSeconds(3f);
+		var menuController = new MenuController();
+		yield return new WaitUntil(() => menuController.ok);
+		SceneManager.LoadScene("Menu");
 	}
 
 	IEnumerator PlayIntro() {
