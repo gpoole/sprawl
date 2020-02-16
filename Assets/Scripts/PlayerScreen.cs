@@ -48,7 +48,13 @@ public class PlayerScreen : MonoBehaviour {
 			playerCamera.cullingMask = playerCamera.cullingMask & ~LayerMask.GetMask(excludeLayers);
 		}
 
-		var cameraRect = viewportLayouts[GameManager.Instance.players.Count - 1][playerState.player.id];
+		Rect cameraRect;
+		if (GameManager.Instance != null) {
+			cameraRect = viewportLayouts[GameManager.Instance.players.Count - 1][playerState.player.id];
+		} else {
+			cameraRect = viewportLayouts[0][0];
+			Debug.Log("No GameManager found, screen is running in single player mode.");
+		}
 		playerCamera.rect = cameraRect;
 		hudCamera.rect = cameraRect;
 

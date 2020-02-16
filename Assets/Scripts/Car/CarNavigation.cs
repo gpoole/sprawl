@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[RequireComponent(typeof(CarPlayerInput))]
+[RequireComponent(typeof(Rigidbody))]
 public class CarNavigation : MonoBehaviour {
 
 	public static float FlashCount = 4f;
@@ -17,16 +19,19 @@ public class CarNavigation : MonoBehaviour {
 
 	private PlayerState playerState;
 
+	private Rigidbody rigidbody;
+
 	private GameObject[] warpPoints;
 
 	private Coroutine flashRoutine;
 
 	void Start() {
 		input = GetComponent<CarPlayerInput>();
+		rigidbody = GetComponent<Rigidbody>();
 		carController = GetComponent<CarController>();
 		playerState = GetComponent<Car>().playerState;
 
-		if (playerState) {
+		if (playerState && carController != null) {
 			playerState.lastCheckpoint = TrackNavigation.Instance.start;
 			StartCoroutine(UpdateCheckpoint());
 		} else {
@@ -76,7 +81,9 @@ public class CarNavigation : MonoBehaviour {
 				Debug.LogError("No warp points or track navigation, can't reset player.");
 			}
 		}
-		carController.Reset();
+
+		rigidbody.ResetInertiaTensor();
+		rigidbody.velocity = Vector3.zero;
 	}
 
 	void WarpTo(Transform warpPoint) {
